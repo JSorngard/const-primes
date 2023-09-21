@@ -62,7 +62,7 @@ impl<const N: usize> Primes<N> {
     /// const PRIMES: Primes<3> = Primes::new();
     /// assert_eq!(PRIMES, [2, 3, 5]);
     /// ```
-    /// Determine N throught type inference
+    /// Determine N through type inference
     /// ```
     /// # use const_primes::Primes;
     /// assert_eq!(Primes::new(), [2, 3, 5, 7, 11]);
