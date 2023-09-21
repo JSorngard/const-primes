@@ -16,7 +16,7 @@
 #![forbid(unsafe_code)]
 #![no_std]
 
-/// [`Primes`] consists of an array of integers of this type.
+/// [`Primes`] consists of an array of integers of this type. Currently `u32`.
 pub type Underlying = u32;
 
 /// Returns the largest integer smaller than or equal to sqrt(x).
