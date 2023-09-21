@@ -84,6 +84,8 @@ impl<const N: usize> Primes<N> {
     ///
     /// This exists because the [`From`] trait is not const.
     /// Will be removed if const traits are stabilized.
+    #[inline]
+    #[must_use]
     pub const fn into_array(self) -> [Underlying; N] {
         self.primes
     }
@@ -92,6 +94,8 @@ impl<const N: usize> Primes<N> {
     ///
     /// This exists because the [`AsRef`] trait is not const.
     /// Will be removed if const traits are stabilized.
+    #[inline]
+    #[must_use]
     pub const fn as_slice(&self) -> &[Underlying; N] {
         &self.primes
     }
@@ -99,6 +103,7 @@ impl<const N: usize> Primes<N> {
 
 impl<const N: usize> core::ops::Index<usize> for Primes<N> {
     type Output = Underlying;
+    #[inline]
     fn index(&self, index: usize) -> &Self::Output {
         &self.primes[index]
     }
@@ -117,12 +122,14 @@ impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
 }
 
 impl<const N: usize> From<Primes<N>> for [Underlying; N] {
+    #[inline]
     fn from(const_primes: Primes<N>) -> Self {
         const_primes.primes
     }
 }
 
 impl<const N: usize> AsRef<[Underlying]> for Primes<N> {
+    #[inline]
     fn as_ref(&self) -> &[Underlying] {
         &self.primes
     }
