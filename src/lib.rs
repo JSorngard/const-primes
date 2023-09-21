@@ -83,7 +83,7 @@ impl<const N: usize> Primes<N> {
     /// Converts `self` into an array of size `N`.
     ///
     /// This exists because the [`From`] trait is not const.
-    /// Will be deprecated if const traits are stabilized.
+    /// May be deprecated if const traits are stabilized.
     #[inline]
     #[must_use]
     pub const fn into_array(self) -> [Underlying; N] {
@@ -93,11 +93,48 @@ impl<const N: usize> Primes<N> {
     /// Returns a slice of the underlying array.
     ///
     /// This exists because the [`AsRef`] trait is not const.
-    /// Will be deprecated if const traits are stabilized.
+    /// May be deprecated if const traits are stabilized.
     #[inline]
     #[must_use]
     pub const fn as_slice(&self) -> &[Underlying; N] {
         &self.primes
+    }
+
+    /// Returns a reference to the element at the given index.
+    ///
+    /// This exists because the [`SliceIndex`](core::slice::SliceIndex) trait is not const.
+    /// May be deprecated if const traits are stabilized.
+    /// # Example
+    /// Basic usage
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<5> = Primes::new();
+    /// assert_eq!(PRIMES.get_element(2), Some(&5));
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn get_element(&self, index: usize) -> Option<&Underlying> {
+        if index < N {
+            Some(&self.primes[index])
+        } else {
+            None
+        }
+    }
+
+    /// Returns the largest prime in `self`.
+    ///
+    /// Returns `None` if `self` was created empty.
+    /// # Example
+    /// Basic usage
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<5> = Primes::new();
+    /// assert_eq!(PRIMES.last(), Some(&11));
+    /// ```
+    #[inline]
+    #[must_use]
+    pub const fn last(&self) -> Option<&Underlying> {
+        self.primes.last()
     }
 }
 
