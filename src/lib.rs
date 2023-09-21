@@ -54,7 +54,25 @@ pub struct Primes<const N: usize> {
 }
 
 impl<const N: usize> Primes<N> {
-    /// Generates a new `Primes`.
+    /// Generates a new instance of `Primes` which contains the first `N` primes.
+    /// # Example
+    /// Basic usage
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<3> = Primes::new();
+    /// assert_eq!(PRIMES, [2, 3, 5]);
+    /// ```
+    /// Determine N throught type inference
+    /// ```
+    /// # use const_primes::Primes;
+    /// assert_eq!(Primes::new(), [2, 3, 5, 7, 11]);
+    /// ```
+    /// Specify N manually
+    /// ```
+    /// # use const_primes::Primes;
+    /// let primes = Primes::<5>::new();
+    /// assert_eq!(primes, [2, 3, 5, 7, 11]);
+    /// ```
     /// # Panic
     /// Panics if `N` is zero.
     pub const fn new() -> Self {
