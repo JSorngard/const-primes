@@ -37,7 +37,15 @@ const fn isqrt(x: Underlying) -> Underlying {
     left
 }
 
-/// An array of the first `N` primes that can be created in `const` contexts.
+/// An type consisting of the first `N` primes that can be created in `const` contexts.
+///
+/// # Examples
+///
+/// ```
+/// # use const_primes::Primes;
+/// const PRIMES: Primes<3> = Primes::new();
+/// assert_eq!(PRIMES, [2, 3, 5]);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Primes<const N: usize> {
     primes: [Underlying; N],
@@ -79,7 +87,7 @@ impl<const N: usize> Primes<N> {
     }
 
     /// Returns a slice of the underlying array.
-    /// 
+    ///
     /// This exists because the [`AsRef`] trait is not const.
     /// Will be removed if const traits are stabilized.
     pub const fn as_slice(&self) -> &[Underlying; N] {
