@@ -10,7 +10,7 @@
 //! assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
 //! ```
 
-/// Returns the greatest integer smaller than or equal to sqrt(x).
+/// Returns the largest integer smaller than or equal to sqrt(x).
 const fn isqrt(x: usize) -> usize {
     let mut left = 0;
     let mut right = x + 1;
