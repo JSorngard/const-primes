@@ -1,6 +1,6 @@
 //! This crate defines the type [`Primes`]: an array of primes computed at compile time.
 //!
-//! The crate currently uses trial division to compute primes and generating very large arrays
+//! The crate currently uses trial division to compute primes and generation very large arrays
 //! will therefore take a long time.
 //!
 //! `#![no_std]` compatible.
