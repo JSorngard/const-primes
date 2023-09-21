@@ -40,10 +40,11 @@ const fn isqrt(x: Underlying) -> Underlying {
 /// A type consisting of the first `N` primes that can be created in `const` contexts.
 ///
 /// # Examples
-///
+/// Basic usage
 /// ```
 /// # use const_primes::Primes;
 /// const PRIMES: Primes<3> = Primes::new();
+/// assert_eq!(PRIMES[2], 5);
 /// assert_eq!(PRIMES, [2, 3, 5]);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -92,6 +93,13 @@ impl<const N: usize> Primes<N> {
     /// Will be removed if const traits are stabilized.
     pub const fn as_slice(&self) -> &[Underlying; N] {
         &self.primes
+    }
+}
+
+impl<const N: usize> core::ops::Index<usize> for Primes<N> {
+    type Output = Underlying;
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.primes[index]
     }
 }
 
