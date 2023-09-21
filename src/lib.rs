@@ -26,6 +26,7 @@ pub struct Primes<const N: usize> {
 }
 
 impl<const N: usize> Primes<N> {
+    /// Generates a new array of `Primes`.
     pub const fn new() -> Self {
         let mut primes = [2; N];
         let mut number = 3;
@@ -80,6 +81,14 @@ impl<const N: usize> From<Primes<N>> for [usize; N] {
 impl<const N: usize> AsRef<[usize]> for Primes<N> {
     fn as_ref(&self) -> &[usize] {
         &self.primes
+    }
+}
+
+impl<const N: usize> IntoIterator for Primes<N> {
+    type Item = <[usize; N] as IntoIterator>::Item;
+    type IntoIter = <[usize; N] as IntoIterator>::IntoIter;
+    fn into_iter(self) -> Self::IntoIter {
+        self.primes.into_iter()
     }
 }
 
