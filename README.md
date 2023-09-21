@@ -1,8 +1,11 @@
 # const-primes
 
-This is a small crate for creating arrays of prime numbers at compile time.
+This is a small crate for creating arrays of prime numbers at compile time.  
 
-#![no_std] compatible.
+Due to limitations imposed by compile time rust
+this crate uses trial division to generate its arrays. This renders it unsuitable for creating very large arrays.
+
+`#![no_std]` compatible.
 
 ## Example
 
