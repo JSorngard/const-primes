@@ -136,6 +136,18 @@ impl<const N: usize> Primes<N> {
     pub const fn last(&self) -> Option<&Underlying> {
         self.primes.last()
     }
+
+    /// Returns the number of primes in `self`.
+    /// 
+    /// # Example
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<5> = Primes::new();
+    /// assert_eq!(PRIMES.len(), 5);
+    /// ```
+    pub const fn len(&self) -> usize {
+        N
+    }
 }
 
 impl<const N: usize, I> core::ops::Index<I> for Primes<N>
