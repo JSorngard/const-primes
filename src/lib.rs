@@ -37,7 +37,7 @@ const fn isqrt(x: Underlying) -> Underlying {
     left
 }
 
-/// An type consisting of the first `N` primes that can be created in `const` contexts.
+/// A type consisting of the first `N` primes that can be created in `const` contexts.
 ///
 /// # Examples
 ///
