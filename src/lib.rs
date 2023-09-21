@@ -12,6 +12,7 @@
 //! ```
 
 #![forbid(unsafe_code)]
+#![no_std]
 
 /// Returns the largest integer smaller than or equal to sqrt(x).
 const fn isqrt(x: usize) -> usize {
