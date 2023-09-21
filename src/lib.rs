@@ -113,6 +113,14 @@ impl<const N: usize> Primes<N> {
     }
 
     /// Converts `self` into an array of size `N`.
+    ///
+    /// # Example
+    /// Basic usage
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: [u32; 5] = Primes::new().into_array();
+    /// assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
+    /// ```
     #[inline]
     #[must_use]
     pub const fn into_array(self) -> [Underlying; N] {
