@@ -10,6 +10,7 @@
 //! ```
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<10> = Primes::new();
+//! assert_eq!(PRIMES[5], 13);
 //! assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
 //! ```
 
