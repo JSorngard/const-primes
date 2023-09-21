@@ -11,7 +11,7 @@
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<10> = Primes::new();
 //! assert_eq!(PRIMES[5], 13);
-//! assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
+//! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
 
 #![forbid(unsafe_code)]
@@ -38,7 +38,7 @@ const fn isqrt(x: Underlying) -> Underlying {
     left
 }
 
-/// A thin wrapper around an array that consists of the first `N` primes and can be created in `const` contexts.
+/// A thin wrapper around an array that consists of the first `N` primes and can be created in const contexts.
 ///
 /// # Examples
 /// Basic usage
@@ -74,10 +74,15 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
     /// # Panic
-    /// Panics if `N` is zero.
+    /// Panics if `N` is zero. In const contexts this will fail to compile
     /// ```compile_fail
     /// # use const_primes::Primes;
-    /// const PRIMES: Primes<0> = Primes::new();
+    /// const NO_PRIMES: Primes<0> = Primes::new();
+    /// ```
+    /// In other contexts it will panic at runtime
+    /// ```should_panic
+    /// # use const_primes::Primes;
+    /// let no_primes = Primes::<0>::new();
     /// ```
     pub const fn new() -> Self {
         assert!(N >= 1, "`N` must be at least 1");
