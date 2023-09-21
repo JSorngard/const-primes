@@ -19,7 +19,7 @@
 
 /// [`Primes`] consists of an array of integers of this type. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work.
-pub type Underlying = u32;
+type Underlying = u32;
 
 /// Returns the largest integer smaller than or equal to sqrt(x).
 const fn isqrt(x: Underlying) -> Underlying {
