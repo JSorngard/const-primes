@@ -8,8 +8,8 @@
 //! # Example
 //!
 //! ```
-//! # use const_primes::{Primes, Underlying};
-//! const PRIMES: [Underlying; 10] = Primes::new().into_array();
+//! # use const_primes::Primes;
+//! const PRIMES: [u32; 10] = Primes::new().into_array();
 //! assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
 //! ```
 
