@@ -1,10 +1,5 @@
 /// Returns the greatest integer smaller than or equal to sqrt(x).
-/// # Example
-/// ```
-/// # use const_primes::isqrt;
-/// assert_eq!(isqrt(27), 5);
-/// ```
-pub const fn isqrt(x: usize) -> usize {
+const fn isqrt(x: usize) -> usize {
     let mut left = 0;
     let mut right = x + 1;
 
