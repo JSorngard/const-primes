@@ -75,6 +75,10 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # Panic
     /// Panics if `N` is zero.
+    /// ```compile_fail
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<0> = Primes::new();
+    /// ```
     pub const fn new() -> Self {
         assert!(N >= 1, "`N` must be at least 1");
 
@@ -236,12 +240,6 @@ mod test {
         const PRIMES: Primes<10> = Primes::new();
         assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
     }
-
-    // #[test]
-    // fn verify_0() {
-    //     const PRIMES: Primes<0> = Primes::new();
-    //     assert_eq!(PRIMES, []);
-    // }
 
     #[test]
     fn verify_1000() {
