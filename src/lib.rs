@@ -180,6 +180,8 @@ impl<const N: usize> Primes<N> {
     /// const PRIMES: Primes<5> = Primes::new();
     /// assert_eq!(PRIMES.len(), 5);
     /// ```
+    // Can never be empty since we panic if the user tries to create an empty `Primes`.
+    #[allow(clippy::len_without_is_empty)]
     pub const fn len(&self) -> usize {
         N
     }
