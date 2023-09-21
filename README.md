@@ -7,10 +7,17 @@ This renders it unsuitable for creating very large arrays.
 
 `#![no_std]` compatible.
 
-## Example
+## Examples
 
+Primes can be computed using either the type defined in the crate
 ```rust
 const PRIMES: Primes<5> = Primes::new();
+assert_eq!(PRIMES[3], 7);
+assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
+```
+or by calling a function that returns a normal Rust array
+```rust
+const PRIMES: [u32; 5] = primes();
 assert_eq!(PRIMES[3], 7);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
 ```
