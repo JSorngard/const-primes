@@ -7,7 +7,7 @@
 pub const fn isqrt(x: usize) -> usize {
     let mut left = 0;
     let mut right = x + 1;
-    
+
     while left != right - 1 {
         let mid = left + (right - left) / 2;
         if mid * mid <= x {
@@ -50,6 +50,13 @@ impl<const N: usize> Primes<N> {
 
         Self { primes }
     }
+
+    /// Converts self into an array.
+    ///
+    /// This exists because the [`From`] trait is not const.
+    pub const fn into_array(self) -> [usize; N] {
+        self.primes
+    }
 }
 
 impl<const N: usize> PartialEq<[usize; N]> for Primes<N> {
@@ -82,6 +89,7 @@ mod test {
 
     #[test]
     fn verify() {
-        assert_eq!([2, 3, 5, 7, 11], Primes::<5>::new());
+        const PRIMES: [usize; 5] = Primes::new().into_array();
+        assert_eq!([2, 3, 5, 7, 11], PRIMES);
     }
 }
