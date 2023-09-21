@@ -101,10 +101,13 @@ impl<const N: usize> Primes<N> {
     }
 }
 
-impl<const N: usize> core::ops::Index<usize> for Primes<N> {
-    type Output = Underlying;
+impl<const N: usize, I> core::ops::Index<I> for Primes<N>
+where
+    I: core::slice::SliceIndex<[Underlying]>,
+{
+    type Output = I::Output;
     #[inline]
-    fn index(&self, index: usize) -> &Self::Output {
+    fn index(&self, index: I) -> &Self::Output {
         &self.primes[index]
     }
 }
