@@ -55,7 +55,13 @@ pub struct Primes<const N: usize> {
 
 impl<const N: usize> Primes<N> {
     /// Generates a new `Primes`.
+    /// # Panic
+    /// Panics if `N` is zero.
     pub const fn new() -> Self {
+        if N == 0 {
+            panic!("`N` must be at least 1");
+        }
+
         let mut primes = [2; N];
         let mut number = 3;
         let mut i = 1;
@@ -102,6 +108,8 @@ impl<const N: usize> Primes<N> {
 
     /// Returns a reference to the element at the given index.
     ///
+    /// Returns `None` if the index is out of bounds.
+    ///
     /// This exists because the [`SliceIndex`](core::slice::SliceIndex) trait is not const.
     /// May be deprecated if const traits are stabilized.
     /// # Example
@@ -123,22 +131,24 @@ impl<const N: usize> Primes<N> {
 
     /// Returns the largest prime in `self`.
     ///
-    /// Returns `None` if `self` was created empty.
     /// # Example
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<5> = Primes::new();
-    /// assert_eq!(PRIMES.last(), Some(&11));
+    /// assert_eq!(PRIMES.last(), &11);
     /// ```
     #[inline]
     #[must_use]
-    pub const fn last(&self) -> Option<&Underlying> {
-        self.primes.last()
+    pub const fn last(&self) -> &Underlying {
+        match self.primes.last() {
+            Some(l) => l,
+            None => panic!("this should panic during creation"),
+        }
     }
 
     /// Returns the number of primes in `self`.
-    /// 
+    ///
     /// # Example
     /// ```
     /// # use const_primes::Primes;
@@ -211,11 +221,11 @@ mod test {
         assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
     }
 
-    #[test]
-    fn verify_0() {
-        const PRIMES: Primes<0> = Primes::new();
-        assert_eq!(PRIMES, []);
-    }
+    // #[test]
+    // fn verify_0() {
+    //     const PRIMES: Primes<0> = Primes::new();
+    //     assert_eq!(PRIMES, []);
+    // }
 
     #[test]
     fn verify_1000() {
