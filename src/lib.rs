@@ -94,7 +94,8 @@ impl<const N: usize> Primes<N> {
         while i < N {
             let mut j = 0;
             let mut is_prime = true;
-            while primes[j] < isqrt(number) + 1 {
+            let max_bound = isqrt(number) + 1;
+            while primes[j] < max_bound {
                 if number % primes[j] == 0 {
                     is_prime = false;
                     break;
