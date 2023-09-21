@@ -37,7 +37,7 @@ const fn isqrt(x: Underlying) -> Underlying {
     left
 }
 
-/// An array of the first `N` primes that can created in `const` contexts.
+/// An array of the first `N` primes that can be created in `const` contexts.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Primes<const N: usize> {
     primes: [Underlying; N],
