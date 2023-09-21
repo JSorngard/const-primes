@@ -8,16 +8,19 @@
 //! # Example
 //!
 //! ```
-//! # use const_primes::Primes;
-//! const PRIMES: [u32; 10] = Primes::new().into_array();
+//! # use const_primes::{Primes, Underlying};
+//! const PRIMES: [Underlying; 10] = Primes::new().into_array();
 //! assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
 //! ```
 
 #![forbid(unsafe_code)]
 #![no_std]
 
+/// [`Primes`] consists of an array of integers of this type.
+pub type Underlying = u32;
+
 /// Returns the largest integer smaller than or equal to sqrt(x).
-const fn isqrt(x: u32) -> u32 {
+const fn isqrt(x: Underlying) -> Underlying {
     let mut left = 0;
     let mut right = x + 1;
 
@@ -36,7 +39,7 @@ const fn isqrt(x: u32) -> u32 {
 /// An array of the first `N` primes, computed at compile time.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Primes<const N: usize> {
-    primes: [u32; N],
+    primes: [Underlying; N],
 }
 
 impl<const N: usize> Primes<N> {
@@ -69,43 +72,43 @@ impl<const N: usize> Primes<N> {
     /// Converts `self` into an array of size `N`.
     ///
     /// This exists because the [`From`] trait is not const.
-    pub const fn into_array(self) -> [u32; N] {
+    pub const fn into_array(self) -> [Underlying; N] {
         self.primes
     }
 
     /// Returns a slice of the underlying array.
-    pub const fn as_slice(&self) -> &[u32; N] {
+    pub const fn as_slice(&self) -> &[Underlying; N] {
         &self.primes
     }
 }
 
-impl<const N: usize> PartialEq<[u32; N]> for Primes<N> {
-    fn eq(&self, other: &[u32; N]) -> bool {
+impl<const N: usize> PartialEq<[Underlying; N]> for Primes<N> {
+    fn eq(&self, other: &[Underlying; N]) -> bool {
         &self.primes == other
     }
 }
 
-impl<const N: usize> PartialEq<Primes<N>> for [u32; N] {
+impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
     fn eq(&self, other: &Primes<N>) -> bool {
         self == &other.primes
     }
 }
 
-impl<const N: usize> From<Primes<N>> for [u32; N] {
+impl<const N: usize> From<Primes<N>> for [Underlying; N] {
     fn from(const_primes: Primes<N>) -> Self {
         const_primes.primes
     }
 }
 
-impl<const N: usize> AsRef<[u32]> for Primes<N> {
-    fn as_ref(&self) -> &[u32] {
+impl<const N: usize> AsRef<[Underlying]> for Primes<N> {
+    fn as_ref(&self) -> &[Underlying] {
         &self.primes
     }
 }
 
 impl<const N: usize> IntoIterator for Primes<N> {
-    type Item = <[u32; N] as IntoIterator>::Item;
-    type IntoIter = <[u32; N] as IntoIterator>::IntoIter;
+    type Item = <[Underlying; N] as IntoIterator>::Item;
+    type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
     fn into_iter(self) -> Self::IntoIter {
         self.primes.into_iter()
     }
@@ -117,25 +120,25 @@ mod test {
 
     #[test]
     fn verify_5() {
-        const PRIMES: [u32; 5] = Primes::new().into_array();
+        const PRIMES: [Underlying; 5] = Primes::new().into_array();
         assert_eq!([2, 3, 5, 7, 11], PRIMES);
     }
 
     #[test]
     fn verify_10() {
-        const PRIMES: [u32; 10] = Primes::new().into_array();
+        const PRIMES: [Underlying; 10] = Primes::new().into_array();
         assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
     }
 
     #[test]
     fn verify_0() {
-        const PRIMES: [u32; 0] = Primes::new().into_array();
+        const PRIMES: [Underlying; 0] = Primes::new().into_array();
         assert_eq!(PRIMES, []);
     }
 
     #[test]
     fn verify_1000() {
-        const PRIMES: [u32; 1000] = Primes::new().into_array();
+        const PRIMES: [Underlying; 1000] = Primes::new().into_array();
         assert_eq!(
             [
                 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79,
