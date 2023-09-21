@@ -58,9 +58,7 @@ impl<const N: usize> Primes<N> {
     /// # Panic
     /// Panics if `N` is zero.
     pub const fn new() -> Self {
-        if N == 0 {
-            panic!("`N` must be at least 1");
-        }
+        assert!(N >= 1, "`N` must be at least 1");
 
         let mut primes = [2; N];
         let mut number = 3;
@@ -129,7 +127,7 @@ impl<const N: usize> Primes<N> {
         }
     }
 
-    /// Returns the largest prime in `self`.
+    /// Returns the last prime in `self`. This is also the largest prime in `self`.
     ///
     /// # Example
     /// Basic usage
