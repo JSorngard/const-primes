@@ -83,7 +83,7 @@ impl<const N: usize> Primes<N> {
     /// Converts `self` into an array of size `N`.
     ///
     /// This exists because the [`From`] trait is not const.
-    /// Will be removed if const traits are stabilized.
+    /// Will be deprecated if const traits are stabilized.
     #[inline]
     #[must_use]
     pub const fn into_array(self) -> [Underlying; N] {
@@ -93,7 +93,7 @@ impl<const N: usize> Primes<N> {
     /// Returns a slice of the underlying array.
     ///
     /// This exists because the [`AsRef`] trait is not const.
-    /// Will be removed if const traits are stabilized.
+    /// Will be deprecated if const traits are stabilized.
     #[inline]
     #[must_use]
     pub const fn as_slice(&self) -> &[Underlying; N] {
