@@ -84,6 +84,7 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// let no_primes = Primes::<0>::new();
     /// ```
+    #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
         assert!(N >= 1, "`N` must be at least 1");
 
@@ -180,6 +181,8 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(PRIMES.len(), 5);
     /// ```
     // Can never be empty since we panic if the user tries to create an empty `Primes`.
+    #[inline]
+    #[must_use]
     #[allow(clippy::len_without_is_empty)]
     pub const fn len(&self) -> usize {
         N
