@@ -125,9 +125,8 @@ impl<const N: usize> Primes<N> {
         &self.primes
     }
 
-    /// Returns a reference to the element at the given index.
+    /// Returns a reference to the element at the given index if it is within bounds.
     ///
-    /// Returns `None` if the index is out of bounds.
     /// # Example
     /// Basic usage
     /// ```
