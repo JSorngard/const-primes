@@ -5,11 +5,18 @@
 //!
 //! `#![no_std]` compatible.
 //!
-//! # Example
-//!
+//! # Examples
+//! Generate primes with the type [`Primes`]
 //! ```
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<10> = Primes::new();
+//! assert_eq!(PRIMES[5], 13);
+//! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+//! ```
+//! or by just calling the function [`primes`]
+//! ```
+//! # use const_primes::primes;
+//! const PRIMES: [u32; 10] = primes();
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
@@ -21,8 +28,10 @@
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 type Underlying = u32;
 
-/// Returns an array of the first `n` prime numbers.
-/// 
+/// Returns an array of the first `N` prime numbers.
+///
+/// The compiler can often infer the value of `N`, but it can also be specified with a turbofish.
+///
 /// # Example
 /// ```
 /// # use const_primes::primes;
