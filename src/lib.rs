@@ -60,11 +60,16 @@ impl<const N: usize> Primes<N> {
         Self { primes }
     }
 
-    /// Converts self into an array.
+    /// Converts `self` into an array of size `N`.
     ///
     /// This exists because the [`From`] trait is not const.
     pub const fn into_array(self) -> [usize; N] {
         self.primes
+    }
+
+    /// Returns a slice of the underlying array.
+    pub const fn as_slice(&self) -> &[usize; N] {
+        &self.primes
     }
 }
 
