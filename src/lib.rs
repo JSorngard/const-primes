@@ -142,11 +142,11 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<5> = Primes::new();
-    /// assert_eq!(PRIMES.get_element(2), Some(&5));
+    /// assert_eq!(PRIMES.get(2), Some(&5));
     /// ```
     #[inline]
     #[must_use]
-    pub const fn get_element(&self, index: usize) -> Option<&Underlying> {
+    pub const fn get(&self, index: usize) -> Option<&Underlying> {
         if index < N {
             Some(&self.primes[index])
         } else {
