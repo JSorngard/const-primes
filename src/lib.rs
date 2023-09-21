@@ -2,6 +2,8 @@
 //! 
 //! The crate currently uses trial division to compute primes, and is therefore not suitable for
 //! generating large arrays.
+//! 
+//! `#![no_std]` compatible.
 //!
 //! # Example
 //!
