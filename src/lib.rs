@@ -21,6 +21,19 @@
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 type Underlying = u32;
 
+/// Returns an array of the first `n` prime numbers.
+/// 
+/// # Example
+/// ```
+/// # use const_primes::primes;
+/// const PRIMES: [u32; 6] = primes();
+/// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13]);
+/// ```
+#[must_use]
+pub const fn primes<const N: usize>() -> [Underlying; N] {
+    Primes::new().into_array()
+}
+
 /// Returns the largest integer smaller than or equal to sqrt(x).
 const fn isqrt(x: Underlying) -> Underlying {
     let mut left = 0;
@@ -38,7 +51,7 @@ const fn isqrt(x: Underlying) -> Underlying {
     left
 }
 
-/// A wrapper around an array that consists of the first `N` primes and can be created in const contexts.
+/// A wrapper around an array that consists of the first `N` primes. Can be created in const contexts.
 ///
 /// # Examples
 /// Basic usage
