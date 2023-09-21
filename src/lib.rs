@@ -99,14 +99,6 @@ impl<const N: usize> Primes<N> {
     pub const fn as_slice(&self) -> &[Underlying; N] {
         &self.primes
     }
-
-    pub const fn get(&self, index: usize) -> Option<Underlying> {
-        if index < N {
-            Some(self.primes[index])
-        } else {
-            None
-        }
-    }
 }
 
 impl<const N: usize, I> core::ops::Index<I> for Primes<N>
