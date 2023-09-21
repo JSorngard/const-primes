@@ -44,7 +44,7 @@ pub struct Primes<const N: usize> {
 }
 
 impl<const N: usize> Primes<N> {
-    /// Generates a new array of `Primes`.
+    /// Generates a new `Primes`.
     pub const fn new() -> Self {
         let mut primes = [2; N];
         let mut number = 3;
