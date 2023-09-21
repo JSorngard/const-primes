@@ -1,4 +1,5 @@
 //! This crate defines the type [`Primes`] that is an array of primes computed at compile time.
+//! 
 //! The crate currently uses trial division to compute primes, and is therefore not suitable for
 //! generating large arrays.
 //!
@@ -9,6 +10,8 @@
 //! const PRIMES: [usize; 10] = Primes::new().into_array();
 //! assert_eq!([2, 3, 5, 7, 11, 13, 17, 19, 23, 29], PRIMES);
 //! ```
+
+#![forbid(unsafe_code)]
 
 /// Returns the largest integer smaller than or equal to sqrt(x).
 const fn isqrt(x: usize) -> usize {
