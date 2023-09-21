@@ -1,4 +1,4 @@
-//! This crate defines the type [`Primes`] that is an array of primes computed at compile time.
+//! This crate defines the type [`Primes`]: an array of primes computed at compile time.
 //!
 //! The crate currently uses trial division to compute primes, and is therefore not suitable for
 //! generating large arrays.
