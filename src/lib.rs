@@ -37,21 +37,21 @@
 //! There is one implementation of `is_prime` in [`trial`] and one in [`sieve`]
 //! ```
 //! use const_primes::{trial, sieve};
-//! const CHECK5: bool = trial::is_prime(5);
-//! const CHECK1009: bool = sieve::is_prime::<1009>();
-//! assert!(CHECK5);
-//! assert!(CHECK1009);
+//! const CHECK_5: bool = trial::is_prime(5);
+//! const CHECK_1009: bool = sieve::is_prime::<1009>();
+//! assert!(CHECK_5);
+//! assert!(CHECK_1009);
 //! ```
 //! The [`Primes`](crate::wrapper::Primes) type also lets you reuse an array of already computed primes for primality testing.
 //! ```
 //! # use const_primes::wrapper::Primes;
 //! const CACHE: Primes<100> = Primes::new();
-//! const CHECK42: Option<bool> = CACHE.is_prime(42);
-//! const CHECK541: Option<bool> = CACHE.is_prime(541);
-//! const CHECK1000: Option<bool> = CACHE.is_prime(1000);
-//! assert_eq!(CHECK42, Some(false));
-//! assert_eq!(CHECK541, Some(true));
-//! assert_eq!(CHECK1000, None);
+//! const CHECK_42: Option<bool> = CACHE.is_prime(42);
+//! const CHECK_541: Option<bool> = CACHE.is_prime(541);
+//! const CHECK_1000: Option<bool> = CACHE.is_prime(1000);
+//! assert_eq!(CHECK_42, Some(false));
+//! assert_eq!(CHECK_541, Some(true));
+//! assert_eq!(CHECK_1000, None);
 //! ```
 
 #![forbid(unsafe_code)]
