@@ -12,6 +12,7 @@ use crate::Underlying;
 /// const IS_101_A_PRIME: bool = is_prime(101);
 /// assert!(IS_101_A_PRIME);
 /// ```
+#[must_use]
 pub const fn is_prime(n: Underlying) -> bool {
     if n == 2 || n == 3 {
         true
@@ -39,6 +40,7 @@ pub const fn is_prime(n: Underlying) -> bool {
 /// const sqrt_27: u32 = isqrt(27);
 /// assert_eq!(sqrt_27, 5);
 /// ```
+#[must_use]
 pub const fn isqrt(n: Underlying) -> Underlying {
     let mut left = 0;
     let mut right = n + 1;
