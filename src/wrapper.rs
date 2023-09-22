@@ -21,6 +21,8 @@ pub struct Primes<const N: usize> {
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
+    /// 
+    /// The primes are computed with [trial division](https://en.wikipedia.org/wiki/Trial_division).
     ///
     /// # Example
     /// Basic usage

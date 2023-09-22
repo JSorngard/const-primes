@@ -14,20 +14,40 @@ need a const generic to be specified in order to compile.
 The implementations in `trial` are slower, but do not need const generics unless they return an array.
 
 ## Examples
-Generate arrays of prime numbers with the function [`trial::primes`](crate::trial::primes)
+Generate arrays of prime numbers with the function `trial::primes`
 ```rust
 const PRIMES: [u32; 10] = primes();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-or with the type [`wrapper::Primes`](crate::wrapper::Primes)
-which ensures that a non-zero number of primes are generated
+or with the type `wrapper::Primes` which ensures that a non-zero number of primes are generated
 ```rust
 const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-in const contexts it is a compile error to generate a `Primes<0>`, while at runtime such an attempt panics.
+Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.
+
+The crate also contains functions for primality testing.  
+There are two implementations of `is_prime`, one in [`trial`] and one in [`sieve`]
+```rust
+use const_primes::{trial, sieve};
+const CHECK5: bool = trial::is_prime(5);
+const CHECK1009: bool = sieve::is_prime::<1009>();
+assert!(CHECK5);
+assert!(CHECK1009);
+```
+`Primes` also lets you reuse an array of already computed primes for primality testing.
+```rust
+use const_primes::wrapper::Primes;
+const CACHE: Primes<100> = Primes::new();
+const CHECK42: Option<bool> = CACHE.is_prime(42);
+const CHECK541: Option<bool> = CACHE.is_prime(541);
+const CHECK1000: Option<bool> = CACHE.is_prime(1000);
+assert_eq!(CHECK42, Some(false));
+assert_eq!(CHECK541, Some(true));
+assert_eq!(CHECK1000, None);
+```
 
 ## License
 
@@ -41,6 +61,8 @@ Licensed under either of
 at your option.
 
 ## Contribution
+
+Contributions are welcome!
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
