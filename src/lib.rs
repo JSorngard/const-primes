@@ -86,7 +86,7 @@ pub struct Primes<const N: usize> {
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
-    /// 
+    ///
     /// # Example
     /// Basic usage
     /// ```

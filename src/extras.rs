@@ -19,7 +19,8 @@ pub const fn is_prime(n: Underlying) -> bool {
         false
     } else {
         let mut candidate_factor = 5;
-        while candidate_factor * candidate_factor <= n {
+        let bound = isqrt(n) + 1;
+        while candidate_factor < bound {
             if n % candidate_factor == 0 || n % (candidate_factor + 2) == 0 {
                 return false;
             }
