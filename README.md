@@ -1,40 +1,35 @@
 # const-primes
 
-This is a small crate for creating arrays of prime numbers at compile time.  
-
-This crate currently uses trial division to generate its arrays due to limitations imposed by Rust when evaluating expressions at compile time.
-This renders it unsuitable for creating very large arrays.
+A crate for generating arrays of prime numbers at compile time.
 
 `#![no_std]` compatible.
 
+The crate is currently split into two modules, [`trial`] and [`sieve`], which contain implementations of
+prime related `const` functions that use [trial division](https://en.wikipedia.org/wiki/Trial_division)
+or the [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) in their implementations respectively.
+
+The sieve needs `O(n)` memory, which means that the functions in the [`sieve`] module
+need a const generic to be specified in order to compile.
+
+The implementations in [`trial`] are slower, but do not need const generics unless they return an array.
+
 ## Examples
-
-Generate primes into a normal Rust array
+Generate arrays of prime numbers with the function [`trial::primes`](crate::trial::primes)
 ```rust
-const PRIMES: [u32; 5] = primes();
-assert_eq!(PRIMES[3], 7);
-assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
+const PRIMES: [u32; 10] = primes();
+assert_eq!(PRIMES[5], 13);
+assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-or by using the struct defined in the crate which ensures that a non-zero number of primes are generated.
+or with the type [`wrapper::Primes`](crate::wrapper::Primes)
+which ensures that a non-zero number of primes are generated in const contexts
 ```rust
-const PRIMES: Primes<5> = Primes::new();
-assert_eq!(PRIMES[3], 7);
-assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
+const PRIMES: Primes<10> = Primes::new();
+assert_eq!(PRIMES[5], 13);
+assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+```
+```compile_fail
+# use const_primes::wrapper::Primes;
+const PRIMES: Primes<0> = Primes::new();
 ```
 
-## License
-
-Licensed under either of
-
- * Apache License, Version 2.0
-   [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
- * MIT license
-   [LICENSE-MIT](http://opensource.org/licenses/MIT)
-
-at your option.
-
-## Contribution
-
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
-dual licensed as above, without any additional terms or conditions.
+License: MIT OR Apache-2.0
