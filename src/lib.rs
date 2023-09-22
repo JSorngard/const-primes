@@ -38,9 +38,35 @@ type Underlying = u32;
 /// const PRIMES: [u32; 6] = primes();
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13]);
 /// ```
+/// # Panic
+/// Panics if `N` is zero. In const contexts this is a compile error.
 #[must_use]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-    Primes::new().into_array()
+    assert!(N >= 1, "`N` must be at least 1");
+
+    let mut primes = [2; N];
+    let mut number = 3;
+    let mut i = 1;
+
+    while i < N {
+        let mut j = 0;
+        let mut is_prime = true;
+        let max_bound = isqrt(number) + 1;
+        while primes[j] < max_bound {
+            if number % primes[j] == 0 {
+                is_prime = false;
+                break;
+            }
+            j += 1;
+        }
+        if is_prime {
+            primes[i] = number;
+            i += 1;
+        }
+        number += 1;
+    }
+
+    primes
 }
 
 /// Returns the largest integer smaller than or equal to sqrt(x).
@@ -108,31 +134,7 @@ impl<const N: usize> Primes<N> {
     /// ```
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        assert!(N >= 1, "`N` must be at least 1");
-
-        let mut primes = [2; N];
-        let mut number = 3;
-        let mut i = 1;
-
-        while i < N {
-            let mut j = 0;
-            let mut is_prime = true;
-            let max_bound = isqrt(number) + 1;
-            while primes[j] < max_bound {
-                if number % primes[j] == 0 {
-                    is_prime = false;
-                    break;
-                }
-                j += 1;
-            }
-            if is_prime {
-                primes[i] = number;
-                i += 1;
-            }
-            number += 1;
-        }
-
-        Self { primes }
+        Self { primes: primes() }
     }
 
     /// Converts `self` into an array of size `N`.
