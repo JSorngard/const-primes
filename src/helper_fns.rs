@@ -4,6 +4,7 @@
 use crate::Underlying;
 
 /// Determines whether `n` is prime
+/// 
 /// # Example
 /// ```
 /// # use const_primes::helper_fns::is_prime;
