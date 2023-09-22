@@ -21,13 +21,13 @@ assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
 or with the type [`wrapper::Primes`](crate::wrapper::Primes)
-which ensures that a non-zero number of primes are generated in const contexts
+which ensures that a non-zero number of primes are generated
 ```rust
 const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-as such the following fails to compile:
+at compile time it is a compile error to generate zero primes, while at runtime such an attempt panics
 ```rust
 const PRIMES: Primes<0> = Primes::new();
 ```
