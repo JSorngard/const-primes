@@ -1,7 +1,8 @@
 //! A crate for generating arrays of prime numbers at compile time.
 //!
-//! The crate currently uses trial division to compute primes and generation of very large arrays
-//! will therefore take a long time.
+//! This crate currently uses trial division to generate its arrays due to
+//! limitations imposed by Rust when evaluating expressions at compile time.
+//! This renders it unsuitable for creating very large arrays.
 //!
 //! `#![no_std]` compatible.
 //!
