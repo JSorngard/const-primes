@@ -31,6 +31,39 @@ pub const fn is_prime(n: Underlying) -> bool {
     }
 }
 
+/// Returns an array that describes whether the number at each index is prime.
+///
+/// Uses the sieve of Eratosthenes.
+/// # Example
+/// ```
+/// # use const_primes::extras::primalities;
+/// const PRIMALITY: [bool; 10] = primalities();
+/// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
+/// ```
+pub const fn primalities<const N: usize>() -> [bool; N] {
+    let mut is_prime = [true; N];
+    if N > 0 {
+        is_prime[0] = false;
+    }
+    if N > 1 {
+        is_prime[1] = false;
+    }
+
+    let mut number = 2;
+    while number * number < N {
+        if is_prime[number] {
+            let mut composite = number * number;
+            while composite < N {
+                is_prime[composite] = false;
+                composite += number;
+            }
+        }
+        number += 1;
+    }
+
+    is_prime
+}
+
 /// Returns the largest integer smaller than or equal to √n.
 /// Uses a binary search.
 ///
