@@ -45,6 +45,10 @@ type Underlying = u32;
 /// ```
 /// # Panic
 /// Panics if `N` is zero. In const contexts this is a compile error.
+/// ```compile_fail
+/// # use const_primes::primes;
+/// const PRIMES: [u32; 0] = primes();
+/// ```
 #[must_use]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     Primes::new().into_array()
