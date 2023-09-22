@@ -29,4 +29,19 @@ assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
 in const contexts it is a compile error to generate a `Primes<0>`, while at runtime such an attempt panics.
 
-License: MIT OR Apache-2.0
+## License
+
+Licensed under either of
+
+ * Apache License, Version 2.0
+   [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license
+   [LICENSE-MIT](http://opensource.org/licenses/MIT)
+
+at your option.
+
+## Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+dual licensed as above, without any additional terms or conditions.
