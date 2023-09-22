@@ -35,6 +35,8 @@ type Underlying = u32;
 ///
 /// The compiler can often infer the value of `N`, but it can also be specified with a turbofish.
 ///
+/// This is just an alias for `Primes::new().into_array()`.
+///
 /// # Example
 /// ```
 /// # use const_primes::primes;
@@ -45,31 +47,7 @@ type Underlying = u32;
 /// Panics if `N` is zero. In const contexts this is a compile error.
 #[must_use]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-    assert!(N >= 1, "`N` must be at least 1");
-
-    let mut primes = [2; N];
-    let mut number = 3;
-    let mut i = 1;
-
-    while i < N {
-        let mut j = 0;
-        let mut is_prime = true;
-        let max_bound = isqrt(number) + 1;
-        while primes[j] < max_bound {
-            if number % primes[j] == 0 {
-                is_prime = false;
-                break;
-            }
-            j += 1;
-        }
-        if is_prime {
-            primes[i] = number;
-            i += 1;
-        }
-        number += 1;
-    }
-
-    primes
+    Primes::new().into_array()
 }
 
 /// A wrapper around an array that consists of the first `N` primes. Can be created in const contexts.
@@ -120,7 +98,31 @@ impl<const N: usize> Primes<N> {
     /// ```
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        Self { primes: primes() }
+        assert!(N >= 1, "`N` must be at least 1");
+
+        let mut primes = [2; N];
+        let mut number = 3;
+        let mut i = 1;
+
+        while i < N {
+            let mut j = 0;
+            let mut is_prime = true;
+            let max_bound = isqrt(number) + 1;
+            while primes[j] < max_bound {
+                if number % primes[j] == 0 {
+                    is_prime = false;
+                    break;
+                }
+                j += 1;
+            }
+            if is_prime {
+                primes[i] = number;
+                i += 1;
+            }
+            number += 1;
+        }
+
+        Self { primes }
     }
 
     /// Converts `self` into an array of size `N`.
