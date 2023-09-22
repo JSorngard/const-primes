@@ -15,7 +15,7 @@ const PRIMES: [u32; 5] = primes();
 assert_eq!(PRIMES[3], 7);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
 ```
-or by using the type defined in the crate
+or by using the struct defined in the crate which ensures that a non-zero number of primes are generated.
 ```rust
 const PRIMES: Primes<5> = Primes::new();
 assert_eq!(PRIMES[3], 7);

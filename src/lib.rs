@@ -14,7 +14,7 @@
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
-//! or with the type [`Primes`]
+//! or with the type [`Primes`] which ensures that a non-zero number of primes are generated
 //! ```
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<10> = Primes::new();
