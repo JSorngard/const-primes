@@ -4,30 +4,41 @@
 
 use crate::Underlying;
 
-/// Determines whether `n` is prime using trial division.
+/// Returns whether `n` is prime.
 ///
+/// Uses the sieve of Eratosthenes.
 /// # Example
+/// Basic usage
 /// ```
 /// # use const_primes::extras::is_prime;
-/// const IS_101_A_PRIME: bool = is_prime(101);
+/// const IS_101_A_PRIME: bool = is_prime::<101>();
 /// assert!(IS_101_A_PRIME);
 /// ```
 #[must_use]
-pub const fn is_prime(n: Underlying) -> bool {
-    if n == 2 || n == 3 {
+pub const fn is_prime<const N: usize>() -> bool {
+    if N == 2 || N == 3 {
         true
-    } else if n <= 1 || n % 2 == 0 || n % 3 == 0 {
+    } else if N <= 1 || N % 2 == 0 || N % 3 == 0 {
         false
     } else {
-        let mut candidate_factor = 5;
-        let bound = isqrt(n) + 1;
-        while candidate_factor < bound {
-            if n % candidate_factor == 0 || n % (candidate_factor + 2) == 0 {
-                return false;
+        let mut primality = [true; N];
+        // 1 is not prime
+        primality[0] = false;
+        let mut number = 3;
+        while number * number <= N {
+            if primality[number - 1] {
+                let mut composite = number * number;
+                while composite <= N {
+                    primality[composite - 1] = false;
+                    composite += number;
+                }
             }
-            candidate_factor += 6;
+            number += 1;
         }
-        true
+        match primality.last() {
+            Some(n) => *n,
+            None => panic!("`primality` always has a non-zero size at this point"),
+        }
     }
 }
 
@@ -65,6 +76,7 @@ pub const fn primalities<const N: usize>() -> [bool; N] {
 }
 
 /// Returns the largest integer smaller than or equal to √n.
+/// 
 /// Uses a binary search.
 ///
 /// # Example
@@ -107,8 +119,19 @@ mod test {
     fn check_is_prime() {
         #[rustfmt::skip]
         const TEST_CASES: [bool; 100] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false];
-        for (x, ans) in TEST_CASES.into_iter().enumerate() {
-            assert_eq!(is_prime(x as Underlying), ans);
+        macro_rules! test_n {
+            ($($n:expr),+) => {
+                $(
+                    assert!(is_prime::<$n>() == TEST_CASES[$n]);
+                )+
+            };
         }
+        test_n!(
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+            24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+            46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67,
+            68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
+            90, 91, 92, 93, 94, 95, 96, 97, 98, 99
+        );
     }
 }
