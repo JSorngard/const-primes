@@ -106,7 +106,7 @@ impl<const N: usize> Primes<N> {
     /// let primes = Primes::<5>::new();
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
-    /// # Panic
+    /// # Panics
     /// Panics if `N` is zero. In const contexts this will fail to compile
     /// ```compile_fail
     /// # use const_primes::Primes;
