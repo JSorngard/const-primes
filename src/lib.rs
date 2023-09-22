@@ -30,6 +30,7 @@ use extras::isqrt;
 
 /// [`Primes`] consists of an array of integers of this type. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
+// This is used since there is currenlty no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
 /// Returns an array of the first `N` prime numbers.
