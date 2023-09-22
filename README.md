@@ -13,6 +13,9 @@ need a const generic to be specified in order to compile.
 
 The implementations in `trial` are slower, but do not need const generics unless they return an array.
 
+## 🚧 Under construction
+Expect breaking changes fairly often. The crate will still try to adhere to semver.
+
 ## Examples
 ### Prime generation
 Generate arrays of prime numbers with the function `trial::primes`
