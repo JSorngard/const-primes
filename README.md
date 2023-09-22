@@ -49,6 +49,12 @@ assert_eq!(CHECK_42, Some(false));
 assert_eq!(CHECK_541, Some(true));
 assert_eq!(CHECK_1000, None);
 ```
+The function `sieve::primalities` lets you compute the prime status of many integers
+```rust
+use const_primes::sieve::primalities;
+const PRIME_STATUS: [bool; 10] = primalities();
+assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
+```
 
 ## License
 

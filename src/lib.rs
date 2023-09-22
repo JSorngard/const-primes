@@ -42,7 +42,7 @@
 //! assert!(CHECK_5);
 //! assert!(CHECK_1009);
 //! ```
-//! The [`Primes`](crate::wrapper::Primes) type also lets you reuse an array of already computed primes for primality testing.
+//! The [`Primes`](crate::wrapper::Primes) type lets you reuse an array of already computed primes for primality testing.
 //! ```
 //! # use const_primes::wrapper::Primes;
 //! const CACHE: Primes<100> = Primes::new();
@@ -52,6 +52,12 @@
 //! assert_eq!(CHECK_42, Some(false));
 //! assert_eq!(CHECK_541, Some(true));
 //! assert_eq!(CHECK_1000, None);
+//! ```
+//! The function [`sieve::primalities`] lets you compute the prime status of many integers
+//! ```
+//! # use const_primes::sieve::primalities;
+//! const PRIME_STATUS: [bool; 10] = primalities();
+//! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
 
 #![forbid(unsafe_code)]
