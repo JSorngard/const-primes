@@ -4,7 +4,7 @@
 
 use crate::Underlying;
 
-/// Returns whether `n` is prime.
+/// Returns whether `N` is prime.
 ///
 /// Uses the sieve of Eratosthenes.
 /// # Example
