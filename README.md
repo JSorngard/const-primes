@@ -38,7 +38,7 @@ const CHECK1009: bool = sieve::is_prime::<1009>();
 assert!(CHECK5);
 assert!(CHECK1009);
 ```
-`Primes` also lets you reuse an array of already computed primes for primality testing.
+The `Primes` type also lets you reuse an array of already computed primes for primality testing.
 ```rust
 use const_primes::wrapper::Primes;
 const CACHE: Primes<100> = Primes::new();
