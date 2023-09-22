@@ -27,9 +27,6 @@ const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-at compile time it is a compile error to generate zero primes, while at runtime such an attempt panics
-```rust
-const PRIMES: Primes<0> = Primes::new();
-```
+in const contexts it is a compile error to generate a `Primes<0>`, while at runtime such an attempt panics.
 
 License: MIT OR Apache-2.0
