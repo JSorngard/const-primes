@@ -36,26 +36,40 @@ type Underlying = u32;
 ///
 /// The compiler can often infer the value of `N`, but it can also be specified with a turbofish.
 ///
-/// This is just an alias for `Primes::new().into_array()`.
-///
 /// # Example
 /// ```
 /// # use const_primes::primes;
 /// const PRIMES: [u32; 6] = primes();
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13]);
 /// ```
-/// # Panic
-/// Panics if `N` is zero. In const contexts this is a compile error.
-/// ```compile_fail
-/// # use const_primes::primes;
-/// const PRIMES: [u32; 0] = primes();
-/// ```
 #[must_use]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-    Primes::new().into_array()
+    let mut primes = [2; N];
+    let mut number = 3;
+    let mut i = 1;
+
+    while i < N {
+        let mut j = 0;
+        let mut is_prime = true;
+        let max_bound = isqrt(number) + 1;
+        while primes[j] < max_bound {
+            if number % primes[j] == 0 {
+                is_prime = false;
+                break;
+            }
+            j += 1;
+        }
+        if is_prime {
+            primes[i] = number;
+            i += 1;
+        }
+        number += 1;
+    }
+    primes
 }
 
-/// A wrapper around an array that consists of the first `N` primes. Can be created in const contexts.
+/// A wrapper around an array that consists of the first `N` primes.
+/// Can be created in const contexts, and if so it ensures that `N` is non-zero at compile time.
 ///
 /// # Examples
 /// Basic usage
@@ -72,6 +86,7 @@ pub struct Primes<const N: usize> {
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
+    /// 
     /// # Example
     /// Basic usage
     /// ```
@@ -96,38 +111,12 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    /// In other contexts it will panic at runtime
-    /// ```should_panic
-    /// # use const_primes::Primes;
-    /// let no_primes = Primes::<0>::new();
-    /// ```
+    /// In other contexts it may panic at runtime instead.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
         assert!(N >= 1, "`N` must be at least 1");
 
-        let mut primes = [2; N];
-        let mut number = 3;
-        let mut i = 1;
-
-        while i < N {
-            let mut j = 0;
-            let mut is_prime = true;
-            let max_bound = isqrt(number) + 1;
-            while primes[j] < max_bound {
-                if number % primes[j] == 0 {
-                    is_prime = false;
-                    break;
-                }
-                j += 1;
-            }
-            if is_prime {
-                primes[i] = number;
-                i += 1;
-            }
-            number += 1;
-        }
-
-        Self { primes }
+        Self { primes: primes() }
     }
 
     /// Converts `self` into an array of size `N`.
