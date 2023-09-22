@@ -14,6 +14,7 @@ need a const generic to be specified in order to compile.
 The implementations in `trial` are slower, but do not need const generics unless they return an array.
 
 ## Examples
+### Prime generation
 Generate arrays of prime numbers with the function `trial::primes`
 ```rust
 const PRIMES: [u32; 10] = primes();
@@ -28,8 +29,8 @@ assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
 Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.
 
-The crate also contains functions for primality testing.  
-There are two implementations of `is_prime`, one in [`trial`] and one in [`sieve`]
+### Primality testing
+There is one implementation of `is_prime` in [`trial`] and one in [`sieve`]
 ```rust
 use const_primes::{trial, sieve};
 const CHECK5: bool = trial::is_prime(5);
