@@ -61,7 +61,7 @@
 //! ```
 
 #![forbid(unsafe_code)]
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 
 /// The functions that return or take integeres use this type. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
