@@ -108,10 +108,10 @@ impl<const N: usize> Primes<N> {
         self.primes
     }
 
-    /// Returns a slice of the underlying array.
+    /// Returns a reference to the underlying array.
     #[inline]
     #[must_use]
-    pub const fn as_slice(&self) -> &[Underlying; N] {
+    pub const fn as_array(&self) -> &[Underlying; N] {
         &self.primes
     }
 
