@@ -30,7 +30,7 @@ assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.
 
 ### Primality testing
-There is one implementation of `is_prime` in [`trial`] and one in [`sieve`]
+There is one implementation of `is_prime` in `trial` and one in `sieve`
 ```rust
 use const_primes::{trial, sieve};
 const CHECK5: bool = trial::is_prime(5);
