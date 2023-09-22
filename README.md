@@ -4,14 +4,14 @@ A crate for generating arrays of prime numbers at compile time.
 
 `#![no_std]` compatible.
 
-The crate is currently split into two modules, [`trial`] and [`sieve`], which contain implementations of
+The crate is currently split into two modules, `trial` and `sieve`, which contain implementations of
 prime related `const` functions that use [trial division](https://en.wikipedia.org/wiki/Trial_division)
 or the [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) in their implementations respectively.
 
-The sieve needs `O(n)` memory, which means that the functions in the [`sieve`] module
+The sieve needs `O(n)` memory, which means that the functions in the `sieve` module
 need a const generic to be specified in order to compile.
 
-The implementations in [`trial`] are slower, but do not need const generics unless they return an array.
+The implementations in `trial` are slower, but do not need const generics unless they return an array.
 
 ## Examples
 Generate arrays of prime numbers with the function [`trial::primes`](crate::trial::primes)
