@@ -8,7 +8,7 @@ use crate::Underlying;
 ///
 /// # Example
 /// ```
-/// # use const_primes::helper_fns::is_prime;
+/// # use const_primes::extras::is_prime;
 /// const IS_101_A_PRIME: bool = is_prime(101);
 /// assert!(IS_101_A_PRIME);
 /// ```
@@ -33,7 +33,7 @@ pub const fn is_prime(n: Underlying) -> bool {
 ///
 /// # Example
 /// ```
-/// # use const_primes::helper_fns::isqrt;
+/// # use const_primes::extras::isqrt;
 /// const sqrt_27: u32 = isqrt(27);
 /// assert_eq!(sqrt_27, 5);
 /// ```

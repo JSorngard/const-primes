@@ -24,8 +24,8 @@
 #![forbid(unsafe_code)]
 #![no_std]
 
-pub mod helper_fns;
-use helper_fns::isqrt;
+pub mod extras;
+use extras::isqrt;
 
 /// [`Primes`] consists of an array of integers of this type. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
