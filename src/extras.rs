@@ -31,6 +31,7 @@ pub const fn is_prime(n: Underlying) -> bool {
 }
 
 /// Returns the largest integer smaller than or equal to sqrt(n).
+/// Uses a binary search.
 ///
 /// # Example
 /// ```
