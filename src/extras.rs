@@ -1,5 +1,5 @@
-//! The functions defined in this module are related to prime numbers,
-//! and are either used in their generation or relevant to the purpose
+//! The functions defined in this module are
+//! either used in the generation of prime numbers or relevant to the purpose
 //! of the crate in other ways.
 
 use crate::Underlying;
