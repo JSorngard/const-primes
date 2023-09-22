@@ -3,7 +3,7 @@
 
 use crate::Underlying;
 
-/// Determines whether `n` is prime
+/// Determines whether `n` is prime using trial division.
 /// 
 /// # Example
 /// ```
