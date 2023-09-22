@@ -6,17 +6,17 @@
 //! `#![no_std]` compatible.
 //!
 //! # Examples
-//! Generate primes with the type [`Primes`]
-//! ```
-//! # use const_primes::Primes;
-//! const PRIMES: Primes<10> = Primes::new();
-//! assert_eq!(PRIMES[5], 13);
-//! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
-//! ```
-//! or by just calling the function [`primes`]
+//! Generate arrays of prime numbers with the function [`primes`]
 //! ```
 //! # use const_primes::primes;
 //! const PRIMES: [u32; 10] = primes();
+//! assert_eq!(PRIMES[5], 13);
+//! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+//! ```
+//! or with the type [`Primes`]
+//! ```
+//! # use const_primes::Primes;
+//! const PRIMES: Primes<10> = Primes::new();
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
