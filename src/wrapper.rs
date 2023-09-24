@@ -11,6 +11,18 @@ use crate::{primes, Underlying};
 /// assert_eq!(PRIMES[2], 5);
 /// assert_eq!(PRIMES, [2, 3, 5]);
 /// ```
+/// Reuse sieved primes for other computations
+/// ```
+/// # use const_primes::Primes;
+/// const CACHE: Primes<100> = Primes::new();
+/// const PRIME_CHECK: Option<bool> = CACHE.is_prime(541);
+/// const PRIME_COUNT: Option<usize> = CACHE.count_primes_leq(200);
+/// assert_eq!(PRIME_CHECK, Some(true));
+/// assert_eq!(PRIME_COUNT, Some(46));
+/// // If questions are asked about numbers outside the cache it returns None
+/// assert!(CACHE.is_prime(1000).is_none());
+/// assert!(CACHE.count_primes_leq(1000).is_none());
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Primes<const N: usize> {
     primes: [Underlying; N],
