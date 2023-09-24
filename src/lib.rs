@@ -155,17 +155,14 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         // For each prime found so far,
         while i < prime_count {
             let prime = primes[i] as usize;
-            // find the smallest composite in the current segment,
-            let smallest_composite = {
-                let mut l = (low / prime) * prime;
-                if l < low {
-                    l += prime;
-                }
-                l
-            };
 
+            // find the smallest composite in the current segment,
+            let mut composite = (low / prime) * prime;
+            if composite < low {
+                composite += prime;
+            }
+            
             // and sieve all numbers that are multiples of the prime.
-            let mut composite = smallest_composite;
             while composite < high {
                 mark[composite - low] = false;
                 composite += prime;
