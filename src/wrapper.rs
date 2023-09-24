@@ -1,7 +1,7 @@
 //! This module defines [`Primes`], a wrapper around an array of the first `N` primes.
 //! It can be created in const contexts and if so it ensures that `N` is non-zero at compile time.
 
-use crate::{trial::primes, Underlying};
+use crate::{sieve::primes, Underlying};
 
 /// A wrapper around an array that consists of the first `N` primes.
 /// Can be created in const contexts, and if so it ensures that `N` is non-zero at compile time.
