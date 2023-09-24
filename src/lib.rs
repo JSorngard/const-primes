@@ -6,7 +6,6 @@
 //! Expect breaking changes fairly often. The crate will still try to adhere to semver.
 //!
 //! # Examples
-//! ## Prime generation
 //! Generate arrays of prime numbers with the function [`primes`]
 //! ```
 //! use const_primes::primes;
@@ -14,7 +13,7 @@
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
-//! or with the type [`Primes`] which ensures that a non-zero number of primes are generated
+//! or with the type [`Primes`], which ensures that a non-zero number of primes are generated
 //! ```
 //! use const_primes::Primes;
 //! const PRIMES: Primes<10> = Primes::new();
@@ -26,8 +25,8 @@
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
-//! ## Other functionality
-//!
+//! ### Other functionality
+//! 
 //! Use [`are_prime`] to compute the prime status of all integers below a given value
 //! ```
 //! # use const_primes::are_prime;
@@ -42,7 +41,7 @@
 //! assert!(CHECK);
 //! ```
 //!
-//! The [`Primes`](crate::Primes) type lets you reuse an array of already computed primes:
+//! The [`Primes`](crate::Primes) type also lets you reuse an array of already computed primes:
 //! ```
 //! # use const_primes::Primes;
 //! const CACHE: Primes<100> = Primes::new();
