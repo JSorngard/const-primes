@@ -30,6 +30,8 @@ pub struct Primes<const N: usize> {
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
+    /// 
+    /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
     ///
     /// # Example
     /// Basic usage
