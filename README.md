@@ -23,20 +23,17 @@ Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise
 ### Other functionality
 Use `are_prime` to compute the prime status of all integers below a given value
 ```rust
-# use const_primes::are_prime;
 const PRIME_STATUS: [bool; 10] = are_prime();
 //                        0      1      2     3     4      5     6      7     8      9
 assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 ```
 or `is_prime` to test whether a given number is prime
 ```rust
-# use const_primes::is_prime;
 const CHECK: bool = is_prime(2_147_483_629);
 assert!(CHECK);
 ```
 The `Primes` type also lets you reuse an array of already computed primes:
 ```rust
-# use const_primes::Primes;
 const CACHE: Primes<100> = Primes::new();
 // For primality testing
 const CHECK_42: Option<bool> = CACHE.is_prime(42);
