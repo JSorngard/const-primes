@@ -13,27 +13,13 @@ const PRIMES: [u32; 10] = primes();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-or with the type `Primes` which ensures that a non-zero number of primes are generated
+or with the type `Primes` which ensures that a non-zero number of primes are generated:
 ```rust
 const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.
-
-### Other functionality
-Use `are_prime` to compute the prime status of all integers below a given value
-```rust
-const PRIME_STATUS: [bool; 10] = are_prime();
-//                        0      1      2     3     4      5     6      7     8      9
-assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
-```
-or `is_prime` to test whether a given number is prime
-```rust
-const CHECK: bool = is_prime(2_147_483_629);
-assert!(CHECK);
-```
-The `Primes` type also lets you reuse it as a cache of primes for related computations:
+It also lets you reuse it as a cache of primes for related computations:
 ```rust
 const CACHE: Primes<100> = Primes::new();
 
@@ -50,6 +36,26 @@ assert_eq!(PRIMES_LEQ_100, Some(25));
 // If questions are asked about numbers outside the cache it returns None
 assert!(CACHE.is_prime(1000).is_none());
 assert!(CACHE.count_primes_leq(1000).is_none());
+```
+Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.  
+
+### Other functionality
+Use `are_prime` to compute the prime status of all integers below a given value
+```rust
+const PRIME_STATUS: [bool; 10] = are_prime();
+//                        0      1      2     3     4      5     6      7     8      9
+assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
+```
+or `is_prime` to test whether a given number is prime
+```rust
+const CHECK: bool = is_prime(2_147_483_629);
+assert!(CHECK);
+```
+or `prime_counts` to count the number of primes less than or equal to each index of an array
+```rust
+# use const_primes::prime_counts;
+const COUNTS: [usize; 10] = prime_counts();
+assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 ```
 
 ## License

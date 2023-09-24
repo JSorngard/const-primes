@@ -1,7 +1,7 @@
 //! A crate for generating prime numbers at compile time.
 //!
 //! Also contains various functions for computing other things related to prime numbers in `const` contexts.
-//! 
+//!
 //! `#![no_std]` compatible.
 //!
 //! # Examples
@@ -19,13 +19,32 @@
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
+//! It also lets you reuse it as a cache of primes for related computations
+//! ```
+//! # use const_primes::Primes;
+//! const CACHE: Primes<100> = Primes::new();
+//!
+//! // For primality testing
+//! const CHECK_42: Option<bool> = CACHE.is_prime(42);
+//! const CHECK_541: Option<bool> = CACHE.is_prime(541);
+//! assert_eq!(CHECK_42, Some(false));
+//! assert_eq!(CHECK_541, Some(true));
+//!
+//! // Or for prime counting
+//! const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
+//! assert_eq!(PRIMES_LEQ_100, Some(25));
+//!
+//! // If questions are asked about numbers outside the cache it returns None
+//! assert!(CACHE.is_prime(1000).is_none());
+//! assert!(CACHE.count_primes_leq(1000).is_none());
+//! ```
 //! Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.
 //! ```compile_fail
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
 //! ## Other functionality
-//! 
+//!
 //! Use [`are_prime`] to compute the prime status of all integers below a given value
 //! ```
 //! # use const_primes::are_prime;
@@ -33,31 +52,17 @@
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//! or [`is_prime`] to test whether a given number is prime
+//! or [`is_prime`] to test whether a given number is prime.
 //! ```
 //! # use const_primes::is_prime;
 //! const CHECK: bool = is_prime(2_147_483_629);
 //! assert!(CHECK);
 //! ```
-//!
-//! The [`Primes`] type also lets you reuse it as a cache of primes for related computations
+//! or [`prime_counts`] to count the number of primes less than or equal to each index of an array
 //! ```
-//! # use const_primes::Primes;
-//! const CACHE: Primes<100> = Primes::new();
-//! 
-//! // For primality testing
-//! const CHECK_42: Option<bool> = CACHE.is_prime(42);
-//! const CHECK_541: Option<bool> = CACHE.is_prime(541);
-//! assert_eq!(CHECK_42, Some(false));
-//! assert_eq!(CHECK_541, Some(true));
-//! 
-//! // Or for prime counting
-//! const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
-//! assert_eq!(PRIMES_LEQ_100, Some(25));
-//! 
-//! // If questions are asked about numbers outside the cache it returns None
-//! assert!(CACHE.is_prime(1000).is_none());
-//! assert!(CACHE.count_primes_leq(1000).is_none());
+//! # use const_primes::prime_counts;
+//! const COUNTS: [usize; 10] = prime_counts();
+//! assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 //! ```
 
 #![forbid(unsafe_code)]
@@ -96,7 +101,7 @@ const fn isqrt(n: Underlying) -> Underlying {
 }
 
 /// Returns the `N` first prime numbers.
-/// 
+///
 /// Uses a segmented sieve of Eratosthenes.
 ///
 /// # Example
@@ -192,7 +197,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 }
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
-/// 
+///
 /// Uses a sieve of Eratosthenes.
 ///
 /// # Example
@@ -227,9 +232,9 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 }
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
-/// 
+///
 /// Computes primes with [`are_prime`] and then counts them.
-/// 
+///
 /// # Example
 /// Basic usage
 /// ```
