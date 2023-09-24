@@ -66,7 +66,7 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
 
-/// The functions that return or take integeres use this type. Currently `u32`.
+/// The functions that return or take integers use this type. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 // This is used since there is currenlty no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
