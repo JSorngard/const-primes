@@ -110,7 +110,7 @@ impl<const N: usize> Primes<N> {
         &self.primes
     }
 
-    // Returns a slice that contains the entire underlying array.
+    /// Returns a slice that contains the entire underlying array.
     #[inline]
     #[must_use]
     pub const fn as_slice(&self) -> &[Underlying] {
