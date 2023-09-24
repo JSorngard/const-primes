@@ -36,7 +36,7 @@
 //! ```
 //! 
 //! There are two implementations of `is_prime`: [`sieve::is_prime`] uses the [sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) and [`trial::is_prime`] uses [trial division](https://en.wikipedia.org/wiki/Trial_division).
-//! The version that uses the sieve is faster, but takes its argument as a const generic since the sieve needs `O(N)` memory.
+//! The version that uses the sieve is faster but less flexible as it takes its argument as a const generic since the sieve needs `O(N)` memory.
 //! ```
 //! use const_primes::{trial, sieve};
 //! const CHECK_5: bool = trial::is_prime(5);
