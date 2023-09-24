@@ -7,7 +7,6 @@ Also contains various functions for computing other things related to prime numb
 `#![no_std]` compatible.
 
 ## Examples
-### Prime generation
 Generate arrays of prime numbers with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ```rust
 const PRIMES: [u32; 10] = primes();

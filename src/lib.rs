@@ -24,7 +24,7 @@
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
-//! ### Other functionality
+//! ## Other functionality
 //! 
 //! Use [`are_prime`] to compute the prime status of all integers below a given value
 //! ```
