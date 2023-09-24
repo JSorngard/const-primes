@@ -4,27 +4,15 @@ A crate for generating arrays of prime numbers at compile time.
 
 `#![no_std]` compatible.
 
-The crate is currently split into two modules, `trial` and `sieve`, which contain implementations of
-prime related `const` functions that use [trial division](https://en.wikipedia.org/wiki/Trial_division)
-or the [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) in their implementations respectively.
-
-The sieve needs `O(n)` memory, which means that the functions in the `sieve` module
-need a const generic to be specified in order to compile.
-
-The implementations in `trial` are slower, but do not need const generics unless they return an array.
-
-## 🚧 Under construction
-Expect breaking changes fairly often. The crate will still try to adhere to semver.
-
 ## Examples
 ### Prime generation
-Generate arrays of prime numbers with the function `trial::primes`
+Generate arrays of prime numbers with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ```rust
 const PRIMES: [u32; 10] = primes();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-or with the type `wrapper::Primes` which ensures that a non-zero number of primes are generated
+or with the type `Primes` which ensures that a non-zero number of primes are generated
 ```rust
 const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
@@ -32,31 +20,35 @@ assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
 Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.
 
-### Primality testing
-There is one implementation of `is_prime` in `trial` and one in `sieve`
+### Other functionality
+Use `are_prime` to compute the prime status of all integers below a given value
 ```rust
-use const_primes::{trial, sieve};
-const CHECK_5: bool = trial::is_prime(5);
-const CHECK_1009: bool = sieve::is_prime::<1009>();
-assert!(CHECK_5);
-assert!(CHECK_1009);
+# use const_primes::are_prime;
+const PRIME_STATUS: [bool; 10] = are_prime();
+//                        0      1      2     3     4      5     6      7     8      9
+assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 ```
-The `Primes` type also lets you reuse an array of already computed primes for primality testing.
+or `is_prime` to test whether a given number is prime
 ```rust
-use const_primes::wrapper::Primes;
+# use const_primes::is_prime;
+const CHECK: bool = is_prime(2_147_483_629);
+assert!(CHECK);
+```
+The `Primes` type also lets you reuse an array of already computed primes:
+```rust
+# use const_primes::Primes;
 const CACHE: Primes<100> = Primes::new();
+// For primality testing
 const CHECK_42: Option<bool> = CACHE.is_prime(42);
 const CHECK_541: Option<bool> = CACHE.is_prime(541);
-const CHECK_1000: Option<bool> = CACHE.is_prime(1000);
 assert_eq!(CHECK_42, Some(false));
 assert_eq!(CHECK_541, Some(true));
-assert_eq!(CHECK_1000, None);
-```
-The function `sieve::primalities` lets you compute the prime status of all integers below a given value
-```rust
-use const_primes::sieve::primalities;
-const PRIME_STATUS: [bool; 10] = primalities();
-assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
+// Or for prime counting
+const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
+assert_eq!(PRIMES_LEQ_100, Some(25));
+// If questions are asked about numbers outside the cache it returns None
+assert!(CACHE.is_prime(1000).is_none());
+assert!(CACHE.count_primes_leq(1000).is_none());
 ```
 
 ## License
