@@ -1,4 +1,4 @@
-use const_primes::{is_prime, are_prime, primes};
+use const_primes::{are_prime, is_prime, primes};
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::hint::black_box;
 

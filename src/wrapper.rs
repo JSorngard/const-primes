@@ -88,6 +88,38 @@ impl<const N: usize> Primes<N> {
         Some(false)
     }
 
+    /// Returns the number of primes smaller than or equal to `n` if it is smaller than or equal to the largest prime in `self`.
+    ///
+    /// Uses a linear search
+    ///
+    /// # Example
+    /// Basic usage
+    /// ```
+    /// # use const_primes::Primes;
+    /// const CACHE: Primes<100> = Primes::new();
+    /// const COUNT: Option<usize> = CACHE.count_primes_leq(500);
+    /// const OUT_OF_BOUNDS: Option<usize> = CACHE.count_primes_leq(1_000);
+    /// assert_eq!(COUNT, Some(95));
+    /// assert_eq!(OUT_OF_BOUNDS, None);
+    /// ```
+    pub const fn count_primes_leq(&self, n: Underlying) -> Option<usize> {
+        if n > *self.last() {
+            return None;
+        }
+
+        let mut i = 0;
+        let mut count = 0;
+        while i < N {
+            if self.primes[i] <= n {
+                count += 1;
+            } else {
+                break;
+            }
+            i += 1;
+        }
+        Some(count)
+    }
+
     /// Converts `self` into an array of size `N`.
     ///
     /// # Example
