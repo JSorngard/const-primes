@@ -384,8 +384,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
-/// Returns an array that indicates which of the `N` first numbers are prime.
-/// 
+/// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
+///
 /// # Example
 /// ```
 /// # use const_primes::primalities;
