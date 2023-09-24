@@ -54,7 +54,6 @@ assert!(CHECK);
 ```
 or `prime_counts` to count the number of primes less than or equal to each index of an array
 ```rust
-# use const_primes::prime_counts;
 const COUNTS: [usize; 10] = prime_counts();
 assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 ```
