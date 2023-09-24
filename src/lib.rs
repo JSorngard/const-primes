@@ -27,6 +27,14 @@
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
 //! ## Primality testing
+//! 
+//! The function [`primalities`] lets you compute the prime status of all integers below a given value
+//! ```
+//! # use const_primes::primalities;
+//! const PRIME_STATUS: [bool; 10] = primalities();
+//! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
+//! ```
+//! 
 //! There are two implementations of `is_prime`: [`sieve::is_prime`] uses the [sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) and [`trial::is_prime`] uses [trial division](https://en.wikipedia.org/wiki/Trial_division).
 //! The version that uses the sieve is faster, but takes its argument as a const generic since the sieve needs `O(N)` memory.
 //! ```
@@ -36,6 +44,7 @@
 //! assert!(CHECK_5);
 //! assert!(CHECK_1009);
 //! ```
+//! 
 //! The [`Primes`](crate::Primes) type lets you reuse an array of already computed primes for primality testing.
 //! ```
 //! # use const_primes::Primes;
@@ -46,12 +55,6 @@
 //! assert_eq!(CHECK_42, Some(false));
 //! assert_eq!(CHECK_541, Some(true));
 //! assert_eq!(CHECK_1000, None);
-//! ```
-//! The function [`primalities`] lets you compute the prime status of all integers below a given value
-//! ```
-//! # use const_primes::primalities;
-//! const PRIME_STATUS: [bool; 10] = primalities();
-//! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
 
 #![forbid(unsafe_code)]
