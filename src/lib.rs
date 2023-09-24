@@ -384,12 +384,13 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
-/// Returns an array where the value at a given index indicates whether the index is prime.
-///
+/// Returns an array that indicates which of the `N` first numbers are prime.
+/// 
 /// # Example
 /// ```
 /// # use const_primes::primalities;
 /// const PRIMALITY: [bool; 10] = primalities();
+/// //                     0      1      2     3     4      5     6      7     8      9
 /// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
 /// ```
 pub const fn primalities<const N: usize>() -> [bool; N] {
