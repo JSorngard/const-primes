@@ -40,7 +40,7 @@
 //! assert!(CHECK);
 //! ```
 //!
-//! The [`Primes`](crate::Primes) type also lets you reuse an array of already computed primes in computations:
+//! The [`Primes`] type also lets you reuse it as a cache of primes for related computations
 //! ```
 //! # use const_primes::Primes;
 //! const CACHE: Primes<100> = Primes::new();

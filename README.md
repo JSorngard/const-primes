@@ -33,7 +33,7 @@ or `is_prime` to test whether a given number is prime
 const CHECK: bool = is_prime(2_147_483_629);
 assert!(CHECK);
 ```
-The `Primes` type also lets you reuse an array of already computed primes in computations:
+The `Primes` type also lets you reuse it as a cache of primes for related computations:
 ```rust
 const CACHE: Primes<100> = Primes::new();
 // For primality testing
