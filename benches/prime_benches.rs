@@ -1,4 +1,4 @@
-use const_primes::{is_prime, primalities, primes};
+use const_primes::{is_prime, are_prime, primes};
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::hint::black_box;
 
@@ -10,7 +10,7 @@ fn benchmarks(c: &mut Criterion) {
         b.iter(|| black_box(is_prime(1_000_000)))
     });
     c.bench_function("sieve 10000 integers", |b| {
-        b.iter(|| black_box(primalities::<10_000>()))
+        b.iter(|| black_box(are_prime::<10_000>()))
     });
 }
 

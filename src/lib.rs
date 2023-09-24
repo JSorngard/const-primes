@@ -28,10 +28,10 @@
 //! ```
 //! ## Primality testing
 //!
-//! The function [`primalities`] lets you compute the prime status of all integers below a given value
+//! Use [`are_prime`] to compute the prime status of all integers below a given value
 //! ```
-//! # use const_primes::primalities;
-//! const PRIME_STATUS: [bool; 10] = primalities();
+//! # use const_primes::are_prime;
+//! const PRIME_STATUS: [bool; 10] = are_prime();
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
@@ -113,7 +113,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     // assuming that we will always succeed at that task if we sieve up to N^2.
 
     // Sieve the first primes below N
-    let is_prime: [bool; N] = primalities();
+    let is_prime: [bool; N] = are_prime();
 
     // Count how many primes we found
     // and store them in the final array
@@ -187,12 +187,12 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// # Example
 /// ```
-/// # use const_primes::primalities;
-/// const PRIMALITY: [bool; 10] = primalities();
+/// # use const_primes::are_prime;
+/// const PRIMALITY: [bool; 10] = are_prime();
 /// //                     0      1      2     3     4      5     6      7     8      9
 /// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
 /// ```
-pub const fn primalities<const N: usize>() -> [bool; N] {
+pub const fn are_prime<const N: usize>() -> [bool; N] {
     let mut is_prime = [true; N];
     if N > 0 {
         is_prime[0] = false;
@@ -225,7 +225,7 @@ pub const fn primalities<const N: usize>() -> [bool; N] {
 /// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 /// ```
 pub const fn prime_counts<const N: usize>() -> [usize; N] {
-    let prime_status: [bool; N] = primalities();
+    let prime_status: [bool; N] = are_prime();
     let mut counts = [0; N];
     let mut count = 0;
     let mut i = 0;
@@ -310,7 +310,7 @@ mod test {
         macro_rules! test_to_n {
             ($($n:expr),+) => {
                 $(
-                    assert_eq!(&TEST_CASES[..$n], primalities::<$n>());
+                    assert_eq!(&TEST_CASES[..$n], are_prime::<$n>());
                 )+
             };
         }
