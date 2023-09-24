@@ -2,6 +2,8 @@
 
 A crate for generating prime numbers at compile time.
 
+Also contains various functions for computing other things related to prime numbers in `const` contexts.
+
 `#![no_std]` compatible.
 
 ## Examples
