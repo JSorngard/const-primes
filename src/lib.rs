@@ -37,7 +37,7 @@
 //! ```
 //! To test whether a given number is prime there is the [`is_prime`] function
 //! ```
-//! use const_primes::is_prime;
+//! # use const_primes::is_prime;
 //! const CHECK: bool = is_prime(1009);
 //! assert!(CHECK);
 //! ```
