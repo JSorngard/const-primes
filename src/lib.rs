@@ -26,7 +26,7 @@
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
-//! ## Primality testing
+//! ## Other functionality
 //!
 //! Use [`are_prime`] to compute the prime status of all integers below a given value
 //! ```
@@ -35,23 +35,28 @@
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//! To test whether a given number is prime there is the [`is_prime`] function
+//! or [`is_prime`] to test whether a given number is prime
 //! ```
 //! # use const_primes::is_prime;
 //! const CHECK: bool = is_prime(2_147_483_629);
 //! assert!(CHECK);
 //! ```
 //!
-//! The [`Primes`](crate::Primes) type lets you reuse an array of already computed primes for primality testing.
+//! The [`Primes`](crate::Primes) type lets you reuse an array of already computed primes:
 //! ```
 //! # use const_primes::Primes;
 //! const CACHE: Primes<100> = Primes::new();
+//! // For primality testing
 //! const CHECK_42: Option<bool> = CACHE.is_prime(42);
 //! const CHECK_541: Option<bool> = CACHE.is_prime(541);
-//! const CHECK_1000: Option<bool> = CACHE.is_prime(1000);
 //! assert_eq!(CHECK_42, Some(false));
 //! assert_eq!(CHECK_541, Some(true));
-//! assert_eq!(CHECK_1000, None);
+//! // Or for prime counting
+//! const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
+//! assert_eq!(PRIMES_LEQ_100, Some(25));
+//! // If questions are asked about numbers outside the cache it returns None
+//! assert!(CACHE.is_prime(1000).is_none());
+//! assert!(CACHE.count_primes_leq(1000).is_none());
 //! ```
 
 #![forbid(unsafe_code)]
