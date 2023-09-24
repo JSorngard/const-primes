@@ -252,6 +252,13 @@ impl<const N: usize> AsRef<[Underlying]> for Primes<N> {
     }
 }
 
+impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
+    #[inline]
+    fn as_ref(&self) -> &[Underlying; N] {
+        &self.primes
+    }
+}
+
 impl<const N: usize> IntoIterator for Primes<N> {
     type Item = <[Underlying; N] as IntoIterator>::Item;
     type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
