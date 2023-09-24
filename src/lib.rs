@@ -27,7 +27,7 @@
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
 //! ## Primality testing
-//! There are two implementations of `is_prime`: one that uses the [sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) ([`sieve::is_prime`]) and one that uses [trial division](https://en.wikipedia.org/wiki/Trial_division) ([`trial::is_prime`]).
+//! There are two implementations of `is_prime`: [`sieve::is_prime`] uses the [sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) and [`trial::is_prime`] uses [trial division](https://en.wikipedia.org/wiki/Trial_division).
 //! The version that uses the sieve is faster, but takes its argument as a const generic since the sieve needs `O(N)` memory.
 //! ```
 //! use const_primes::{trial, sieve};
@@ -318,7 +318,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         return primes;
     }
 
-    // This is a segmented sieve that runs until it has found enough primes while 
+    // This is a segmented sieve that runs until it has found enough primes while
     // assuming that we will always succeed at that task if we sieve up to N^2.
 
     // Sieve the first primes below N
