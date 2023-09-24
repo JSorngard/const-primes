@@ -35,15 +35,11 @@
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//!
-//! There are two implementations of `is_prime`: [`sieve::is_prime`] uses the [sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) and [`trial::is_prime`] uses [trial division](https://en.wikipedia.org/wiki/Trial_division).
-//! The version that uses the sieve is faster but less flexible as it takes its argument as a const generic since the sieve needs `O(N)` memory.
+//! To test whether a given number is prime there is the [`is_prime`] function
 //! ```
-//! use const_primes::{trial, sieve};
-//! const CHECK_5: bool = trial::is_prime(5);
-//! const CHECK_1009: bool = sieve::is_prime::<1009>();
-//! assert!(CHECK_5);
-//! assert!(CHECK_1009);
+//! use const_primes::is_prime;
+//! const CHECK: bool = is_prime(1009);
+//! assert!(CHECK);
 //! ```
 //!
 //! The [`Primes`](crate::Primes) type lets you reuse an array of already computed primes for primality testing.
@@ -66,8 +62,6 @@
 // This is used since there is currenlty no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-pub mod sieve;
-pub mod trial;
 mod wrapper;
 pub use wrapper::Primes;
 
@@ -222,9 +216,48 @@ pub const fn primalities<const N: usize>() -> [bool; N] {
     is_prime
 }
 
+/// Returns whether `n` is prime.
+///
+/// Uses trial division with a simple wheel.
+///
+/// # Example
+/// Basic usage
+/// ```
+/// # use const_primes::is_prime;
+/// const IS_101_A_PRIME: bool = is_prime(101);
+/// assert!(IS_101_A_PRIME);
+/// ```
+#[must_use]
+pub const fn is_prime(n: Underlying) -> bool {
+    if n == 2 || n == 3 {
+        true
+    } else if n <= 1 || n % 2 == 0 || n % 3 == 0 {
+        false
+    } else {
+        let mut candidate_factor = 5;
+        let bound = isqrt(n) + 1;
+        while candidate_factor < bound {
+            if n % candidate_factor == 0 || n % (candidate_factor + 2) == 0 {
+                return false;
+            }
+            candidate_factor += 6;
+        }
+        true
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn check_is_prime() {
+        #[rustfmt::skip]
+        const TEST_CASES: [bool; 100] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false];
+        for (x, ans) in TEST_CASES.into_iter().enumerate() {
+            assert_eq!(is_prime(x as Underlying), ans);
+        }
+    }
 
     #[test]
     fn check_primes_is_prime() {

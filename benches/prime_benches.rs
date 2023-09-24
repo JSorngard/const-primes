@@ -1,22 +1,18 @@
-use const_primes::{primes, sieve, trial};
+use const_primes::{is_prime, primalities, primes};
 use criterion::{criterion_group, criterion_main, Criterion};
 use std::hint::black_box;
 
-fn sieve_primes(c: &mut Criterion) {
-    c.bench_function("10 000 primes", |b| {
+fn benchmarks(c: &mut Criterion) {
+    c.bench_function("generate 10000 primes", |b| {
         b.iter(|| black_box(primes::<10_000>()))
     });
-}
-
-fn compare_is_primes(c: &mut Criterion) {
-    let mut group = c.benchmark_group("is_prime");
-    group.bench_function("sieve", |b| {
-        b.iter(|| black_box(sieve::is_prime::<1_000_000>()))
+    c.bench_function("is_prime(1000000)", |b| {
+        b.iter(|| black_box(is_prime(1_000_000)))
     });
-    group.bench_function("trial", |b| {
-        b.iter(|| black_box(trial::is_prime(1_000_000)))
+    c.bench_function("sieve 10000 integers", |b| {
+        b.iter(|| black_box(primalities::<10_000>()))
     });
 }
 
-criterion_group!(benches, sieve_primes, compare_is_primes);
+criterion_group!(benches, benchmarks);
 criterion_main!(benches);
