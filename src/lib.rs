@@ -38,7 +38,7 @@
 //! To test whether a given number is prime there is the [`is_prime`] function
 //! ```
 //! # use const_primes::is_prime;
-//! const CHECK: bool = is_prime(1009);
+//! const CHECK: bool = is_prime(2_147_483_629);
 //! assert!(CHECK);
 //! ```
 //!
@@ -79,7 +79,7 @@ const fn isqrt(n: Underlying) -> Underlying {
 
     while left != right - 1 {
         let mid = left + (right - left) / 2;
-        if mid * mid <= n {
+        if mid as u64 * mid as u64 <= n as u64 {
             left = mid;
         } else {
             right = mid;
