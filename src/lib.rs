@@ -318,6 +318,9 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         return primes;
     }
 
+    // This is a segmented sieve that runs until it has found enough primes while 
+    // assuming that we will always succeed at that task if we sieve up to N^2.
+
     // Sieve the first primes below N
     let is_prime: [bool; N] = primalities();
 
@@ -345,8 +348,10 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         let mut mark = [true; N];
         let mut i = 0;
 
+        // For each prime found so far,
         while i < prime_count {
             let prime = primes[i] as usize;
+            // find the smallest composite in the current segment,
             let smallest_composite = {
                 let mut l = (low / prime) * prime;
                 if l < low {
@@ -355,6 +360,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
                 l
             };
 
+            // and sieve all numbers that are multiples of the prime.
             let mut composite = smallest_composite;
             while composite < high {
                 mark[composite - low] = false;
@@ -364,11 +370,13 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
             i += 1;
         }
 
+        // Move the found primes into the final array
         i = low;
         while i < high {
             if mark[i - low] {
                 primes[prime_count] = i as Underlying;
                 prime_count += 1;
+                // and stop the generation if we're done.
                 if prime_count == N {
                     break 'generate;
                 }
