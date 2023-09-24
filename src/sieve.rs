@@ -5,23 +5,26 @@ use crate::Underlying;
 
 /// Returns the `N` first prime numbers.
 ///
-/// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve),
-/// so the memory usage is only `O(N)`.
-///
+/// # Example
 /// ```
 /// # use const_primes::sieve::primes;
-/// const PRIMES: []
+/// const PRIMES: [u32; 10] = primes();
+/// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     if N == 0 {
         return [0; N];
     } else if N == 1 {
         return [2; N];
+    } else if N == 2 {
+        let mut primes = [0; N];
+        primes[0] = 2;
+        primes[1] = 3;
+        return primes;
     }
 
     // Sieve the first primes below N
     let is_prime: [bool; N] = primalities();
-
 
     // Count how many primes we found
     // and store them in the final array
