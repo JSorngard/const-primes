@@ -36,14 +36,17 @@ assert!(CHECK);
 The `Primes` type also lets you reuse it as a cache of primes for related computations:
 ```rust
 const CACHE: Primes<100> = Primes::new();
+
 // For primality testing
 const CHECK_42: Option<bool> = CACHE.is_prime(42);
 const CHECK_541: Option<bool> = CACHE.is_prime(541);
 assert_eq!(CHECK_42, Some(false));
 assert_eq!(CHECK_541, Some(true));
+
 // Or for prime counting
 const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
 assert_eq!(PRIMES_LEQ_100, Some(25));
+
 // If questions are asked about numbers outside the cache it returns None
 assert!(CACHE.is_prime(1000).is_none());
 assert!(CACHE.count_primes_leq(1000).is_none());
