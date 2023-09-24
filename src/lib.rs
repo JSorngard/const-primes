@@ -1,4 +1,4 @@
-//! A crate for generating arrays of prime numbers at compile time.
+//! A crate for generating prime numbers at compile time.
 //!
 //! `#![no_std]` compatible.
 //!
@@ -224,8 +224,8 @@ pub const fn primalities<const N: usize>() -> [bool; N] {
 /// Basic usage
 /// ```
 /// # use const_primes::is_prime;
-/// const IS_101_A_PRIME: bool = is_prime(101);
-/// assert!(IS_101_A_PRIME);
+/// const CHECK: bool = is_prime(2_147_483_629);
+/// assert!(CHECK);
 /// ```
 #[must_use]
 pub const fn is_prime(n: Underlying) -> bool {
