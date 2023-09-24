@@ -94,6 +94,8 @@ const fn isqrt(n: Underlying) -> Underlying {
 }
 
 /// Returns the `N` first prime numbers.
+/// 
+/// Uses a segmented sieve of Eratosthenes.
 ///
 /// # Example
 /// ```
@@ -188,6 +190,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 }
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
+/// 
+/// Uses a sieve of Eratosthenes.
 ///
 /// # Example
 /// ```
@@ -221,6 +225,9 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 }
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
+/// 
+/// Computes primes with [`are_prime`] and then counts them.
+/// 
 /// # Example
 /// Basic usage
 /// ```
