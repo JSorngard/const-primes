@@ -110,6 +110,13 @@ impl<const N: usize> Primes<N> {
         &self.primes
     }
 
+    // Returns a slice that contains the entire underlying array.
+    #[inline]
+    #[must_use]
+    pub const fn as_slice(&self) -> &[Underlying] {
+        self.primes.as_slice()
+    }
+
     /// Returns a reference to the element at the given index if it is within bounds.
     ///
     /// # Example
