@@ -142,6 +142,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         number += 1;
     }
 
+    // For every segment of N numbers
     let mut low = N - 1;
     let mut high = 2 * N - 1;
     'generate: while prime_count < N {
@@ -152,17 +153,17 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         let mut mark = [true; N];
         let mut i = 0;
 
-        // For each prime found so far,
+        // repeat for each prime found so far:
         while i < prime_count {
             let prime = primes[i] as usize;
 
-            // find the smallest composite in the current segment,
+            // Find the smallest composite in the current segment,
             let mut composite = (low / prime) * prime;
             if composite < low {
                 composite += prime;
             }
-            
-            // and sieve all numbers that are multiples of the prime.
+
+            // and sieve all numbers in the segment that are multiples of the prime.
             while composite < high {
                 mark[composite - low] = false;
                 composite += prime;
@@ -177,7 +178,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
             if mark[i - low] {
                 primes[prime_count] = i as Underlying;
                 prime_count += 1;
-                // and stop the generation if we're done.
+                // and stop the generating primes if we're done.
                 if prime_count == N {
                     break 'generate;
                 }
