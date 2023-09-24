@@ -102,7 +102,7 @@ const fn isqrt(n: Underlying) -> Underlying {
 
 /// Returns the `N` first prime numbers.
 ///
-/// Uses a segmented sieve of Eratosthenes.
+/// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ///
 /// # Example
 /// ```
