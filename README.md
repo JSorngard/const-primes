@@ -1,6 +1,6 @@
 # const-primes
 
-A crate for generating arrays of prime numbers at compile time.
+A crate for generating prime numbers at compile time.
 
 `#![no_std]` compatible.
 
