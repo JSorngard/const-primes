@@ -32,6 +32,7 @@
 //! ```
 //! # use const_primes::primalities;
 //! const PRIME_STATUS: [bool; 10] = primalities();
+//! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
 //! 
