@@ -102,8 +102,6 @@ impl<const N: usize> Primes<N> {
 
     /// Returns the number of primes smaller than or equal to `n` if it is smaller than or equal to the largest prime in `self`.
     ///
-    /// Uses a linear search
-    ///
     /// # Example
     /// Basic usage
     /// ```
