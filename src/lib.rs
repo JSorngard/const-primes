@@ -216,6 +216,29 @@ pub const fn primalities<const N: usize>() -> [bool; N] {
     is_prime
 }
 
+/// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
+/// # Example
+/// Basic usage
+/// ```
+/// # use const_primes::prime_counts;
+/// const COUNTS: [usize; 10] = prime_counts();
+/// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
+/// ```
+pub const fn prime_counts<const N: usize>() -> [usize; N] {
+    let prime_status: [bool; N] = primalities();
+    let mut counts = [0; N];
+    let mut count = 0;
+    let mut i = 0;
+    while i < N {
+        if prime_status[i] {
+            count += 1;
+        }
+        counts[i] = count;
+        i += 1;
+    }
+    counts
+}
+
 /// Returns whether `n` is prime.
 ///
 /// Uses trial division with a simple wheel.
