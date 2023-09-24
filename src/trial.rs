@@ -1,11 +1,11 @@
-//! This module contains implementations of prime related functions that use [trial division](https://en.wikipedia.org/wiki/Trial_division).
+//! This module contains the implementation of `is_prime` that uses [trial division](https://en.wikipedia.org/wiki/Trial_division).
 
 use crate::{isqrt, Underlying};
 
 /// Returns whether `n` is prime.
 ///
 /// For a version of this function that uses the
-/// [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes),
+/// [sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes),
 /// see [`sieve::is_prime`](crate::sieve::is_prime).
 ///
 /// # Example

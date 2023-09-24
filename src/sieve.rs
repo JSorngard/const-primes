@@ -1,3 +1,5 @@
+//! This module contains the implementation of `is_prime` that uses the [sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes).
+
 /// Returns whether `N` is prime.
 ///
 /// For a version of this function that does not need const generics, see [`trial::is_prime`](crate::trial::is_prime).
