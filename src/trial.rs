@@ -34,40 +34,6 @@ pub const fn is_prime(n: Underlying) -> bool {
     }
 }
 
-/// Returns an array of the first `N` prime numbers.
-///
-/// # Example
-/// ```
-/// # use const_primes::trial::primes;
-/// const PRIMES: [u32; 6] = primes();
-/// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13]);
-/// ```
-#[must_use]
-pub const fn primes<const N: usize>() -> [Underlying; N] {
-    let mut primes = [2; N];
-    let mut number = 3;
-    let mut i = 1;
-
-    while i < N {
-        let mut j = 0;
-        let mut is_prime = true;
-        let max_bound = isqrt(number) + 1;
-        while primes[j] < max_bound {
-            if number % primes[j] == 0 {
-                is_prime = false;
-                break;
-            }
-            j += 1;
-        }
-        if is_prime {
-            primes[i] = number;
-            i += 1;
-        }
-        number += 1;
-    }
-    primes
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
