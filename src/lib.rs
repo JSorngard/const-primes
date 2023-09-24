@@ -27,8 +27,8 @@
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
 //! ## Primality testing
-//! There are two implementations of `is_prime`: one that uses trial division ([`trial::is_prime`]) and one that uses the sieve of Eratosthenes [`sieve::is_prime`].
-//! The version that uses the sieve is faster, but takes its argument as a const generic.
+//! There are two implementations of `is_prime`: one that uses the sieve of Eratosthenes ([`sieve::is_prime`]) and one that uses trial division ([`trial::is_prime`]).
+//! The version that uses the sieve is faster, but takes its argument as a const generic since the sieve needs `O(N)` memory.
 //! ```
 //! use const_primes::{trial, sieve};
 //! const CHECK_5: bool = trial::is_prime(5);
