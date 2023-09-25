@@ -120,12 +120,13 @@ impl<const N: usize> Primes<N> {
         Some(count)
     }
 
-    /// Searches the underlying array for target. 
-    /// If the target is found it returns an `Ok(index)` that contains the index of the matching element.
-    /// If the target is not found in the array an `Err(Option<index>)` is returned where the `Some` variant
-    /// indicates where the target could be inserted into the array while maintaining the sorted order
-    /// and the `None` variant indicates that the target is larger than the largest prime in the array,
-    /// and so no information about where it might fit is available.
+    /// Searches the underlying array of primes for the target integer. 
+    /// If the target is found it returns an [`Result::Ok`] that contains the index of the matching element.
+    /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
+    /// If the target could be inserted into the array while maintaining the sorted order, the [`Some`](Option::Some)
+    /// variant contains that index of that location.
+    /// If the target is larger than the largest prime in the array no information about where it might fit is available,
+    /// and a [`None`](Option::None) is returned.
     const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
         if target > *self.last() {
             Err(None)
