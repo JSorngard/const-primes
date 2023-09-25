@@ -111,10 +111,9 @@ const fn isqrt(n: Underlying) -> Underlying {
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
 /// # Panics
-/// If a computed prime overflows a `u32` this will result in a compile error in a const context, panic in debug mode,
-/// and *it will silently produce the wrong result in release mode*.  
-/// However, this happens only if you try to generate more than around 203000000 primes
-/// which would add more than 800 MB to your binary.
+/// If a computed prime overflows a `u32` this will result in a compile error in a const context.  
+/// Very large arrays have a tendency to overflow the stack, so outside a const context that
+/// is most likely the first error you encounter as you increase `N`.
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     if N == 0 {
         return [0; N];
