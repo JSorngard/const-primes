@@ -146,6 +146,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     let mut low = N - 1;
     let mut high = 2 * N - 1;
     'generate: while prime_count < N {
+        // FIXME: change to proper error handling
+        // if high overflows.
         if high > N * N {
             high = N * N;
         }
