@@ -122,6 +122,8 @@ impl<const N: usize> Primes<N> {
 
     /// Returns the largest prime less than or equal to `n`.  
     /// If `n` is 0, 1, or larger than the largest prime in `self` this returns `None`.
+    /// 
+    /// Uses a binary search.
     /// # Example
     /// ```
     /// # use const_primes::Primes;
@@ -144,6 +146,8 @@ impl<const N: usize> Primes<N> {
 
     /// Returns the smallest prime greater than or equal to `n`.  
     /// If `n` is larger than the largest prime in `self` this returns `None`.
+    /// 
+    /// Uses a binary search.
     /// # Example
     /// ```
     /// # use const_primes::Primes;
@@ -163,11 +167,11 @@ impl<const N: usize> Primes<N> {
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
     /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
     /// If the target could be inserted into the array while maintaining the sorted order, the [`Some`](Option::Some)
-    /// variant contains that index of that location.
+    /// variant contains the index of that location.
     /// If the target is larger than the largest prime in the array no information about where it might fit is available,
     /// and a [`None`](Option::None) is returned.
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
+    pub const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
         if target > *self.last() {
             Err(None)
         } else {
