@@ -82,10 +82,8 @@ impl<const N: usize> Primes<N> {
     pub const fn is_prime(&self, n: u32) -> Option<bool> {
         match self.binary_search(n) {
             Ok(_) => Some(true),
-            Err(op) => match op {
-                Some(_) => Some(false),
-                None => None,
-            },
+            Err(Some(_)) => Some(false),
+            Err(None) => None,
         }
     }
 
