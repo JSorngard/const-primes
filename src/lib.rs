@@ -112,7 +112,7 @@ const fn isqrt(n: Underlying) -> Underlying {
 /// ```
 /// # Panics
 /// If a computed prime overflows a `u32` this will result in a compile error in a const context, panic in debug mode,
-/// and *it will silently produce the wrong result in release mode*.
+/// and *it will silently produce the wrong result in release mode*.  
 /// However, this happens only if you try to generate more than around 203000000 primes
 /// which would add more than 800 MB to your binary.
 pub const fn primes<const N: usize>() -> [Underlying; N] {
