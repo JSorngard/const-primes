@@ -294,10 +294,12 @@ mod test {
         const CACHE: Primes<100> = Primes::new();
         type BSResult = Result<usize, Option<usize>>;
         const FOUND2: BSResult = CACHE.binary_search(2);
+        const INSERT0: BSResult = CACHE.binary_search(0);
         const INSERT4: BSResult = CACHE.binary_search(4);
         const FOUND541: BSResult = CACHE.binary_search(541);
         const NOINFO542: BSResult = CACHE.binary_search(542);
         assert_eq!(FOUND2, Ok(0));
+        assert_eq!(INSERT0, Err(Some(0)));
         assert_eq!(INSERT4, Err(Some(2)));
         assert_eq!(FOUND541, Ok(99));
         assert_eq!(NOINFO542, Err(None));
