@@ -110,6 +110,10 @@ const fn isqrt(n: Underlying) -> Underlying {
 /// const PRIMES: [u32; 10] = primes();
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
+/// # Panics
+/// If a computed prime overflows a `u32` this will panic in debug mode,
+/// and result in a compile error in a const context.  
+/// ⚠️: In release mode it will silently produce the wrong result.
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     if N == 0 {
         return [0; N];
@@ -122,8 +126,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         return primes;
     }
 
-    // This is a segmented sieve that runs until it has found enough primes while
-    // assuming that we will always succeed at that task if we sieve up to N^2.
+    // This is a segmented sieve that runs until it has found enough primes.
 
     // Sieve the first primes below N
     let is_prime: [bool; N] = are_prime();
@@ -146,12 +149,6 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     let mut low = N - 1;
     let mut high = 2 * N - 1;
     'generate: while prime_count < N {
-        // FIXME: change to proper error handling
-        // if high overflows.
-        if high > N * N {
-            high = N * N;
-        }
-
         let mut mark = [true; N];
         let mut i = 0;
 
