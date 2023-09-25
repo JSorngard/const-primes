@@ -123,7 +123,7 @@ impl<const N: usize> Primes<N> {
 
     /// Returns the largest prime less than or equal to `n`.  
     /// If `n` is 0, 1, or larger than the largest prime in `self` this returns `None`.
-    /// 
+    ///
     /// Uses a binary search.
     /// # Example
     /// ```
@@ -147,7 +147,7 @@ impl<const N: usize> Primes<N> {
 
     /// Returns the smallest prime greater than or equal to `n`.  
     /// If `n` is larger than the largest prime in `self` this returns `None`.
-    /// 
+    ///
     /// Uses a binary search.
     /// # Example
     /// ```
