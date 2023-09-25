@@ -120,8 +120,8 @@ impl<const N: usize> Primes<N> {
     }
 
     /// Searches `self` for the target. If it is larger than the larest prime in `self` this returns `None`,
-    /// otherwise if the target is found it returns a [`Result::Ok`] that contains the index of the matching element,
-    /// and if it isn't found it returns a [`Result::Err`] that contains the index where a matching element could be inserted
+    /// otherwise if the target is found it returns a `Some(Ok(index))` that contains the index of the matching element,
+    /// and if it isn't found it returns a `Some(Err(index))` that contains the index where a matching element could be inserted
     /// while maintaining sorted order.
     const fn binary_search(&self, target: Underlying) -> Option<Result<usize, usize>> {
         if target > *self.last() {
