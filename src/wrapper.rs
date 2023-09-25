@@ -81,16 +81,17 @@ impl<const N: usize> Primes<N> {
     /// ```
     pub const fn is_prime(&self, n: u32) -> Option<bool> {
         match self.binary_search(n) {
-            Some(res) => match res {
-                Ok(_) => Some(true),
-                Err(_) => Some(false),
+            Ok(_) => Some(true),
+            Err(op) => match op {
+                Some(_) => Some(false),
+                None => None,
             },
-            None => None,
         }
     }
 
     /// Returns the number of primes smaller than or equal to `n`, if it's smaller than or equal to the largest prime in `self`.
     ///
+    /// Uses a linear search to count the primes.
     /// # Example
     /// Basic usage
     /// ```
@@ -119,13 +120,15 @@ impl<const N: usize> Primes<N> {
         Some(count)
     }
 
-    /// Searches `self` for the target. If it is larger than the larest prime in `self` this returns `None`,
-    /// otherwise if the target is found it returns a `Some(Ok(index))` that contains the index of the matching element,
-    /// and if it isn't found it returns a `Some(Err(index))` that contains the index where a matching element could be inserted
-    /// while maintaining sorted order.
-    const fn binary_search(&self, target: Underlying) -> Option<Result<usize, usize>> {
+    /// Searches the underlying array for target. 
+    /// If the target is found it returns an `Ok(index)` that contains the index of the matching element.
+    /// If the target is not found in the array an `Err(Option<index>)` is returned where the `Some` variant
+    /// indicates where the target could be written into the array while maintaining the sorted order
+    /// and the `None` variant indicates that the target is larger than the largest prime in the array,
+    /// and so no information about where it might fit is available.
+    const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
         if target > *self.last() {
-            None
+            Err(None)
         } else {
             let mut size = N;
             let mut left = 0;
@@ -138,11 +141,11 @@ impl<const N: usize> Primes<N> {
                 } else if candidate > target {
                     right = mid;
                 } else {
-                    return Some(Ok(mid));
+                    return Ok(mid);
                 }
                 size = right - left;
             }
-            Some(Err(left))
+            Err(Some(left))
         }
     }
 
