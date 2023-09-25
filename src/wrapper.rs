@@ -118,6 +118,27 @@ impl<const N: usize> Primes<N> {
         Some(count)
     }
 
+    /// Returns the largest prime less than or equal to `n`.  
+    /// If `n` is 0, 1, or larger than the largest prime in `self` this returns `None`.
+    /// # Examples
+    /// ```
+    /// # use const_primes::Primes;
+    /// const CACHE: Primes<100> = Primes::new();
+    /// const LPLEQ400: Option<u32> = CACHE.largest_prime_leq(400);
+    /// assert_eq!(LPLEQ400, Some(397));
+    /// ```
+    pub const fn largest_prime_leq(&self, n: Underlying) -> Option<Underlying> {
+        if n <= 1 {
+            None
+        } else {
+            match self.binary_search(n) {
+                Ok(i) => Some(self.primes[i]),
+                Err(Some(i)) => Some(self.primes[i - 1]),
+                Err(None) => None,
+            }
+        }
+    }
+
     /// Searches the underlying array of primes for the target integer.
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
     /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
@@ -301,5 +322,18 @@ mod test {
         assert_eq!(INSERT4, Err(Some(2)));
         assert_eq!(FOUND541, Ok(99));
         assert_eq!(NOINFO542, Err(None));
+    }
+
+    #[test]
+    fn check_largest_prime_leq() {
+        const CACHE: Primes<100> = Primes::new();
+        const LPLEQ0: Option<Underlying> = CACHE.largest_prime_leq(0);
+        const LPLEQ400: Option<Underlying> = CACHE.largest_prime_leq(400);
+        const LPLEQ541: Option<Underlying> = CACHE.largest_prime_leq(541);
+        const LPLEQ542: Option<Underlying> = CACHE.largest_prime_leq(542);
+        assert_eq!(LPLEQ0, None);
+        assert_eq!(LPLEQ400, Some(397));
+        assert_eq!(LPLEQ541, Some(541));
+        assert_eq!(LPLEQ542, None);
     }
 }
