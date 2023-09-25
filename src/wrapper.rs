@@ -242,7 +242,7 @@ impl<const N: usize> Primes<N> {
         }
     }
 
-    /// Returns the last prime in `self`. This is also the largest prime in `self`.
+    /// Returns a reference to the last prime in `self`. This is also the largest prime in `self`.
     ///
     /// # Example
     /// Basic usage
