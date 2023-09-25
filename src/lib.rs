@@ -128,21 +128,27 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 
     // This is a segmented sieve that runs until it has found enough primes.
 
-    // Sieve the first primes below N
-    let is_prime: [bool; N] = are_prime();
-
-    // Count how many primes we found
-    // and store them in the final array
+    // This array is the output in the end
     let mut primes = [0; N];
+    // This keeps track of how many primes we've found so far.
     let mut prime_count = 0;
-    let mut number = 0;
-    while number < N {
-        if is_prime[number] {
-            primes[prime_count] = number as Underlying;
-            prime_count += 1;
-        }
 
-        number += 1;
+    {
+        // Sieve the first primes below N
+        let is_prime: [bool; N] = are_prime();
+        // in a new scope to ensure this array drops when it's no longer needed.
+
+        // Count how many primes we found
+        // and store them in the final array
+        let mut number = 0;
+        while number < N {
+            if is_prime[number] {
+                primes[prime_count] = number as Underlying;
+                prime_count += 1;
+            }
+
+            number += 1;
+        }
     }
 
     // For every segment of N numbers
