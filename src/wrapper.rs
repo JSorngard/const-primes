@@ -123,7 +123,7 @@ impl<const N: usize> Primes<N> {
     /// Searches the underlying array for target. 
     /// If the target is found it returns an `Ok(index)` that contains the index of the matching element.
     /// If the target is not found in the array an `Err(Option<index>)` is returned where the `Some` variant
-    /// indicates where the target could be written into the array while maintaining the sorted order
+    /// indicates where the target could be inserted into the array while maintaining the sorted order
     /// and the `None` variant indicates that the target is larger than the largest prime in the array,
     /// and so no information about where it might fit is available.
     const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
