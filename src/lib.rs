@@ -111,9 +111,7 @@ const fn isqrt(n: Underlying) -> Underlying {
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
 /// # Panics
-/// If a computed prime overflows a `u32` this will result in a compile error in a const context.  
-/// Very large arrays have a tendency to overflow the stack, so outside a const context that
-/// is most likely the first error you encounter as you increase `N`.
+/// Panics if a computed prime overflows a `u32`. This will result in a compile error in a const context.  
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     if N == 0 {
         return [0; N];
@@ -183,7 +181,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
             if mark[i - low] {
                 primes[prime_count] = i as Underlying;
                 prime_count += 1;
-                // and stop the generating primes if we're done.
+                // and stop the generation of primes if we're done.
                 if prime_count == N {
                     break 'generate;
                 }
