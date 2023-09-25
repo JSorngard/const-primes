@@ -80,26 +80,13 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(PRIMES.is_prime(1000), None);
     /// ```
     pub const fn is_prime(&self, n: u32) -> Option<bool> {
-        if n > *self.last() {
-            return None;
+        match self.binary_search(n) {
+            Some(res) => match res {
+                Ok(_) => Some(true),
+                Err(_) => Some(false),
+            },
+            None => None,
         }
-
-        let mut size = N;
-        let mut left = 0;
-        let mut right = size;
-        while left < right {
-            let mid = left + size / 2;
-            let candidate = self.primes[mid];
-            if candidate < n {
-                left = mid + 1;
-            } else if candidate > n {
-                right = mid;
-            } else {
-                return Some(true);
-            }
-            size = right - left;
-        }
-        Some(false)
     }
 
     /// Returns the number of primes smaller than or equal to `n`, if it's smaller than or equal to the largest prime in `self`.
@@ -130,6 +117,33 @@ impl<const N: usize> Primes<N> {
             i += 1;
         }
         Some(count)
+    }
+
+    /// Searches `self` for the target. If it is larger than the larest prime in `self` this returns `None`,
+    /// otherwise if the target is found it returns a [`Result::Ok`] that contains the index of the matching element,
+    /// and if it isn't found it returns a [`Result::Err`] that contains the index where a matching element could be inserted
+    /// while maintaining sorted order.
+    const fn binary_search(&self, target: Underlying) -> Option<Result<usize, usize>> {
+        if target > *self.last() {
+            None
+        } else {
+            let mut size = N;
+            let mut left = 0;
+            let mut right = size;
+            while left < right {
+                let mid = left + size / 2;
+                let candidate = self.primes[mid];
+                if candidate < target {
+                    left = mid + 1;
+                } else if candidate > target {
+                    right = mid;
+                } else {
+                    return Some(Ok(mid));
+                }
+                size = right - left;
+            }
+            Some(Err(left))
+        }
     }
 
     /// Converts `self` into an array of size `N`.
