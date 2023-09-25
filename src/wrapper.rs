@@ -79,6 +79,7 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(TMOLTUAE, Some(false));
     /// assert_eq!(PRIMES.is_prime(1000), None);
     /// ```
+    #[must_use = "the method only returns a new value"]
     pub const fn is_prime(&self, n: u32) -> Option<bool> {
         match self.binary_search(n) {
             Ok(_) => Some(true),
@@ -100,6 +101,7 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(COUNT, Some(95));
     /// assert_eq!(OUT_OF_BOUNDS, None);
     /// ```
+    #[must_use = "the method only returns a new value"]
     pub const fn count_primes_leq(&self, n: Underlying) -> Option<usize> {
         if n > *self.last() {
             return None;
@@ -127,6 +129,7 @@ impl<const N: usize> Primes<N> {
     /// const LPLEQ400: Option<u32> = CACHE.largest_prime_leq(400);
     /// assert_eq!(LPLEQ400, Some(397));
     /// ```
+    #[must_use = "the method only returns a new value"]
     pub const fn largest_prime_leq(&self, n: Underlying) -> Option<Underlying> {
         if n <= 1 {
             None
@@ -148,6 +151,7 @@ impl<const N: usize> Primes<N> {
     /// const SPGEQ: Option<u32> = CACHE.smallest_prime_geq(400);
     /// assert_eq!(SPGEQ, Some(401));
     /// ```
+    #[must_use = "the method only returns a new value"]
     pub const fn smallest_prime_geq(&self, n: Underlying) -> Option<Underlying> {
         match self.binary_search(n) {
             Ok(i) | Err(Some(i)) => Some(self.primes[i]),
@@ -162,6 +166,7 @@ impl<const N: usize> Primes<N> {
     /// variant contains that index of that location.
     /// If the target is larger than the largest prime in the array no information about where it might fit is available,
     /// and a [`None`](Option::None) is returned.
+    #[must_use = "the method only returns a new value"]
     const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
         if target > *self.last() {
             Err(None)
@@ -195,21 +200,21 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
     /// ```
     #[inline]
-    #[must_use]
+    #[must_use = "the method only returns a new value"]
     pub const fn into_array(self) -> [Underlying; N] {
         self.primes
     }
 
     /// Returns a reference to the underlying array.
     #[inline]
-    #[must_use]
+    #[must_use = "the method only returns a new value"]
     pub const fn as_array(&self) -> &[Underlying; N] {
         &self.primes
     }
 
     /// Returns a slice that contains the entire underlying array.
     #[inline]
-    #[must_use]
+    #[must_use = "the method only returns a new value"]
     pub const fn as_slice(&self) -> &[Underlying] {
         self.primes.as_slice()
     }
@@ -224,7 +229,7 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(PRIMES.get(2), Some(&5));
     /// ```
     #[inline]
-    #[must_use]
+    #[must_use = "the method only returns a new value"]
     pub const fn get(&self, index: usize) -> Option<&Underlying> {
         if index < N {
             Some(&self.primes[index])
@@ -243,7 +248,7 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(PRIMES.last(), &11);
     /// ```
     #[inline]
-    #[must_use]
+    #[must_use = "the method only returns a new value"]
     pub const fn last(&self) -> &Underlying {
         match self.primes.last() {
             Some(l) => l,
@@ -261,7 +266,7 @@ impl<const N: usize> Primes<N> {
     /// ```
     // Can never be empty since we panic if the user tries to create an empty `Primes`.
     #[inline]
-    #[must_use]
+    #[must_use = "the method only returns a new value"]
     #[allow(clippy::len_without_is_empty)]
     pub const fn len(&self) -> usize {
         N
