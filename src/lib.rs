@@ -306,6 +306,7 @@ mod test {
         for (x, ans) in TEST_CASES.into_iter().enumerate() {
             assert_eq!(is_prime(x as u64), ans);
         }
+        assert_eq!(is_prime(18446744073709551557), true);
     }
 
     #[test]
