@@ -57,7 +57,8 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    /// In other contexts it may panic at runtime instead.
+    /// In other contexts it may panic at runtime instead.  
+    /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
         assert!(N >= 1, "`N` must be at least 1");
