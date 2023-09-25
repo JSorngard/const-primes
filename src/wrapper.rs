@@ -120,7 +120,7 @@ impl<const N: usize> Primes<N> {
         Some(count)
     }
 
-    /// Searches the underlying array of primes for the target integer. 
+    /// Searches the underlying array of primes for the target integer.
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
     /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
     /// If the target could be inserted into the array while maintaining the sorted order, the [`Some`](Option::Some)
@@ -282,5 +282,24 @@ impl<const N: usize> IntoIterator for Primes<N> {
     type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
     fn into_iter(self) -> Self::IntoIter {
         self.primes.into_iter()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn check_binary_search() {
+        const CACHE: Primes<100> = Primes::new();
+        type BSResult = Result<usize, Option<usize>>;
+        const FOUND2: BSResult = CACHE.binary_search(2);
+        const INSERT4: BSResult = CACHE.binary_search(4);
+        const FOUND541: BSResult = CACHE.binary_search(541);
+        const NOINFO542: BSResult = CACHE.binary_search(542);
+        assert_eq!(FOUND2, Ok(0));
+        assert_eq!(INSERT4, Err(Some(2)));
+        assert_eq!(FOUND541, Ok(99));
+        assert_eq!(NOINFO542, Err(None));
     }
 }
