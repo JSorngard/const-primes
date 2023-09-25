@@ -112,8 +112,7 @@ const fn isqrt(n: Underlying) -> Underlying {
 /// ```
 /// # Panics
 /// If a computed prime overflows a `u32` this will panic in debug mode,
-/// and result in a compile error in a const context.  
-/// ⚠️ It will silently produce the wrong result in release mode .
+/// and result in a compile error in a const context and *it will silently produce the wrong result in release mode*.
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     if N == 0 {
         return [0; N];
