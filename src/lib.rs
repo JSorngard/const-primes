@@ -282,7 +282,7 @@ pub const fn is_prime(n: u64) -> bool {
         true
     } else if n <= 1 || n % 2 == 0 || n % 3 == 0 {
         false
-    } else {
+    } else if n <= u16::MAX as u64 {
         let mut candidate_factor = 5;
         let bound = isqrt(n) + 1;
         while candidate_factor < bound {
@@ -292,7 +292,152 @@ pub const fn is_prime(n: u64) -> bool {
             candidate_factor += 6;
         }
         true
+    } else {
+        // Find r such that n = 2^d * r + 1 for some r >= 1
+        let mut d = n - 1;
+        while d % 2 == 0 {
+            d /= 2;
+        }
+
+        // These lists of witnesses were taken from https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Testing_against_small_sets_of_bases.
+        let mut witnesses = [0; 12];
+        let num_witnesses = if n < 1_373_653 {
+            witnesses[0] = 2;
+            witnesses[1] = 3;
+            2
+        } else if n < 9_080_191 {
+            witnesses[0] = 31;
+            witnesses[1] = 73;
+            2
+        } else if n < 25_326_001 {
+            witnesses[0] = 2;
+            witnesses[1] = 3;
+            witnesses[2] = 5;
+            3
+        } else if n < 3_215_031_751 {
+            witnesses[0] = 2;
+            witnesses[1] = 3;
+            witnesses[2] = 5;
+            witnesses[3] = 7;
+            4
+        } else if n < 4_759_123_141 {
+            witnesses[0] = 2;
+            witnesses[1] = 7;
+            witnesses[2] = 63;
+            3
+        } else if n < 1_122_004_669_633 {
+            witnesses[0] = 2;
+            witnesses[1] = 13;
+            witnesses[2] = 23;
+            witnesses[3] = 1662803;
+            4
+        } else if n < 2_152_302_898_747 {
+            witnesses[0] = 2;
+            witnesses[1] = 3;
+            witnesses[2] = 5;
+            witnesses[3] = 7;
+            witnesses[4] = 11;
+            5
+        } else if n < 3_474_749_660_383 {
+            witnesses[0] = 2;
+            witnesses[1] = 3;
+            witnesses[2] = 5;
+            witnesses[3] = 7;
+            witnesses[4] = 11;
+            witnesses[5] = 13;
+            6
+        } else if n < 341_550_071_728_321 {
+            witnesses[0] = 2;
+            witnesses[1] = 3;
+            witnesses[2] = 5;
+            witnesses[3] = 7;
+            witnesses[4] = 11;
+            witnesses[5] = 13;
+            witnesses[6] = 17;
+            7
+        } else if n < 3_825_123_056_546_413_051 {
+            witnesses[0] = 2;
+            witnesses[1] = 3;
+            witnesses[2] = 5;
+            witnesses[3] = 7;
+            witnesses[4] = 11;
+            witnesses[5] = 13;
+            witnesses[6] = 17;
+            witnesses[7] = 19;
+            witnesses[8] = 23;
+            9
+        } else {
+            witnesses = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
+            12
+        };
+
+        let mut i = 0;
+        while i < num_witnesses {
+            if !miller_test(d, n, witnesses[i]) {
+                return false;
+            }
+            i += 1;
+        }
+
+        true
     }
+}
+
+/// Performs a Miller-Rabin test with the witness k.
+const fn miller_test(mut d: u64, n: u64, k: u64) -> bool {
+    let mut x = mod_pow(k, d, n);
+    if x == 1 || x == n - 1 {
+        return true;
+    }
+
+    while d != n - 1 {
+        x = ((x as u128 * x as u128) % n as u128) as u64;
+        d *= 2;
+
+        if x == 1 {
+            return false;
+        } else if x == n - 1 {
+            return true;
+        }
+    }
+
+    false
+}
+
+/// Returns (a ^ b) % m.
+// Overflow free mod_pow taken from https://stackoverflow.com/questions/12168348/ways-to-do-modulo-multiplication-with-primitive-types
+const fn mod_pow(mut a: u64, mut b: u64, m: u64) -> u64 {
+    let mut res = 0;
+
+    // Only needed if b may be >= m.
+    if b >= m {
+        if m > u64::MAX / 2 {
+            b -= m;
+        } else {
+            b %= m;
+        }
+    }
+
+    while a != 0 {
+        if a % 2 == 1 {
+            // Add b to res, modulo m, without overflow.
+            if b >= m - res {
+                // Equivalent to `if res + b >= m`, but without overflow.
+                res -= m;
+            }
+            res += b;
+        }
+        a >>= 1;
+
+        // Double b, modulo m.
+        let mut temp_b = b;
+        if b >= m - b {
+            // Equivalent to 2 * b >= m, but without overflow.
+            temp_b -= m;
+        }
+        b += temp_b;
+    }
+    res
 }
 
 #[cfg(test)]
