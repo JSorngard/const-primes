@@ -412,7 +412,7 @@ const fn miller_test(mut d: u64, n: u64, k: u64) -> bool {
     }
 
     while d != n - 1 {
-        x = mod_mul(x, x, n); //((x as u128 * x as u128) % n as u128) as u64;
+        x = mod_mul(x, x, n);
         d *= 2;
 
         if x == 1 {
