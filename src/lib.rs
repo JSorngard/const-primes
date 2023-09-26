@@ -292,8 +292,6 @@ pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
     // The largest prime smaller than 2^64
     if n > 18446744073709551557 {
         None
-    } else if n == 18446744073709551557 {
-        Some(n)
     } else {
         if n % 2 == 0 {
             n += 1;
