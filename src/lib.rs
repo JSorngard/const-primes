@@ -333,13 +333,14 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
 
 /// Returns whether `n` is prime.
 ///
-/// Uses trial division with a simple wheel.
+/// Uses trial division with a small wheel for small numbers and the
+/// Miller-Rabin primality test with known perfect witness bases for large numbers.
 ///
 /// # Example
 /// Basic usage
 /// ```
 /// # use const_primes::is_prime;
-/// const CHECK: bool = is_prime(2_147_483_629);
+/// const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 /// assert!(CHECK);
 /// ```
 #[must_use]
