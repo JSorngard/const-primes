@@ -273,7 +273,7 @@ pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
     }
 }
 
-/// Returns the smallest prime larger than or equal to `n` if there is one that
+/// Returns the smallest prime greater than or equal to `n` if there is one that
 /// can be represented by a `u64`.
 ///
 /// # Example
