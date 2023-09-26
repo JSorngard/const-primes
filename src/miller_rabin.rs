@@ -106,3 +106,18 @@ const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
 const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
     ((a as u128 * b as u128) % modulo as u128) as u64
 }
+
+#[cfg(test)]
+mod test {
+    use super::is_prime;
+    
+    #[test]
+    fn check_is_prime() {
+        #[rustfmt::skip]
+        const TEST_CASES: [bool; 100] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false];
+        for (x, ans) in TEST_CASES.into_iter().enumerate() {
+            assert_eq!(is_prime(x as u64), ans);
+        }
+        assert_eq!(is_prime(18446744073709551557), true);
+    }
+}

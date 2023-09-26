@@ -338,16 +338,6 @@ mod test {
     use super::*;
 
     #[test]
-    fn check_is_prime() {
-        #[rustfmt::skip]
-        const TEST_CASES: [bool; 100] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false];
-        for (x, ans) in TEST_CASES.into_iter().enumerate() {
-            assert_eq!(is_prime(x as u64), ans);
-        }
-        assert_eq!(is_prime(18446744073709551557), true);
-    }
-
-    #[test]
     fn check_primes_is_prime() {
         const SET: Primes<3> = Primes::new();
         assert_eq!(SET.is_prime(0), Some(false));
