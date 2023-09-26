@@ -239,6 +239,72 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
     is_prime
 }
 
+/// Returns the largest prime smaller than or equal to `n` if there is one.
+/// 
+/// # Examples
+/// ```
+/// # use const_primes::largest_prime_leq;
+/// const LPLEQ: Option<u64> = largest_prime_leq(400);
+/// assert_eq!(LPLEQ, Some(397));
+/// ```
+/// There's no prime smaller than or equal to one
+/// ```
+/// # use const_primes::largest_prime_leq;
+/// const NOSUCH: Option<u64> = largest_prime_leq(1);
+/// assert!(NOSUCH.is_none());
+/// ```
+pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
+    if n == 0 || n == 1 {
+        None
+    } else if n == 2 {
+        Some(n)
+    } else {
+        if n % 2 == 0 {
+            n -= 1;
+        }
+
+        while !is_prime(n) {
+            n -= 2;
+        }
+        
+        Some(n)
+    }
+}
+
+/// Returns the smallest prime larger than or equal to `n` if there is one that
+/// can be represented by a `u64`.
+/// 
+/// # Example
+/// ```
+/// # use const_primes::smallest_prime_geq;
+/// const SPGEQ: Option<u64> = smallest_prime_geq(400);
+/// assert_eq!(SPGEQ, Some(401));
+/// ```
+/// Primes larger than 18446744073709551557 can not be represented by a `u64`
+/// ```
+/// # use const_primes::smallest_prime_geq;
+/// const NOSUCH: Option<u64> = smallest_prime_geq(18446744073709551558);
+/// assert!(NOSUCH.is_none());
+/// ```
+pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
+    // The largest prime smaller than 2^64
+    if n > 18446744073709551557 {
+        None
+    } else if n == 18446744073709551557 {
+        Some(n)
+    } else {
+        if n % 2 == 0 {
+            n += 1;
+        }
+
+        while !is_prime(n) {
+            n += 2;
+        }
+
+        Some(n)
+    }
+}
+
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
 /// Computes primes with [`are_prime`] and then counts them.
