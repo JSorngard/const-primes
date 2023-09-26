@@ -299,76 +299,31 @@ pub const fn is_prime(n: u64) -> bool {
             d /= 2;
         }
 
+        // Since we know the maximum size of the numbers we test against we can use the fact that there are known perfect bases
+        // in order to make the test both fast and deterministic.
         // These lists of witnesses were taken from https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Testing_against_small_sets_of_bases.
-        let mut witnesses = [0; 12];
-        let num_witnesses = if n < 1_373_653 {
-            witnesses[0] = 2;
-            witnesses[1] = 3;
-            2
+        let (witnesses, num_witnesses) = if n < 1_373_653 {
+            ([2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 2)
         } else if n < 9_080_191 {
-            witnesses[0] = 31;
-            witnesses[1] = 73;
-            2
+            ([31, 73, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 2)
         } else if n < 25_326_001 {
-            witnesses[0] = 2;
-            witnesses[1] = 3;
-            witnesses[2] = 5;
-            3
+            ([2, 3, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0], 3)
         } else if n < 3_215_031_751 {
-            witnesses[0] = 2;
-            witnesses[1] = 3;
-            witnesses[2] = 5;
-            witnesses[3] = 7;
-            4
+            ([2, 3, 5, 7, 0, 0, 0, 0, 0, 0, 0, 0], 4)
         } else if n < 4_759_123_141 {
-            witnesses[0] = 2;
-            witnesses[1] = 7;
-            witnesses[2] = 63;
-            3
+            ([2, 7, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0], 3)
         } else if n < 1_122_004_669_633 {
-            witnesses[0] = 2;
-            witnesses[1] = 13;
-            witnesses[2] = 23;
-            witnesses[3] = 1662803;
-            4
+            ([2, 13, 23, 1662803, 0, 0, 0, 0, 0, 0, 0, 0], 4)
         } else if n < 2_152_302_898_747 {
-            witnesses[0] = 2;
-            witnesses[1] = 3;
-            witnesses[2] = 5;
-            witnesses[3] = 7;
-            witnesses[4] = 11;
-            5
+            ([2, 3, 5, 7, 11, 0, 0, 0, 0, 0, 0, 0], 5)
         } else if n < 3_474_749_660_383 {
-            witnesses[0] = 2;
-            witnesses[1] = 3;
-            witnesses[2] = 5;
-            witnesses[3] = 7;
-            witnesses[4] = 11;
-            witnesses[5] = 13;
-            6
+            ([2, 3, 5, 7, 11, 13, 0, 0, 0, 0, 0, 0], 6)
         } else if n < 341_550_071_728_321 {
-            witnesses[0] = 2;
-            witnesses[1] = 3;
-            witnesses[2] = 5;
-            witnesses[3] = 7;
-            witnesses[4] = 11;
-            witnesses[5] = 13;
-            witnesses[6] = 17;
-            7
+            ([2, 3, 5, 7, 11, 13, 17, 0, 0, 0, 0, 0], 7)
         } else if n < 3_825_123_056_546_413_051 {
-            witnesses[0] = 2;
-            witnesses[1] = 3;
-            witnesses[2] = 5;
-            witnesses[3] = 7;
-            witnesses[4] = 11;
-            witnesses[5] = 13;
-            witnesses[6] = 17;
-            witnesses[7] = 19;
-            witnesses[8] = 23;
-            9
+            ([2, 3, 5, 7, 11, 13, 17, 19, 23, 0, 0, 0], 9)
         } else {
-            witnesses = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
-            12
+            ([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37], 12)
         };
 
         let mut i = 0;
@@ -391,7 +346,7 @@ const fn miller_test(mut d: u64, n: u64, k: u64) -> bool {
     }
 
     while d != n - 1 {
-        x = ((x as u128 * x as u128) % n as u128) as u64;
+        x = mod_mul(x, x, n); //((x as u128 * x as u128) % n as u128) as u64;
         d *= 2;
 
         if x == 1 {
@@ -405,39 +360,25 @@ const fn miller_test(mut d: u64, n: u64, k: u64) -> bool {
 }
 
 /// Returns (a ^ b) % m.
-// Overflow free mod_pow taken from https://stackoverflow.com/questions/12168348/ways-to-do-modulo-multiplication-with-primitive-types
-const fn mod_pow(mut a: u64, mut b: u64, m: u64) -> u64 {
-    let mut res = 0;
+const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
+    let mut res = 1;
 
-    // Only needed if b may be >= m.
-    if b >= m {
-        if m > u64::MAX / 2 {
-            b -= m;
-        } else {
-            b %= m;
+    base %= modulo;
+
+    while exp > 0 {
+        if exp % 2 == 1 {
+            res = mod_mul(res, base, modulo);
         }
+        base = mod_mul(base, base, modulo);
+        exp >>= 1;
     }
 
-    while a != 0 {
-        if a % 2 == 1 {
-            // Add b to res, modulo m, without overflow.
-            if b >= m - res {
-                // Equivalent to `if res + b >= m`, but without overflow.
-                res -= m;
-            }
-            res += b;
-        }
-        a >>= 1;
-
-        // Double b, modulo m.
-        let mut temp_b = b;
-        if b >= m - b {
-            // Equivalent to 2 * b >= m, but without overflow.
-            temp_b -= m;
-        }
-        b += temp_b;
-    }
     res
+}
+
+/// Calculates (a * b) % m without overflow.
+const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
+    ((a as u128 * b as u128) % modulo as u128) as u64
 }
 
 #[cfg(test)]
