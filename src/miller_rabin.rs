@@ -2,7 +2,8 @@
 
 /// Returns whether `n` is prime.
 ///
-/// Uses a Miller-Rabin primality test with known perfect witness bases.
+/// Uses a Miller-Rabin primality test with a set of witnesses that
+/// is known to be sufficient for numbers that fit in a `u64`.
 ///
 /// # Example
 /// Basic usage
