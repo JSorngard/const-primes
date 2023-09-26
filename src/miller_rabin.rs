@@ -2,8 +2,7 @@
 
 /// Returns whether `n` is prime.
 ///
-/// Uses trial division with a small wheel for small numbers and the
-/// Miller-Rabin primality test with known perfect witness bases for large numbers.
+/// Uses a Miller-Rabin primality test with known perfect witness bases.
 ///
 /// # Example
 /// Basic usage
