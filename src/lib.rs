@@ -261,7 +261,7 @@ pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
     if n == 0 || n == 1 {
         None
     } else if n == 2 {
-        Some(n)
+        Some(2)
     } else {
         if n % 2 == 0 {
             n -= 1;
