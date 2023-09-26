@@ -33,5 +33,9 @@ mod test {
         for (x, ans) in TEST_CASES {
             assert_eq!(isqrt(x as u64), ans);
         }
+        assert_eq!(
+            f64::from(u32::MAX).sqrt().floor() as u64,
+            isqrt(u64::from(u32::MAX))
+        );
     }
 }

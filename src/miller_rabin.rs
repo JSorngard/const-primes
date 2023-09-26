@@ -2,7 +2,8 @@
 
 /// Returns whether `n` is prime.
 ///
-/// Uses a Miller-Rabin primality test with a set of witnesses that
+/// Does trial division with a small wheel up to log(n) and then uses a Miller-Rabin
+/// primality test with a set of witnesses that
 /// is known to be sufficient for numbers that fit in a `u64`.
 ///
 /// # Example
@@ -14,11 +15,19 @@
 /// ```
 #[must_use]
 pub const fn is_prime(n: u64) -> bool {
-    if n == 2 || n == 3 || n == 5 || n == 7 {
+    if n == 2 || n == 3 {
         true
-    } else if n <= 1 || n % 2 == 0 || n % 3 == 0 || n % 5 == 0 || n % 7 == 0 {
+    } else if n <= 1 || n % 2 == 0 || n % 3 == 0 {
         false
     } else {
+        let mut candidate_factor = 5;
+        while candidate_factor < n.ilog2() as u64 {
+            if n % candidate_factor == 0 || n % (candidate_factor + 2) == 0 {
+                return false;
+            }
+            candidate_factor += 6;
+        }
+
         // Find r such that n = 2^d * r + 1 for some r >= 1
         let mut d = n - 1;
         while d % 2 == 0 {
