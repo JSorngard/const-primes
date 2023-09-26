@@ -103,6 +103,8 @@ mod test {
             println!(" be prime");
             assert_eq!(is_prime(x as u64), ans);
         }
-        assert_eq!(is_prime(18446744073709551557), true);
+        assert!(is_prime(65521));
+        assert!(is_prime(4294967291));
+        assert!(is_prime(18446744073709551557));
     }
 }
