@@ -1,4 +1,4 @@
-//! A crate for generating prime numbers at compile time.
+//! A crate for generating and working with prime numbers in const contexts.
 //!
 //! Also contains various functions for computing other things related to prime numbers in `const` contexts.
 //!
