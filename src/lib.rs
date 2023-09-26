@@ -242,7 +242,7 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 }
 
 /// Returns the largest prime smaller than or equal to `n` if there is one.
-/// 
+///
 /// Scans for primes downwards from the input with [`is_prime`].
 ///
 /// # Examples
@@ -279,7 +279,7 @@ pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
 /// can be represented by a `u64`.
 ///
 /// Scans for primes upwards from the input with [`is_prime`].
-/// 
+///
 /// # Example
 /// ```
 /// # use const_primes::smallest_prime_geq;
@@ -296,6 +296,8 @@ pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
     // The largest prime smaller than 2^64
     if n > 18446744073709551557 {
         None
+    } else if n <= 2 {
+        Some(2)
     } else {
         if n % 2 == 0 {
             n += 1;
@@ -408,6 +410,13 @@ mod test {
                 Some(PRECOMPUTED_PRIMES[i - 1] as u64)
             );
         }
+
+        assert_eq!(smallest_prime_geq(0), Some(2));
+        assert_eq!(smallest_prime_geq(1), Some(2));
+        assert_eq!(smallest_prime_geq(2), Some(2));
+        assert_eq!(largest_prime_leq(0), None);
+        assert_eq!(largest_prime_leq(1), None);
+        assert_eq!(largest_prime_leq(2), Some(2));
     }
 
     #[rustfmt::skip]
