@@ -242,6 +242,8 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 }
 
 /// Returns the largest prime smaller than or equal to `n` if there is one.
+/// 
+/// Scans for primes downwards from the input with [`is_prime`].
 ///
 /// # Examples
 /// ```
@@ -276,6 +278,8 @@ pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
 /// Returns the smallest prime greater than or equal to `n` if there is one that
 /// can be represented by a `u64`.
 ///
+/// Scans for primes upwards from the input with [`is_prime`].
+/// 
 /// # Example
 /// ```
 /// # use const_primes::smallest_prime_geq;
