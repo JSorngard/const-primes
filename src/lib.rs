@@ -73,8 +73,8 @@
 // This is used since there is currenlty no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-mod wrapper;
 mod miller_rabin;
+mod wrapper;
 pub use miller_rabin::is_prime;
 pub use wrapper::Primes;
 
