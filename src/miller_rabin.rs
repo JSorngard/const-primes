@@ -30,11 +30,11 @@ pub const fn is_prime(n: u64) -> bool {
         // This list of witnesses was taken from https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Testing_against_small_sets_of_bases
         // and is sufficient for all numbers smaller than 2^64.
         const NUM_WITNESSES: usize = 12;
-        let witnesses: [u64; NUM_WITNESSES] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
+        const WITNESSES: [u64; NUM_WITNESSES] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
 
         let mut i = 0;
-        while i < NUM_WITNESSES && witnesses[i] < n {
-            if !miller_test(d, n, witnesses[i]) {
+        while i < NUM_WITNESSES && WITNESSES[i] < n {
+            if !miller_test(d, n, WITNESSES[i]) {
                 return false;
             }
             i += 1;
