@@ -96,11 +96,6 @@ mod test {
         #[rustfmt::skip]
         const TEST_CASES: [bool; 100] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false];
         for (x, ans) in TEST_CASES.into_iter().enumerate() {
-            print!("{x} should");
-            if !ans {
-                print!(" not");
-            }
-            println!(" be prime");
             assert_eq!(is_prime(x as u64), ans);
         }
         assert!(is_prime(65521));
