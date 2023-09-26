@@ -16,7 +16,7 @@
 pub const fn is_prime(n: u64) -> bool {
     if n == 2 || n == 3 {
         true
-    } else if n <= 1 || n % 2 == 0 || n % 3 == 0 {
+    } else if n <= 1 || n % 2 == 0 || n % 3 == 0 || n % 5 == 0 || n % 7 == 0 {
         false
     } else {
         // Find r such that n = 2^d * r + 1 for some r >= 1
