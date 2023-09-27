@@ -1,4 +1,4 @@
-//! This module contains const math operations of integers.
+//! This module contains const math operations on integers.
 
 /// Returns the largest integer smaller than or equal to √n.
 ///
