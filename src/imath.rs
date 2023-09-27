@@ -22,6 +22,28 @@ pub const fn isqrt(n: u64) -> u64 {
     left
 }
 
+/// Calculates (a ^ b) % m without overflow.
+pub const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
+    let mut res = 1;
+
+    base %= modulo;
+
+    while exp > 0 {
+        if exp % 2 == 1 {
+            res = mod_mul(res, base, modulo);
+        }
+        base = mod_mul(base, base, modulo);
+        exp >>= 1;
+    }
+
+    res
+}
+
+/// Calculates (a * b) % m without overflow.
+pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
+    ((a as u128 * b as u128) % modulo as u128) as u64
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

@@ -1,5 +1,7 @@
 //! This module contains an implementation of a deterministic Miller-Rabin primality test
 
+use crate::imath::{mod_mul, mod_pow};
+
 /// Returns whether `n` is prime.
 ///
 /// Does trial division with a small wheel up to log2(`n`) and then uses a Miller-Rabin
@@ -72,28 +74,6 @@ const fn miller_test(mut d: u64, n: u64, k: u64) -> bool {
     }
 
     false
-}
-
-/// Returns (a ^ b) % m.
-const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
-    let mut res = 1;
-
-    base %= modulo;
-
-    while exp > 0 {
-        if exp % 2 == 1 {
-            res = mod_mul(res, base, modulo);
-        }
-        base = mod_mul(base, base, modulo);
-        exp >>= 1;
-    }
-
-    res
-}
-
-/// Calculates (a * b) % m without overflow.
-const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
-    ((a as u128 * b as u128) % modulo as u128) as u64
 }
 
 #[cfg(test)]
