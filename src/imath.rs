@@ -1,3 +1,5 @@
+//! This module contains const math operations of integers.
+
 /// Returns the largest integer smaller than or equal to √n.
 ///
 /// Uses a binary search.
