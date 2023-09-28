@@ -2,9 +2,6 @@
 //!
 //! `#![no_std]` compatible.
 //!
-//! Since panicking is a compile error in const contexts, and that is where this crate
-//! is targeted, the functions in this crate use panicking as error handling.
-//!
 //! # Examples
 //! Generate arrays of prime numbers with the function [`primes`] which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 //! ```
