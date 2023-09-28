@@ -173,7 +173,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
-/// Returns the prime status of the `N` largest integers below `upper_limit`.  
+/// Returns an array that indicates which of the `N` largest integers below `upper_limit` are prime.
+/// 
 /// The value at a given index represents whether `index + upper_limit - N` is prime.
 ///
 /// If you just want the prime status of the first `N` integers, see [`are_prime`].
@@ -185,7 +186,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// and then uses the result to sieve the output range.
 ///
 /// # Examples
-/// Basic usage.
+/// Basic usage
 /// ```
 /// # use const_primes::are_prime_below;
 /// const PRIME_STATUSES: [bool; 10] = are_prime_below(30);
@@ -196,7 +197,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///     [false, false, false, true, false, false, false, false, false, true],
 /// );
 /// ```
-/// Sieve limited ranges of very large values.
+/// Sieve limited ranges of very large values
 /// ```
 /// # use const_primes::are_prime_below;
 /// const BIG_NUMBER: u64 = 5_000_000_000;

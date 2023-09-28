@@ -4,7 +4,7 @@ use crate::imath::{mod_mul, mod_pow};
 
 /// Returns whether `n` is prime.
 ///
-/// Does trial division with a small wheel up to log2(`n`) and then uses a Miller-Rabin
+/// Does trial division with a small wheel up to `log2(n)` and then uses a Miller-Rabin
 /// primality test with a set of witnesses that
 /// is known to be sufficient for numbers that fit in a `u64`.
 ///
