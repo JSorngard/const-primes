@@ -63,8 +63,8 @@
 //! # use const_primes::are_prime_below;
 //! const N: usize = 1001;
 //! const BIG_PRIME_STATUS: [bool; N] = are_prime_below(1_000_005);
-//! //                                   1_000_002       1_000_003      1_000_004
-//! assert_eq!(BIG_PRIME_STATUS[998..], [false,          true,          false]);
+//! //                                   1_000_002   1_000_003   1_000_004
+//! assert_eq!(BIG_PRIME_STATUS[998..], [false,      true,       false]);
 //! ```
 //! and more!
 
