@@ -43,25 +43,27 @@
 //! ```
 //! ## Other functionality
 //!
-//! Use [`are_prime`] to compute the prime status of all integers below a given value
+//! Use [`is_prime`] to test whether a given number is prime,
+//! ```
+//! # use const_primes::is_prime;
+//! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
+//! assert!(CHECK);
+//! ```
+//! or [`are_prime`] to compute the prime status of the `N` first integers, 
 //! ```
 //! # use const_primes::are_prime;
 //! const PRIME_STATUS: [bool; 10] = are_prime();
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//! or [`is_prime`] to test whether a given number is prime.
+//! or [`are_prime_below`] to compute the prime status of the `N` largest integers below a given value,
 //! ```
-//! # use const_primes::is_prime;
-//! const CHECK: bool = is_prime(2_147_483_629);
-//! assert!(CHECK);
+//! # use const_primes::are_prime_below;
+//! const BIG_PRIME_STATUS: [bool; 1001] = are_prime_below(1_000_005);
+//! //                                   1_000_002       1_000_003      1_000_004
+//! assert_eq!(BIG_PRIME_STATUS[998..], [false,          true,          false]);
 //! ```
-//! or [`prime_counts`] to count the number of primes less than or equal to each index of an array
-//! ```
-//! # use const_primes::prime_counts;
-//! const COUNTS: [usize; 10] = prime_counts();
-//! assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
-//! ```
+//! and more!
 
 #![forbid(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
@@ -174,16 +176,12 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
-/// Returns an array that indicates which of the `N` largest integers below `upper_limit` are prime.
-///
-/// The value at a given index represents whether `index + upper_limit - N` is prime.
-///
+/// Returns an array that indicates which of the integers in `[upper_limit - N, upper_limit)` are prime, 
+/// or in other words: the value at a given index represents whether `index + upper_limit - N` is prime.
+/// 
 /// If you just want the prime status of the first `N` integers, see [`are_prime`].
 ///
-/// Panics if `upper_limit` is not in the range `[N, N^2]`. This is a compile error in
-/// const contexts.
-///
-/// Uses a sieve of Eratosthenes to sieve the first `N` numbers
+/// Uses a sieve of Eratosthenes to sieve the first `N` integers
 /// and then uses the result to sieve the output range if needed.
 ///
 /// # Examples
