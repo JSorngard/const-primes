@@ -184,7 +184,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// const contexts.
 ///
 /// Uses a sieve of Eratosthenes to sieve the first `N` numbers
-/// and then uses the result to sieve the output range.
+/// and then uses the result to sieve the output range if needed.
 ///
 /// # Examples
 /// Basic usage
