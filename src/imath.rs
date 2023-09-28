@@ -1,6 +1,7 @@
-//! This module contains const math operations on integers.
+//! This module contains const math operations on integers that are used by the other
+//! functions in the crate.
 
-/// Returns the largest integer smaller than or equal to √n.
+/// Returns the largest integer smaller than or equal to `√n`.
 ///
 /// Uses a binary search.
 #[must_use]
@@ -24,7 +25,7 @@ pub const fn isqrt(n: u64) -> u64 {
     left
 }
 
-/// Calculates (a ^ b) % m without overflow.
+/// Calculates `(base ^ exp) % modulo` without overflow.
 #[must_use]
 pub const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
     let mut res = 1;
@@ -42,7 +43,7 @@ pub const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
     res
 }
 
-/// Calculates (a * b) % m without overflow.
+/// Calculates `(a * b) % modulo` without overflow.
 #[must_use]
 pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
     ((a as u128 * b as u128) % modulo as u128) as u64
