@@ -109,32 +109,30 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     // This keeps track of how many primes we've found so far.
     let mut prime_count = 0;
 
-    {
-        // Sieve the first primes below N
-        let is_prime: [bool; N] = are_prime();
-        // in a new scope to ensure this array drops when it's no longer needed.
+    // Sieve the first primes below N
+    let mut sieve: [bool; N] = are_prime();
 
-        // Count how many primes we found
-        // and store them in the final array
-        let mut number = 0;
-        while number < N {
-            if is_prime[number] {
-                primes[prime_count] = number as Underlying;
-                prime_count += 1;
-            }
-
-            number += 1;
+    // Count how many primes we found
+    // and store them in the final array
+    let mut number = 0;
+    while number < N {
+        if sieve[number] {
+            primes[prime_count] = number as Underlying;
+            prime_count += 1;
         }
+
+        number += 1;
     }
 
     // For every segment of N numbers
     let mut low = N - 1;
     let mut high = 2 * N - 1;
     'generate: while prime_count < N {
-        let mut mark = [true; N];
+        // reset the sieve for the segment
+        sieve = [true; N];
         let mut i = 0;
 
-        // repeat for each prime found so far:
+        // and repeat for each prime found so far:
         while i < prime_count {
             let prime = primes[i] as usize;
 
@@ -146,7 +144,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 
             // and sieve all numbers in the segment that are multiples of the prime.
             while composite < high {
-                mark[composite - low] = false;
+                sieve[composite - low] = false;
                 composite += prime;
             }
 
@@ -156,7 +154,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
         // Move the found primes into the final array
         i = low;
         while i < high {
-            if mark[i - low] {
+            if sieve[i - low] {
                 primes[prime_count] = i as Underlying;
                 prime_count += 1;
                 // and stop the generation of primes if we're done.
