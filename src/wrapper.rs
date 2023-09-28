@@ -24,10 +24,6 @@ use crate::{primes, Underlying};
 /// assert!(CACHE.count_primes_leq(1000).is_none());
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
-#[cfg_attr(
-    feature = "serde_support",
-    derive(serde::Serialize, serde::Deserialize)
-)]
 pub struct Primes<const N: usize> {
     primes: [Underlying; N],
 }
