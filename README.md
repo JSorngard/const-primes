@@ -44,15 +44,17 @@ Use `is_prime` to test whether a given number is prime
 const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 assert!(CHECK);
 ```
-or `are_prime` to compute the prime status of the first `N` integers,
+or `are_prime` to compute the prime status of the `N` first integers,
 ```rust
-const PRIME_STATUS: [bool; 10] = are_prime();
+const N: usize = 10;
+const PRIME_STATUS: [bool; N] = are_prime();
 //                        0      1      2     3     4      5     6      7     8      9
 assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 ```
 or `are_prime_below` to compute the prime status of the `N` largest integers below a given value,
 ```rust
-const BIG_PRIME_STATUS: [bool; 1001] = are_prime_below(1_000_005);
+const N: usize = 1001;
+const BIG_PRIME_STATUS: [bool; N] = are_prime_below(1_000_005);
 //                                   1_000_002       1_000_003      1_000_004
 assert_eq!(BIG_PRIME_STATUS[998..], [false,          true,          false]);
 ```
