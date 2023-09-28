@@ -49,7 +49,7 @@
 //! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 //! assert!(CHECK);
 //! ```
-//! or [`are_prime`] to compute the prime status of the `N` first integers, 
+//! or [`are_prime`] to compute the prime status of the `N` first integers,
 //! ```
 //! # use const_primes::are_prime;
 //! const PRIME_STATUS: [bool; 10] = are_prime();
@@ -176,9 +176,9 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
-/// Returns an array of size `N` that indicates which of the integers in `[upper_limit - N, upper_limit)` are prime, 
+/// Returns an array of size `N` that indicates which of the integers in `[upper_limit - N, upper_limit)` are prime,
 /// or in other words: the value at a given index represents whether `index + upper_limit - N` is prime.
-/// 
+///
 /// If you just want the prime status of the first `N` integers, see [`are_prime`].
 ///
 /// Uses a sieve of Eratosthenes to sieve the first `N` integers

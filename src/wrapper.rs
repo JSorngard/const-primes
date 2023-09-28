@@ -23,7 +23,7 @@ use crate::{primes, Underlying};
 /// assert!(CACHE.is_prime(1000).is_none());
 /// assert!(CACHE.count_primes_leq(1000).is_none());
 /// ```
-#[derive(Debug, Clone, Copy, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
 #[cfg_attr(
     feature = "serde_support",
     derive(serde::Serialize, serde::Deserialize)
@@ -300,6 +300,8 @@ impl<const N: usize> From<Primes<N>> for [Underlying; N] {
     }
 }
 
+// region: AsRef
+
 impl<const N: usize> AsRef<[Underlying]> for Primes<N> {
     #[inline]
     fn as_ref(&self) -> &[Underlying] {
@@ -314,6 +316,8 @@ impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
     }
 }
 
+// endregion: AsRef
+
 impl<const N: usize> IntoIterator for Primes<N> {
     type Item = <[Underlying; N] as IntoIterator>::Item;
     type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
@@ -321,6 +325,8 @@ impl<const N: usize> IntoIterator for Primes<N> {
         self.primes.into_iter()
     }
 }
+
+// region: PartialEq
 
 impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
     fn eq(&self, other: &T) -> bool {
@@ -339,6 +345,31 @@ impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
         self == &other.primes
     }
 }
+
+// endregion: PartialEq
+
+// region: PartialOrd
+
+use core::cmp::Ordering;
+impl<const N: usize, T: PartialOrd<[Underlying; N]>> PartialOrd<T> for Primes<N> {
+    fn partial_cmp(&self, other: &T) -> Option<Ordering> {
+        other.partial_cmp(&self.primes)
+    }
+}
+
+impl<const N: usize> PartialOrd<Primes<N>> for [Underlying; N] {
+    fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
+        other.primes.partial_cmp(self)
+    }
+}
+
+impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
+    fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
+        other.primes.as_slice().partial_cmp(self)
+    }
+}
+
+// endregion: PartialOrd
 
 #[cfg(test)]
 mod test {
