@@ -39,22 +39,24 @@ assert!(CACHE.count_primes_leq(1000).is_none());
 Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.  
 
 ### Other functionality
-Use `are_prime` to compute the prime status of all integers below a given value
+Use `is_prime` to test whether a given number is prime
+```rust
+const CHECK: bool = is_prime(18_446_744_073_709_551_557);
+assert!(CHECK);
+```
+or `are_prime` to compute the prime status of all integers below a given value
 ```rust
 const PRIME_STATUS: [bool; 10] = are_prime();
 //                        0      1      2     3     4      5     6      7     8      9
 assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 ```
-or `is_prime` to test whether a given number is prime
+or `are_prime_below` to compute the prime status of the `N` largest integers below a given value,
 ```rust
-const CHECK: bool = is_prime(2_147_483_629);
-assert!(CHECK);
+const BIG_PRIME_STATUS: [bool; 1001] = are_prime_below(1_000_005);
+//                                   1_000_002       1_000_003      1_000_004
+assert_eq!(BIG_PRIME_STATUS[998..], [false,          true,          false]);
 ```
-or `prime_counts` to count the number of primes less than or equal to each index of an array
-```rust
-const COUNTS: [usize; 10] = prime_counts();
-assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
-```
+and more!
 
 ## License
 
