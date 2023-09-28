@@ -23,7 +23,7 @@ use crate::{primes, Underlying};
 /// assert!(CACHE.is_prime(1000).is_none());
 /// assert!(CACHE.count_primes_leq(1000).is_none());
 /// ```
-#[derive(Debug, Clone, Copy, Hash)]
+#[derive(Debug, Clone, Copy, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(
     feature = "serde_support",
     derive(serde::Serialize, serde::Deserialize)
@@ -328,18 +328,17 @@ impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
     }
 }
 
-macro_rules! impl_partial_eq {
-    ($($t:ty),+) => {
-        $(
-            impl<const N: usize> PartialEq<Primes<N>> for $t {
-                fn eq(&self, other: &Primes<N>) -> bool {
-                    self == &other.primes
-                }
-            }
-        )+
-    };
+impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
+    fn eq(&self, other: &Primes<N>) -> bool {
+        self == &other.primes
+    }
 }
-impl_partial_eq! {[Underlying; N], &[Underlying]}
+
+impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
+    fn eq(&self, other: &Primes<N>) -> bool {
+        self == &other.primes
+    }
+}
 
 #[cfg(test)]
 mod test {
