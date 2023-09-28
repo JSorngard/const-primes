@@ -44,7 +44,7 @@ Use `is_prime` to test whether a given number is prime
 const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 assert!(CHECK);
 ```
-or `are_prime` to compute the prime status of all integers below a given value
+or `are_prime` to compute the prime status of the first `N` integers,
 ```rust
 const PRIME_STATUS: [bool; 10] = are_prime();
 //                        0      1      2     3     4      5     6      7     8      9
