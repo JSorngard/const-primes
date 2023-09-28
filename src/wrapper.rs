@@ -347,19 +347,19 @@ mod test {
 
     #[test]
     fn ensure_partial_eq_is_implemented() {
-        const P1: Primes<10> = Primes::new();
+        const P1: Primes<3> = Primes::new();
         macro_rules! partial_eq_check {
             ($($t:expr),+) => {
                 $(
-                    assert_ne!(P1, $t);
-                    assert_ne!(&P1, &$t);
-                    assert_ne!(&$t, &P1);
-                    assert_ne!($t, P1);
+                    assert_eq!(P1, $t);
+                    assert_eq!(&P1, &$t);
+                    assert_eq!(&$t, &P1);
+                    assert_eq!($t, P1);
                 )+
             };
         }
-        let v = vec![0; 10];
-        partial_eq_check!([0; 10], v, v.as_slice());
+        let v = vec![2, 3, 5];
+        partial_eq_check!([2, 3, 5], v, v.as_slice());
     }
 
     #[test]
