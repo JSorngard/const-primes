@@ -339,7 +339,7 @@ macro_rules! impl_partial_eq {
         )+
     };
 }
-impl_partial_eq! {[Underlying; N], Vec<Underlying>, &[Underlying]}
+impl_partial_eq! {[Underlying; N], &[Underlying]}
 
 #[cfg(test)]
 mod test {
@@ -359,7 +359,7 @@ mod test {
             };
         }
         let v = vec![2, 3, 5];
-        partial_eq_check!([2, 3, 5], v, v.as_slice());
+        partial_eq_check!([2, 3, 5], v.as_slice());
     }
 
     #[test]
