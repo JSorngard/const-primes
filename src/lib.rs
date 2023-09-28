@@ -378,13 +378,13 @@ pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
 /// Primes larger than 18446744073709551557 can not be represented by a `u64`
 /// ```
 /// # use const_primes::smallest_prime_geq;
-/// const NOSUCH: Option<u64> = smallest_prime_geq(18446744073709551558);
+/// const NOSUCH: Option<u64> = smallest_prime_geq(18_446_744_073_709_551_558);
 /// assert!(NOSUCH.is_none());
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
     // The largest prime smaller than 2^64
-    if n > 18446744073709551557 {
+    if n > 18_446_744_073_709_551_557 {
         None
     } else if n <= 2 {
         Some(2)
