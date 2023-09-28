@@ -24,6 +24,10 @@ use crate::{primes, Underlying};
 /// assert!(CACHE.count_primes_leq(1000).is_none());
 /// ```
 #[derive(Debug, Clone, Copy, Hash)]
+#[cfg_attr(
+    feature = "serde_support",
+    derive(serde::Serialize, serde::Deserialize)
+)]
 pub struct Primes<const N: usize> {
     primes: [Underlying; N],
 }
@@ -289,12 +293,6 @@ where
     }
 }
 
-impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
-    fn eq(&self, other: &Primes<N>) -> bool {
-        self == &other.primes
-    }
-}
-
 impl<const N: usize> From<Primes<N>> for [Underlying; N] {
     #[inline]
     fn from(const_primes: Primes<N>) -> Self {
@@ -330,9 +328,39 @@ impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
     }
 }
 
+macro_rules! impl_partial_eq {
+    ($($t:ty),+) => {
+        $(
+            impl<const N: usize> PartialEq<Primes<N>> for $t {
+                fn eq(&self, other: &Primes<N>) -> bool {
+                    self == &other.primes
+                }
+            }
+        )+
+    };
+}
+impl_partial_eq! {[Underlying; N], Vec<Underlying>, &[Underlying]}
+
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn ensure_partial_eq_is_implemented() {
+        const P1: Primes<10> = Primes::new();
+        macro_rules! partial_eq_check {
+            ($($t:expr),+) => {
+                $(
+                    assert_ne!(P1, $t);
+                    assert_ne!(&P1, &$t);
+                    assert_ne!(&$t, &P1);
+                    assert_ne!($t, P1);
+                )+
+            };
+        }
+        let v = vec![0; 10];
+        partial_eq_check!([0; 10], v, v.as_slice());
+    }
 
     #[test]
     fn check_binary_search() {
