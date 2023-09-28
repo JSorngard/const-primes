@@ -21,4 +21,5 @@ name = "prime_benches"
 harness = false
 
 [features]
+## Derive [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) for [`Primes`]
 serde_support = ["dep:serde"]
