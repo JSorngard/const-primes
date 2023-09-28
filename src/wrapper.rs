@@ -125,6 +125,8 @@ impl<const N: usize> Primes<N> {
         Some(count)
     }
 
+    // region: Next prime
+
     /// Returns the largest prime less than or equal to `n`.  
     /// If `n` is 0, 1, or larger than the largest prime in `self` this returns `None`.
     ///
@@ -168,6 +170,8 @@ impl<const N: usize> Primes<N> {
         }
     }
 
+    // endregion: Next prime
+
     /// Searches the underlying array of primes for the target integer.
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
     /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
@@ -199,6 +203,8 @@ impl<const N: usize> Primes<N> {
         }
     }
 
+    // region: Conversions
+
     /// Converts `self` into an array of size `N`.
     ///
     /// # Example
@@ -227,6 +233,8 @@ impl<const N: usize> Primes<N> {
     pub const fn as_slice(&self) -> &[Underlying] {
         self.primes.as_slice()
     }
+
+    // endregion: Conversions
 
     /// Returns a reference to the element at the given index if it is within bounds.
     ///
