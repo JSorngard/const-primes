@@ -90,6 +90,7 @@ pub use wrapper::Primes;
 /// ```
 /// # Panics
 /// Panics if a computed prime overflows a `u32`. This will result in a compile error in a const context.  
+#[must_use = "the function only returns a new value"]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     if N == 0 {
         return [0; N];
@@ -174,7 +175,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 }
 
 /// Returns an array that indicates which of the `N` largest integers below `upper_limit` are prime.
-/// 
+///
 /// The value at a given index represents whether `index + upper_limit - N` is prime.
 ///
 /// If you just want the prime status of the first `N` integers, see [`are_prime`].
@@ -220,17 +221,20 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// # use const_primes::are_prime_below;
 /// const PRIME_STATUSES: [bool; 5] = are_prime_below(4);
 /// ```
+#[must_use = "the function returns a new value and does not modify its input"]
 pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
     let n64 = N as u64;
+
     assert!(
         upper_limit <= n64 * n64,
         "`upper_limit` can not be larger than `N`^2"
     );
     assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
+
     let lower_limit = upper_limit - n64;
 
+    // Use a normal sieve of Eratosthenes for the first N numbers.
     let base_sieve: [bool; N] = {
-        // Use a normal sieve of Eratosthenes for the first N numbers.
         let mut base_sieve = [true; N];
         if N > 0 {
             base_sieve[0] = false;
@@ -241,12 +245,17 @@ pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
 
         let mut number: usize = 2;
         let bound = isqrt(n64);
+        // For all numbers up to and including sqrt(n):
         while (number as u64) <= bound {
             if base_sieve[number] {
+                // If a number is prime we enumerate all multiples of it
+                // starting from its square,
                 let mut composite = match number.checked_mul(number) {
                     Some(prod) => prod,
                     None => break,
                 };
+
+                // and mark them as not prime.
                 while composite < N {
                     base_sieve[composite] = false;
                     composite = match composite.checked_add(number) {
@@ -262,7 +271,7 @@ pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
     };
 
     if upper_limit == n64 {
-        // If we are not interested in sieving a larger range we can just return early
+        // If we are not interested in sieving a larger range we can just return early.
         return base_sieve;
     }
 
@@ -315,6 +324,7 @@ pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
 /// //                     0      1      2     3     4      5     6      7     8      9
 /// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
 /// ```
+#[must_use = "the function only returns a new value"]
 pub const fn are_prime<const N: usize>() -> [bool; N] {
     are_prime_below(N as u64)
 }
@@ -335,6 +345,7 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 /// const NOSUCH: Option<u64> = largest_prime_leq(1);
 /// assert!(NOSUCH.is_none());
 /// ```
+#[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
     if n == 0 || n == 1 {
         None
@@ -370,6 +381,7 @@ pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
 /// const NOSUCH: Option<u64> = smallest_prime_geq(18446744073709551558);
 /// assert!(NOSUCH.is_none());
 /// ```
+#[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
     // The largest prime smaller than 2^64
     if n > 18446744073709551557 {
@@ -400,6 +412,7 @@ pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
 /// const COUNTS: [usize; 10] = prime_counts();
 /// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 /// ```
+#[must_use = "the function only returns a new value"]
 pub const fn prime_counts<const N: usize>() -> [usize; N] {
     let prime_status: [bool; N] = are_prime();
     let mut counts = [0; N];
