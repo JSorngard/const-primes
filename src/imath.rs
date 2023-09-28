@@ -7,7 +7,7 @@
 #[must_use]
 pub const fn isqrt(n: u64) -> u64 {
     if n == u64::MAX {
-        return 4294967296;
+        return 4_294_967_296;
     }
 
     let mut left = 0;
