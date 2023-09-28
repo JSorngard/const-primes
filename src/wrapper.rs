@@ -23,7 +23,7 @@ use crate::{primes, Underlying};
 /// assert!(CACHE.is_prime(1000).is_none());
 /// assert!(CACHE.count_primes_leq(1000).is_none());
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, Hash)]
 pub struct Primes<const N: usize> {
     primes: [Underlying; N],
 }
@@ -289,12 +289,6 @@ where
     }
 }
 
-impl<const N: usize> PartialEq<[Underlying; N]> for Primes<N> {
-    fn eq(&self, other: &[Underlying; N]) -> bool {
-        &self.primes == other
-    }
-}
-
 impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
     fn eq(&self, other: &Primes<N>) -> bool {
         self == &other.primes
@@ -327,6 +321,12 @@ impl<const N: usize> IntoIterator for Primes<N> {
     type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
     fn into_iter(self) -> Self::IntoIter {
         self.primes.into_iter()
+    }
+}
+
+impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
+    fn eq(&self, other: &T) -> bool {
+        other == &self.primes
     }
 }
 
