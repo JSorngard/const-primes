@@ -527,6 +527,7 @@ mod test {
                         let p: Primes<$n> = Primes::new();
                         assert_eq!(*p.last(), PRIMES[$n - 1]);
                         assert_eq!(p.len(), $n);
+                        assert_eq!(*p.last(), p[$n - 1]);
                     }
                 )+
             };
