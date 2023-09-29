@@ -536,11 +536,16 @@ mod test {
     }
 
     #[test]
-    fn verify_impl_from_primes_for_array() {
+    fn verify_impl_from_primes_traits() {
         const N: usize = 10;
         const P: Primes<N> = Primes::new();
         let p: [Underlying; N] = P.into();
         assert_eq!(P, p);
+        assert_eq!(p, P.as_ref());
+        assert_eq!(
+            P.as_array(),
+            <Primes<N> as AsRef<[Underlying; N]>>::as_ref(&P)
+        );
     }
 
     #[test]
