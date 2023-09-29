@@ -505,6 +505,19 @@ mod test {
     }
 
     #[test]
+    fn check_get() {
+        const N: usize = 10;
+        const P: Primes<N> = Primes::new();
+        const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+        for n in 0..N {
+            assert_eq!(P.get(n), Some(&A[n]));
+        }
+        for n in N + 1..2 * N {
+            assert!(P.get(n).is_none());
+        }
+    }
+
+    #[test]
     fn check_count_primes_leq() {
         const N: usize = 79;
         const PRIME_COUNTS: [usize; N] = [
