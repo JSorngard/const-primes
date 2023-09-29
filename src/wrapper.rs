@@ -466,6 +466,15 @@ mod test {
         assert_eq!(SPGEQ400, Some(401));
         assert_eq!(SPGEQ541, Some(541));
         assert_eq!(SPGEQ542, None);
+
+        const N: usize = 32;
+        const NEXT_PRIME: [u32; N] = [2, 2, 2, 3, 5, 5, 7, 7, 11, 11, 11, 11, 13, 13, 17, 17, 17, 17, 19, 19, 23, 23, 23, 23, 29, 29, 29, 29, 29, 29, 31, 31];
+        const P: Primes<N> = Primes::new();
+
+        for n in 0..N {
+            println!("{n}");
+            assert_eq!(P.smallest_prime_geq(n as u32), Some(NEXT_PRIME[n]));
+        }
     }
 
     #[test]
