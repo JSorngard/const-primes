@@ -536,6 +536,14 @@ mod test {
     }
 
     #[test]
+    fn verify_impl_from_primes_for_array() {
+        const N: usize = 10;
+        const P: Primes<N> = Primes::new();
+        let p: [Underlying; N] = P.into();
+        assert_eq!(P, p);
+    }
+
+    #[test]
     fn check_count_primes_leq() {
         const N: usize = 79;
         const PRIME_COUNTS: [usize; N] = [
