@@ -523,8 +523,10 @@ mod test {
         macro_rules! check_last_n {
             ($($n:literal),+) => {
                 $(
-                    {let p: Primes<$n> = Primes::new();
-                    assert_eq!(*p.last(), PRIMES[$n - 1]);}
+                    {
+                        let p: Primes<$n> = Primes::new();
+                        assert_eq!(*p.last(), PRIMES[$n - 1]);
+                    }
                 )+
             };
         }
