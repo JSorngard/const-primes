@@ -213,7 +213,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 ///
 /// # Panics
-/// Panics if `upper_limit` is not in the range `[N, N^2]`. This is a compile error in const contexts.
+/// Panics if `upper_limit` is not in the range `[N, N^2]`, or if `N^2` overflows a `u64`.
+/// These are compile errors in const contexts.
 /// ```compile_fail
 /// # use const_primes::are_prime_below;
 /// const PRIME_STATUSES: [bool; 5] = are_prime_below(26);
@@ -226,10 +227,15 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
     let n64 = N as u64;
 
-    assert!(
-        upper_limit <= n64 * n64,
-        "`upper_limit` can not be larger than `N`^2"
-    );
+    // Since panics are compile time errors in const contexts
+    // we check all the preconditions here and panic early.
+    match n64.checked_mul(n64) {
+        Some(prod) => assert!(
+            upper_limit <= prod,
+            "`upper_limit` must be smaller than or equal to `N`^2"
+        ),
+        None => panic!("`N`^2 must fit in a `u64`"),
+    }
     assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
 
     // Use a normal sieve of Eratosthenes for the first N numbers.
