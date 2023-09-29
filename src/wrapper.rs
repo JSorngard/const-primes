@@ -468,7 +468,10 @@ mod test {
         assert_eq!(SPGEQ542, None);
 
         const N: usize = 32;
-        const NEXT_PRIME: [u32; N] = [2, 2, 2, 3, 5, 5, 7, 7, 11, 11, 11, 11, 13, 13, 17, 17, 17, 17, 19, 19, 23, 23, 23, 23, 29, 29, 29, 29, 29, 29, 31, 31];
+        const NEXT_PRIME: [u32; N] = [
+            2, 2, 2, 3, 5, 5, 7, 7, 11, 11, 11, 11, 13, 13, 17, 17, 17, 17, 19, 19, 23, 23, 23, 23,
+            29, 29, 29, 29, 29, 29, 31, 31,
+        ];
         const P: Primes<N> = Primes::new();
 
         for n in 0..N {
@@ -478,9 +481,38 @@ mod test {
     }
 
     #[test]
+    fn verify_into_array() {
+        const N: usize = 10;
+        const P: Primes<N> = Primes::new();
+        const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+        assert_eq!(P.into_array(), A);
+    }
+
+    #[test]
+    fn verity_as_slice() {
+        const N: usize = 10;
+        const P: Primes<N> = Primes::new();
+        const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+        assert_eq!(P.as_slice(), &A);
+    }
+
+    #[test]
+    fn verify_as_array() {
+        const N: usize = 10;
+        const P: Primes<N> = Primes::new();
+        const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+        assert_eq!(P.as_array(), &A);
+    }
+
+    #[test]
     fn check_count_primes_leq() {
         const N: usize = 79;
-        const PRIME_COUNTS: [usize; N] = [0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 21, 21, 21, 21, 21, 21];
+        const PRIME_COUNTS: [usize; N] = [
+            0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9,
+            10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15,
+            15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20,
+            21, 21, 21, 21, 21, 21,
+        ];
         const P: Primes<N> = Primes::new();
 
         for n in 0..N {
