@@ -518,6 +518,20 @@ mod test {
     }
 
     #[test]
+    fn check_last() {
+        const PRIMES: [Underlying; 10] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+        macro_rules! check_last_n {
+            ($($n:literal),+) => {
+                $(
+                    {let p: Primes<$n> = Primes::new();
+                    assert_eq!(*p.last(), PRIMES[$n - 1]);}
+                )+
+            };
+        }
+        check_last_n!(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    }
+
+    #[test]
     fn check_count_primes_leq() {
         const N: usize = 79;
         const PRIME_COUNTS: [usize; N] = [
