@@ -3,7 +3,7 @@
 //! `#![no_std]` compatible.
 //!
 //! # Examples
-//! Generate arrays of prime numbers with the function [`primes`] which uses a 
+//! Generate arrays of prime numbers with the function [`primes`] which uses a
 //! [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 //! ```
 //! use const_primes::primes;
@@ -232,59 +232,26 @@ pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
     );
     assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
 
-    let lower_limit = upper_limit - n64;
-
     // Use a normal sieve of Eratosthenes for the first N numbers.
-    let base_sieve: [bool; N] = {
-        let mut base_sieve = [true; N];
-        if N > 0 {
-            base_sieve[0] = false;
-        }
-        if N > 1 {
-            base_sieve[1] = false;
-        }
-
-        let mut number: usize = 2;
-        let bound = isqrt(n64);
-        // For all numbers up to and including sqrt(n):
-        while (number as u64) <= bound {
-            if base_sieve[number] {
-                // If a number is prime we enumerate all multiples of it
-                // starting from its square,
-                let mut composite = match number.checked_mul(number) {
-                    Some(prod) => prod,
-                    None => break,
-                };
-
-                // and mark them as not prime.
-                while composite < N {
-                    base_sieve[composite] = false;
-                    composite = match composite.checked_add(number) {
-                        Some(sum) => sum,
-                        None => break,
-                    };
-                }
-            }
-            number += 1;
-        }
-
-        base_sieve
-    };
+    let base_sieve: [bool; N] = are_prime();
 
     if upper_limit == n64 {
         // If we are not interested in sieving a larger range we can just return early.
         return base_sieve;
     }
 
-    let mut upper_sieve = [true; N];
+    // Otherwise we use the base sieve to sieve the upper range
+    let mut segment_sieve = [true; N];
+
+    let lower_limit = upper_limit - n64;
 
     // In case 0 and/or 1 are included in the upper sieve we need to treat them as a special case
     // since they are not multiples of any prime in `base_sieve` even though they are not primes.
     if lower_limit == 0 && N > 1 {
-        upper_sieve[0] = false;
-        upper_sieve[1] = false;
+        segment_sieve[0] = false;
+        segment_sieve[1] = false;
     } else if lower_limit == 1 && N > 0 {
-        upper_sieve[0] = false;
+        segment_sieve[0] = false;
     }
 
     // For all the found primes
@@ -304,14 +271,14 @@ pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
 
             // Sieve all numbers in the segment that are multiples of the prime.
             while composite < upper_limit {
-                upper_sieve[(composite - lower_limit) as usize] = false;
+                segment_sieve[(composite - lower_limit) as usize] = false;
                 composite += prime;
             }
         }
         i += 1;
     }
 
-    upper_sieve
+    segment_sieve
 }
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
@@ -327,7 +294,39 @@ pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
 /// ```
 #[must_use = "the function only returns a new value"]
 pub const fn are_prime<const N: usize>() -> [bool; N] {
-    are_prime_below(N as u64)
+    let mut sieve = [true; N];
+    if N > 0 {
+        sieve[0] = false;
+    }
+    if N > 1 {
+        sieve[1] = false;
+    }
+
+    let mut number: usize = 2;
+    let bound = isqrt(N as u64);
+    // For all numbers up to and including sqrt(n):
+    while (number as u64) <= bound {
+        if sieve[number] {
+            // If a number is prime we enumerate all multiples of it
+            // starting from its square,
+            let mut composite = match number.checked_mul(number) {
+                Some(prod) => prod,
+                None => break,
+            };
+
+            // and mark them as not prime.
+            while composite < N {
+                sieve[composite] = false;
+                composite = match composite.checked_add(number) {
+                    Some(sum) => sum,
+                    None => break,
+                };
+            }
+        }
+        number += 1;
+    }
+
+    sieve
 }
 
 /// Returns the largest prime smaller than or equal to `n` if there is one.
