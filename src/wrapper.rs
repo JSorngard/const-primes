@@ -549,6 +549,14 @@ mod test {
     }
 
     #[test]
+    fn check_into_iter() {
+        const P: Primes<10> = Primes::new();
+        for (i, prime) in P.into_iter().enumerate() {
+            assert_eq!(prime, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29][i]);
+        }
+    }
+
+    #[test]
     fn check_count_primes_leq() {
         const N: usize = 79;
         const PRIME_COUNTS: [usize; N] = [
