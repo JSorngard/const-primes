@@ -202,13 +202,13 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Sieve limited ranges of very large values
 /// ```
 /// # use const_primes::are_prime_below;
-/// const BIG_NUMBER: u64 = 5_000_000_000;
-/// const SQRT_BIG_NUMBER: usize = 70711; // ceil(sqrt(BIG_NUMBER))
-/// const BIG_PRIME_STATUSES: [bool; SQRT_BIG_NUMBER] = are_prime_below(BIG_NUMBER);
+/// const BIG_NUMBER: u64 = 5_000_000_031;
+/// const CEIL_SQRT_BIG_NUMBER: usize = 70711;
+/// const BIG_PRIME_STATUSES: [bool; CEIL_SQRT_BIG_NUMBER] = are_prime_below(BIG_NUMBER);
 /// assert_eq!(
-///     BIG_PRIME_STATUSES[SQRT_BIG_NUMBER - 65..SQRT_BIG_NUMBER - 60],
-/// //  4999999935 4999999936 4999999937 4999999938 4999999939
-///     [false,    false,     true,      false,     false],
+///     BIG_PRIME_STATUSES[CEIL_SQRT_BIG_NUMBER - 3..],
+/// //  5_000_000_028  5_000_000_029  5_000_000_030
+///     [false,        true,          false],
 /// );
 /// ```
 ///
