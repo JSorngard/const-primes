@@ -380,7 +380,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn ensure_partial_eq_is_implemented() {
+    fn partial_eq_impl() {
         const P1: Primes<3> = Primes::new();
         macro_rules! partial_eq_check {
             ($($t:expr),+) => {
@@ -394,6 +394,36 @@ mod test {
         }
         let v = vec![2, 3, 5];
         partial_eq_check!([2, 3, 5], v.as_slice());
+    }
+
+    #[test]
+    fn clone_impl() {
+        const P1: Primes<10> = Primes::new();
+        let p2: Primes<10> = P1.clone();
+        assert_eq!(P1, p2);
+    }
+
+    #[test]
+    fn copy_impl() {
+        const P1: Primes<10> = Primes::new();
+        const P2: Primes<10> = P1;
+        assert_eq!(P1, P2);
+        fn take_by_move<const N: usize>(p: Primes<N>) -> Primes<N> {
+            p
+        }
+        assert_eq!(P1, take_by_move(P1));
+    }
+
+    #[test]
+    fn hash_impl() {
+        use std::collections::HashSet;
+
+        const P: Primes<10> = Primes::new();
+
+        let mut set = HashSet::<Primes<10>>::new();
+        set.insert(P);
+        let p2: Vec<Primes<10>> = set.drain().collect();
+        assert_eq!(P, p2[0]);
     }
 
     #[test]
@@ -436,5 +466,20 @@ mod test {
         assert_eq!(SPGEQ400, Some(401));
         assert_eq!(SPGEQ541, Some(541));
         assert_eq!(SPGEQ542, None);
+    }
+
+    #[test]
+    fn check_count_primes_leq() {
+        const N: usize = 79;
+        const PRIME_COUNTS: [usize; N] = [0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 16, 16, 17, 17, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 20, 20, 21, 21, 21, 21, 21, 21];
+        const P: Primes<N> = Primes::new();
+
+        for n in 0..N {
+            assert_eq!(P.count_primes_leq(n as u32), Some(PRIME_COUNTS[n]));
+        }
+
+        for n in *P.last() + 1..*P.last() * 2 {
+            assert!(P.count_primes_leq(n as u32).is_none());
+        }
     }
 }
