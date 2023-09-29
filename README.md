@@ -1,3 +1,5 @@
+[![Latest Version](https://img.shields.io/crates/v/const-primes.svg)](https://crates.io/crates/const-primes)
+
 # const-primes
 
 A crate for generating and working with prime numbers in const contexts.
