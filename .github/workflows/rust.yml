@@ -2,8 +2,16 @@ name: Rust
 
 on:
   push:
+    paths:
+      - 'src/**'
+      - 'benches/**'
+      - 'Cargo.toml'
     branches: [ "main" ]
   pull_request:
+    paths:
+      - 'src/**'
+      - 'benches/**'
+      - 'Cargo.toml'
     branches: [ "main" ]
 
 env:
