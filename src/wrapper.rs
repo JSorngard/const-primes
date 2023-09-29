@@ -518,7 +518,7 @@ mod test {
     }
 
     #[test]
-    fn check_last() {
+    fn check_last_and_len() {
         const PRIMES: [Underlying; 10] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
         macro_rules! check_last_n {
             ($($n:literal),+) => {
@@ -526,6 +526,7 @@ mod test {
                     {
                         let p: Primes<$n> = Primes::new();
                         assert_eq!(*p.last(), PRIMES[$n - 1]);
+                        assert_eq!(p.len(), $n);
                     }
                 )+
             };
