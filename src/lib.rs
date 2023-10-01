@@ -61,17 +61,17 @@
 //! or [`are_prime_below`] to compute the prime status of the `N` largest integers below a given value,
 //! ```
 //! # use const_primes::are_prime_below;
-//! const N: usize = 1001;
-//! const BIG_PRIME_STATUS: [bool; N] = are_prime_below(1_000_005);
-//! //                                   1_000_002   1_000_003   1_000_004
-//! assert_eq!(BIG_PRIME_STATUS[998..], [false,      true,       false]);
+//! const N: usize = 70711;
+//! const BIG_PRIME_STATUS: [bool; N] = are_prime_below(5_000_000_031);
+//! //                                     5_000_000_028  5_000_000_029  5_000_000_030
+//! assert_eq!(BIG_PRIME_STATUS[N - 3..], [false,         true,          false]);
 //! ```
 //! and more!
 
 #![forbid(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
 
-/// The functions that return or take integers use this type. Currently `u32`.
+/// The type that Primes<N> stores, and primes::<N>() returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
