@@ -6,23 +6,28 @@
 /// Uses a binary search.
 #[must_use]
 pub const fn isqrt(n: u64) -> u64 {
-    if n == u64::MAX {
-        return 4_294_967_296;
-    }
+    match n {
+        0 => 0,
+        1 | 2 | 3 => 1,
+        4 | 5 | 6 | 7 | 8 => 2,
+        9 | 10 | 11 | 12 | 13 | 14 | 15 => 3,
+        u64::MAX => 4_294_967_296,
+        _ => {
+            let mut left = 0;
+            let mut right = n + 1;
 
-    let mut left = 0;
-    let mut right = n + 1;
+            while left != right - 1 {
+                let mid = left + (right - left) / 2;
+                if mid as u128 * mid as u128 <= n as u128 {
+                    left = mid;
+                } else {
+                    right = mid;
+                }
+            }
 
-    while left != right - 1 {
-        let mid = left + (right - left) / 2;
-        if mid as u128 * mid as u128 <= n as u128 {
-            left = mid;
-        } else {
-            right = mid;
+            left
         }
     }
-
-    left
 }
 
 /// Calculates `(base ^ exp) % modulo` without overflow.
