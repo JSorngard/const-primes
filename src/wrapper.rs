@@ -1,5 +1,7 @@
 use crate::{primes, Underlying};
 
+// region: Primes<N>
+
 /// A wrapper around an array that consists of the first `N` primes.
 /// Can be created in const contexts, and if so it ensures that `N` is non-zero at compile time.
 ///
@@ -374,6 +376,8 @@ impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
 }
 
 // endregion: PartialOrd
+
+// endregion: Primes<N>
 
 #[cfg(test)]
 mod test {
