@@ -383,6 +383,8 @@ impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
 mod test {
     use super::*;
 
+    // region: TraitImpls
+
     #[test]
     fn partial_eq_impl() {
         const P1: Primes<3> = Primes::new();
@@ -429,6 +431,29 @@ mod test {
         let p2: Vec<Primes<10>> = set.drain().collect();
         assert_eq!(P, p2[0]);
     }
+   
+    #[test]
+    fn verify_impl_from_primes_traits() {
+        const N: usize = 10;
+        const P: Primes<N> = Primes::new();
+        let p: [Underlying; N] = P.into();
+        assert_eq!(P, p);
+        assert_eq!(p, P.as_ref());
+        assert_eq!(
+            P.as_array(),
+            <Primes<N> as AsRef<[Underlying; N]>>::as_ref(&P)
+        );
+    }
+
+    #[test]
+    fn check_into_iter() {
+        const P: Primes<10> = Primes::new();
+        for (i, prime) in P.into_iter().enumerate() {
+            assert_eq!(prime, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29][i]);
+        }
+    }
+
+    // endregion: TraitImpls
 
     #[test]
     fn check_binary_search() {
@@ -537,27 +562,6 @@ mod test {
             };
         }
         check_last_n!(1, 2, 3, 4, 5, 6, 7, 8, 9);
-    }
-
-    #[test]
-    fn verify_impl_from_primes_traits() {
-        const N: usize = 10;
-        const P: Primes<N> = Primes::new();
-        let p: [Underlying; N] = P.into();
-        assert_eq!(P, p);
-        assert_eq!(p, P.as_ref());
-        assert_eq!(
-            P.as_array(),
-            <Primes<N> as AsRef<[Underlying; N]>>::as_ref(&P)
-        );
-    }
-
-    #[test]
-    fn check_into_iter() {
-        const P: Primes<10> = Primes::new();
-        for (i, prime) in P.into_iter().enumerate() {
-            assert_eq!(prime, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29][i]);
-        }
     }
 
     #[test]
