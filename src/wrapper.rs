@@ -431,7 +431,7 @@ mod test {
         let p2: Vec<Primes<10>> = set.drain().collect();
         assert_eq!(P, p2[0]);
     }
-   
+
     #[test]
     fn verify_impl_from_primes_traits() {
         const N: usize = 10;
