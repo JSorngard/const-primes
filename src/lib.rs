@@ -71,7 +71,7 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
 
-/// The type that Primes<N> stores, and primes::<N>() returns. Currently `u32`.
+/// The type that `Primes<N>` stores, and `primes::<N>()`` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
@@ -315,9 +315,8 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
         if sieve[number] {
             // If a number is prime we enumerate all multiples of it
             // starting from its square,
-            let mut composite = match number.checked_mul(number) {
-                Some(prod) => prod,
-                None => break,
+            let Some(mut composite) = number.checked_mul(number) else {
+                break;
             };
 
             // and mark them as not prime.
