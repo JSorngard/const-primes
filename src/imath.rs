@@ -52,15 +52,13 @@ pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
 }
 
 /// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
-/// 
+///
 /// This function is
 /// - 1 if `n` is a square-free integer with an even number of prime factors,  
 /// - -1 if `n` is a square-free integer with an odd number of prime factors,  
 /// - 0 if `n` has a square prime factor.  
-/// # Panics
-/// Panics if the input is zero.
-pub const fn mobius(n: u64) -> i8 {
-    assert!(n > 0, "`n` must be greater than 0");
+pub const fn mobius(n: core::num::NonZeroU64) -> i8 {
+    let n = n.get();
 
     if n == 1 {
         return 1;
@@ -108,7 +106,10 @@ mod test {
         #[rustfmt::skip]
         const TEST_CASES: [i8; 50] = [1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
         for (n, ans) in TEST_CASES.into_iter().enumerate() {
-            assert_eq!(mobius(n as u64 + 1), ans);
+            assert_eq!(
+                mobius(core::num::NonZeroU64::new(n as u64 + 1).unwrap()),
+                ans
+            );
         }
     }
 }
