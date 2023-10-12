@@ -354,7 +354,7 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 /// ```
 pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
     let mut x = x.get();
-    let mut prime_count = 0;
+    let mut prime_count: u64 = 0;
 
     macro_rules! handle_factor {
         ($($factor:expr),+) => {
