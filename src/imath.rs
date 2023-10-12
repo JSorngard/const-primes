@@ -54,7 +54,7 @@ pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
 /// This function is
 /// - 1 if `n` is a square-free integer with an even number of prime factors,  
 /// - -1 if `n` is a square-free integer with an odd number of prime factors,  
-/// - 0 if `n` has a square prime factor.  
+/// - 0 if `n` has a squared prime factor.  
 pub const fn mobius(n: core::num::NonZeroU64) -> i8 {
     let n = n.get();
 
