@@ -56,8 +56,9 @@ pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
 /// This function is
 /// - 1 if `n` is a square-free integer with an even number of prime factors,  
 /// - -1 if `n` is a square-free integer with an odd number of prime factors,  
-/// - 0 if `n` has a square prime factor.
-/// 
+/// - 0 if `n` has a square prime factor.  
+/// # Panics
+/// Panics if the input is zero.
 pub const fn mobius(n: u64) -> i8 {
     assert!(n > 0, "`n` must be greater than 0");
 
