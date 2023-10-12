@@ -334,6 +334,39 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
     sieve
 }
 
+/// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
+///
+/// This function is
+/// - 1 if `n` is a square-free integer with an even number of prime factors,  
+/// - -1 if `n` is a square-free integer with an odd number of prime factors,  
+/// - 0 if `n` has a squared prime factor.  
+pub const fn mobius(n: core::num::NonZeroU64) -> i8 {
+    let n = n.get();
+
+    if n == 1 {
+        return 1;
+    }
+
+    let mut p = 0;
+    let mut i = 1;
+    while i <= n {
+        if n % i == 0 && is_prime(i) {
+            if n % (i * i) == 0 {
+                return 0;
+            } else {
+                p += 1;
+            }
+        }
+        i += 1;
+    }
+
+    if p % 2 == 0 {
+        1
+    } else {
+        -1
+    }
+}
+
 /// Returns the largest prime smaller than or equal to `n` if there is one.
 ///
 /// Scans for primes downwards from the input with [`is_prime`].
@@ -466,6 +499,18 @@ mod test {
             68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
             90, 91, 92, 93, 94, 95, 96, 97, 98, 99
         );
+    }
+
+    #[test]
+    fn check_möbius() {
+        #[rustfmt::skip]
+        const TEST_CASES: [i8; 50] = [1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
+        for (n, ans) in TEST_CASES.into_iter().enumerate() {
+            assert_eq!(
+                mobius(core::num::NonZeroU64::new(n as u64 + 1).unwrap()),
+                ans
+            );
+        }
     }
 
     #[test]

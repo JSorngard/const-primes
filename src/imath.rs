@@ -49,39 +49,6 @@ pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
     ((a as u128 * b as u128) % modulo as u128) as u64
 }
 
-/// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
-///
-/// This function is
-/// - 1 if `n` is a square-free integer with an even number of prime factors,  
-/// - -1 if `n` is a square-free integer with an odd number of prime factors,  
-/// - 0 if `n` has a squared prime factor.  
-pub const fn mobius(n: core::num::NonZeroU64) -> i8 {
-    let n = n.get();
-
-    if n == 1 {
-        return 1;
-    }
-
-    let mut p = 0;
-    let mut i = 1;
-    while i <= n {
-        if n % i == 0 && crate::is_prime(i) {
-            if n % (i * i) == 0 {
-                return 0;
-            } else {
-                p += 1;
-            }
-        }
-        i += 1;
-    }
-
-    if p % 2 == 0 {
-        1
-    } else {
-        -1
-    }
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -98,17 +65,5 @@ mod test {
             isqrt(u64::from(u32::MAX))
         );
         assert_eq!(isqrt(u64::MAX), 4294967296);
-    }
-
-    #[test]
-    fn check_möbius() {
-        #[rustfmt::skip]
-        const TEST_CASES: [i8; 50] = [1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
-        for (n, ans) in TEST_CASES.into_iter().enumerate() {
-            assert_eq!(
-                mobius(core::num::NonZeroU64::new(n as u64 + 1).unwrap()),
-                ans
-            );
-        }
     }
 }
