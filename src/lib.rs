@@ -354,50 +354,35 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 /// ```
 pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
     let mut x = x.get();
-
     let mut prime_count = 0;
 
-    // Handle 2 separately
-    if x % 2 == 0 {
-        x /= 2;
-        prime_count += 1;
-        // If 2^2 is also a divisor of x
-        if x % 2 == 0 {
-            return 0;
-        }
-    }
-    // Same for 3
-    if x % 3 == 0 {
-        x /= 3;
-        prime_count += 1;
-        if x % 3 == 0 {
-            return 0;
-        }
+    macro_rules! handle_factor {
+        ($($factor:expr),+) => {
+            $(
+                // If the given factor divides x
+                if x % $factor == 0 {
+                    // divide it out,
+                    x /= $factor;
+                    // count it,
+                    prime_count += 1;
+                    // and check if the factor still divides x.
+                    if x % $factor == 0 {
+                        // If it does then we return 0.
+                        return 0;
+                    }
+                }
+            )+
+        };
     }
 
-    // For the remaining factors
+    // Handle 2 and 3 separately
+    handle_factor!(2, 3);
+
+    // Handle the remaining factors <= √x with a wheel
     let mut i = 5;
     let bound = isqrt(x);
     while i <= bound {
-        // If i is a divisor of x
-        if x % i == 0 {
-            x /= i;
-            prime_count += 1;
-
-            // check if i^2 is also a divisor of x
-            if x % i == 0 {
-                return 0;
-            }
-        }
-        // Same for i + 2
-        if x % (i + 2) == 0 {
-            x /= i + 2;
-            prime_count += 1;
-
-            if x % (i + 2) == 0 {
-                return 0;
-            }
-        }
+        handle_factor!(i, i + 2);
         i += 6;
     }
 
@@ -407,6 +392,7 @@ pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
         prime_count += 1;
     }
 
+    // Return 1 or -1 depending on whether x has an even or odd number of prime factors.
     if prime_count % 2 == 0 {
         1
     } else {
