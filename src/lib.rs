@@ -334,6 +334,86 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
     sieve
 }
 
+/// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
+///
+/// This function is
+/// - 1 if `n` is a square-free integer with an even number of prime factors,  
+/// - -1 if `n` is a square-free integer with an odd number of prime factors,  
+/// - 0 if `n` has a squared prime factor.
+///
+/// Uses a small wheel to check prime factors up to `√n`` and exits early if
+/// there is a squared factor.
+///
+/// # Example
+/// ```
+/// # use const_primes::moebius;
+/// use core::num::NonZeroU64;
+/// const N: NonZeroU64 = match NonZeroU64::new(1001) {Some(i) => i, None => panic!()};
+/// const MÖBIUS1001: i8 = moebius(N);
+/// assert_eq!(MÖBIUS1001, -1);
+/// ```
+pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
+    let mut x = x.get();
+
+    let mut prime_count = 0;
+
+    // Handle 2 separately
+    if x % 2 == 0 {
+        x /= 2;
+        prime_count += 1;
+        // If 2^2 is also a divisor of x
+        if x % 2 == 0 {
+            return 0;
+        }
+    }
+    // Same for 3
+    if x % 3 == 0 {
+        x /= 3;
+        prime_count += 1;
+        if x % 3 == 0 {
+            return 0;
+        }
+    }
+
+    // For the remaining factors
+    let mut i = 5;
+    let bound = isqrt(x);
+    while i <= bound {
+        // If i is a divisor of x
+        if x % i == 0 {
+            x /= i;
+            prime_count += 1;
+
+            // check if i^2 is also a divisor of x
+            if x % i == 0 {
+                return 0;
+            }
+        }
+        // Same for i + 2
+        if x % (i + 2) == 0 {
+            x /= i + 2;
+            prime_count += 1;
+
+            if x % (i + 2) == 0 {
+                return 0;
+            }
+        }
+        i += 6;
+    }
+
+    // If x is a prime it will never be divided by any factor less than its square root.
+    // In that case we can check if x is still larger than one, and then count it.
+    if x > 1 {
+        prime_count += 1;
+    }
+
+    if prime_count % 2 == 0 {
+        1
+    } else {
+        -1
+    }
+}
+
 /// Returns the largest prime smaller than or equal to `n` if there is one.
 ///
 /// Scans for primes downwards from the input with [`is_prime`].
@@ -466,6 +546,21 @@ mod test {
             68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
             90, 91, 92, 93, 94, 95, 96, 97, 98, 99
         );
+    }
+
+    #[test]
+    fn check_möbius() {
+        use core::num::NonZeroU64;
+        #[rustfmt::skip]
+        const TEST_CASES: [i8; 50] = [1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
+        for (n, ans) in TEST_CASES.into_iter().enumerate() {
+            assert_eq!(moebius(NonZeroU64::new(n as u64 + 1).unwrap()), ans);
+        }
+        #[rustfmt::skip]
+        const BIG_TEST_CASES: [i8; 51] = [0, -1, -1, 1, 0, -1, 1, 1, 0, -1, -1, 1, 0, -1, 0, -1, 0, 0, 1, -1, 0, -1, -1, -1, 0, 0, 0, 1, 0, 0, -1, -1, 0, -1, -1, 0, 0, 1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, 0];
+        for (n, ans) in BIG_TEST_CASES.into_iter().enumerate() {
+            assert_eq!(moebius(NonZeroU64::new(n as u64 + 1000).unwrap()), ans);
+        }
     }
 
     #[test]
