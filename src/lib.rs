@@ -356,18 +356,15 @@ pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
     let mut x = x.get();
     let mut prime_count: u64 = 0;
 
+    // We avoid code repetition with the use of this macro.
     macro_rules! handle_factor {
         ($($factor:expr),+) => {
             $(
-                // If the given factor divides x
                 if x % $factor == 0 {
-                    // divide it out,
                     x /= $factor;
-                    // count it,
                     prime_count += 1;
-                    // and check if the factor still divides x.
+                    // This checks if factor^2 divides x.
                     if x % $factor == 0 {
-                        // If it does then we return 0.
                         return 0;
                     }
                 }
@@ -375,10 +372,10 @@ pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
         };
     }
 
-    // Handle 2 and 3 separately
+    // Handle 2 and 3 separately, since the wheel will not find these factors.
     handle_factor!(2, 3);
 
-    // Handle the remaining factors <= √x with a wheel
+    // Handle the remaining factors <= √x with the wheel.
     let mut i = 5;
     let bound = isqrt(x);
     while i <= bound {
@@ -392,7 +389,6 @@ pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
         prime_count += 1;
     }
 
-    // Return 1 or -1 depending on whether x has an even or odd number of prime factors.
     if prime_count % 2 == 0 {
         1
     } else {
