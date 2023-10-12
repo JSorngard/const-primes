@@ -341,7 +341,7 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 /// - -1 if `n` is a square-free integer with an odd number of prime factors,  
 /// - 0 if `n` has a squared prime factor.
 ///
-/// Uses a small wheel to check prime factors up to `√n`` and exits early if
+/// Uses a small wheel to check prime factors up to `√n` and exits early if
 /// there is a squared factor.
 ///
 /// # Example
