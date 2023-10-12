@@ -357,14 +357,16 @@ pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
 
     let mut prime_count = 0;
 
-    // Handle 2 and 3 separately
+    // Handle 2 separately
     if x % 2 == 0 {
         x /= 2;
         prime_count += 1;
+        // If 2^2 is also a divisor of x
         if x % 2 == 0 {
             return 0;
         }
     }
+    // Same for 3
     if x % 3 == 0 {
         x /= 3;
         prime_count += 1;
@@ -400,7 +402,7 @@ pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
     }
 
     // If x is a prime it will never be divided by any factor less than its square root.
-    // In that case x is still larger than one, and we must count it.
+    // In that case we can check if x is still larger than one, and then count it.
     if x > 1 {
         prime_count += 1;
     }
