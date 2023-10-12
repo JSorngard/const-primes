@@ -337,11 +337,11 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 /// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
 ///
 /// This function is
-/// - 1 if `n` is a square-free integer with an even number of prime factors,  
-/// - -1 if `n` is a square-free integer with an odd number of prime factors,  
-/// - 0 if `n` has a squared prime factor.
+/// - 1 if `x` is a square-free integer with an even number of prime factors,  
+/// - -1 if `x` is a square-free integer with an odd number of prime factors,  
+/// - 0 if `x` has a squared prime factor.
 ///
-/// Uses a small wheel to check prime factors up to `√n` and exits early if
+/// Uses a small wheel to check prime factors up to `√x` and exits early if
 /// there is a squared factor.
 ///
 /// # Example
