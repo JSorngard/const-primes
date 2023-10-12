@@ -1,8 +1,6 @@
 //! This module contains const math operations on integers that are used by the other
 //! functions in the crate.
 
-use crate::is_prime;
-
 /// Returns the largest integer smaller than or equal to `√n`.
 ///
 /// Uses a binary search.
@@ -67,7 +65,7 @@ pub const fn mobius(n: core::num::NonZeroU64) -> i8 {
     let mut p = 0;
     let mut i = 1;
     while i <= n {
-        if n % i == 0 && is_prime(i) {
+        if n % i == 0 && crate::is_prime(i) {
             if n % (i * i) == 0 {
                 return 0;
             } else {
