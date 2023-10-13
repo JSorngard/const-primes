@@ -3,7 +3,7 @@
 
 /// Returns the largest integer smaller than or equal to `√n`.
 ///
-/// Uses a binary search.
+/// Uses the Newton-Rhapson method.
 #[must_use]
 pub const fn isqrt(n: u64) -> u64 {
     if n <= 1 {
