@@ -363,10 +363,9 @@ pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
                 if x % $factor == 0 {
                     x /= $factor;
                     prime_count += 1;
-                    // This checks if factor^2 divides x.
-                    if x % $factor == 0 {
-                        return 0;
-                    }
+                    // If x is still divisible by the factor that means x has a
+                    // square or more prime factor, and we return 0.
+                    if x % $factor == 0 { return 0; }
                 }
             )+
         };
