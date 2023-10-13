@@ -24,9 +24,7 @@ fn benchmarks(c: &mut Criterion) {
         b.iter(|| black_box(are_prime::<10_000>()))
     });
 
-    let ints: Vec<_> = (1..1_000_000)
-        .map(|n| core::num::NonZeroU64::new(n).unwrap())
-        .collect();
+    let ints: Vec<_> = (1..1_000_000).map(|n| n).collect();
     c.bench_function("möbius of first 1e6 integers", |b| {
         b.iter(|| {
             for &i in &ints {

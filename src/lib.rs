@@ -347,13 +347,11 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 /// # Example
 /// ```
 /// # use const_primes::moebius;
-/// use core::num::NonZeroU64;
-/// const N: NonZeroU64 = match NonZeroU64::new(1001) {Some(i) => i, None => panic!()};
+/// const N: u64 = 1001;
 /// const MÖBIUS1001: i8 = moebius(N);
 /// assert_eq!(MÖBIUS1001, -1);
 /// ```
-pub const fn moebius(x: core::num::NonZeroU64) -> i8 {
-    let mut x = x.get();
+pub const fn moebius(mut x: u64) -> i8 {
     let mut prime_count: u64 = 0;
 
     // We avoid code repetition with the use of this macro.
@@ -531,16 +529,15 @@ mod test {
 
     #[test]
     fn check_möbius() {
-        use core::num::NonZeroU64;
         #[rustfmt::skip]
-        const TEST_CASES: [i8; 50] = [1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
+        const TEST_CASES: [i8; 51] = [0, 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
         for (n, ans) in TEST_CASES.into_iter().enumerate() {
-            assert_eq!(moebius(NonZeroU64::new(n as u64 + 1).unwrap()), ans);
+            assert_eq!(moebius(n as u64), ans);
         }
         #[rustfmt::skip]
         const BIG_TEST_CASES: [i8; 51] = [0, -1, -1, 1, 0, -1, 1, 1, 0, -1, -1, 1, 0, -1, 0, -1, 0, 0, 1, -1, 0, -1, -1, -1, 0, 0, 0, 1, 0, 0, -1, -1, 0, -1, -1, 0, 0, 1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, 0];
         for (n, ans) in BIG_TEST_CASES.into_iter().enumerate() {
-            assert_eq!(moebius(NonZeroU64::new(n as u64 + 1000).unwrap()), ans);
+            assert_eq!(moebius(n as u64 + 1000), ans);
         }
     }
 
