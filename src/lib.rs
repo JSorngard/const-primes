@@ -383,8 +383,8 @@ pub const fn moebius(mut x: u64) -> i8 {
         i += 6;
     }
 
-    // If x is a prime it will never be divided by any factor less than its square root.
-    // In that case we can check if x is still larger than one, and then count it.
+    // There can exist one prime factor larger than √x,
+    // in that case we can check if x is still larger than one, and then count it.
     if x > 1 {
         prime_count += 1;
     }
