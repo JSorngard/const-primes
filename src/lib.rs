@@ -351,11 +351,14 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 /// const MÖBIUS1001: i8 = moebius(N);
 /// assert_eq!(MÖBIUS1001, -1);
 /// ```
+// I have added this code to Rosettacode: https://www.rosettacode.org/wiki/M%C3%B6bius_function#Rust
+// as of the writing of this comment.
 pub const fn moebius(mut x: u64) -> i8 {
     let mut prime_count: u64 = 0;
 
-    // We avoid code repetition with the use of this macro.
-    macro_rules! handle_factor {
+    // If x is divisible by the given factor this macro counts the factor and divides it out. 
+    // It then returns zero if x is still divisible by the factor.
+    macro_rules! handle_factors {
         ($($factor:expr),+) => {
             $(
                 if x % $factor == 0 {
@@ -370,13 +373,13 @@ pub const fn moebius(mut x: u64) -> i8 {
     }
 
     // Handle 2 and 3 separately, since the wheel will not find these factors.
-    handle_factor!(2, 3);
+    handle_factors!(2, 3);
 
     // Handle the remaining factors <= √x with the wheel.
     let mut i = 5;
     let bound = isqrt(x);
     while i <= bound {
-        handle_factor!(i, i + 2);
+        handle_factors!(i, i + 2);
         i += 6;
     }
 
