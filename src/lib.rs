@@ -356,8 +356,8 @@ pub const fn are_prime<const N: usize>() -> [bool; N] {
 pub const fn moebius(mut x: u64) -> i8 {
     let mut prime_count: u64 = 0;
 
-    // If x is divisible by the given factor this macro counts the factor and divides it out.
-    // It then returns zero if x is still divisible by the factor.
+    /// If x is divisible by the any of the given factors this macro counts the factor and divides it out.
+    /// It then returns zero if x is still divisible by the factor.
     macro_rules! handle_factors {
         ($($factor:expr),+) => {
             $(
