@@ -6,23 +6,17 @@
 /// Uses a binary search.
 #[must_use]
 pub const fn isqrt(n: u64) -> u64 {
-    if n == u64::MAX {
-        return 4_294_967_296;
-    }
-
-    let mut left = 0;
-    let mut right = n + 1;
-
-    while left != right - 1 {
-        let mid = left + (right - left) / 2;
-        if mid as u128 * mid as u128 <= n as u128 {
-            left = mid;
-        } else {
-            right = mid;
+    if n <= 1 {
+        n
+    } else {
+        let mut x0 = n / 2;
+        let mut x1 = (x0 + n / x0) / 2;
+        while x1 < x0 {
+            x0 = x1;
+            x1 = (x0 + n / x0) / 2;
         }
+        x0
     }
-
-    left
 }
 
 /// Calculates `(base ^ exp) % modulo` without overflow.
@@ -64,6 +58,7 @@ mod test {
             f64::from(u32::MAX).sqrt().floor() as u64,
             isqrt(u64::from(u32::MAX))
         );
-        assert_eq!(isqrt(u64::MAX), 4294967296);
+        assert_eq!(isqrt(u64::MAX - 1), 4294967295);
+        assert_eq!(isqrt(u64::MAX), 4294967295);
     }
 }
