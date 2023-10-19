@@ -49,10 +49,8 @@ mod test {
 
     #[test]
     fn check_isqrt() {
-        #[rustfmt::skip]
-        const TEST_CASES: [u64; 100] = [0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9];
-        for (x, ans) in TEST_CASES.into_iter().enumerate() {
-            assert_eq!(isqrt(x as u64), ans);
+        for x in 0..1_000_000 {
+            assert_eq!(isqrt(x), (x as f64).sqrt().floor() as u64);
         }
         assert_eq!(
             f64::from(u32::MAX).sqrt().floor() as u64,
