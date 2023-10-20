@@ -35,7 +35,7 @@ impl<const N: usize> Primes<N> {
     ///
     /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
     ///
-    /// # Example
+    /// # Examples
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
@@ -53,7 +53,9 @@ impl<const N: usize> Primes<N> {
     /// let primes = Primes::<5>::new();
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
+    ///
     /// # Panics
+    ///
     /// Panics if `N` is zero. In const contexts this will fail to compile
     /// ```compile_fail
     /// # use const_primes::Primes;
