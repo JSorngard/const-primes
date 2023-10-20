@@ -85,6 +85,8 @@ pub use wrapper::Primes;
 
 /// Returns the `N` first prime numbers.
 ///
+/// [`Primes`] might be relevant for you if you intend to later use these prime numbers for related computations.
+///
 /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ///
 /// # Example
