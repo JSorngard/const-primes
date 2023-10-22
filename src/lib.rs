@@ -483,10 +483,20 @@ pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
 /// ```
 #[must_use = "the function only returns a new value"]
 pub const fn prime_counts<const N: usize>() -> [usize; N] {
-    let prime_status: [bool; N] = are_prime();
     let mut counts = [0; N];
-    let mut count = 0;
-    let mut i = 0;
+    if N <= 2 {
+        return counts;
+    }
+    if N > 2 {
+        counts[2] = 1;
+    }
+    if N > 3 {
+        counts[3] = 2;
+    }
+
+    let prime_status: [bool; N] = are_prime();
+    let mut count = 1;
+    let mut i = 3;
     while i < N {
         if prime_status[i] {
             count += 1;
@@ -534,18 +544,28 @@ mod test {
 
     #[test]
     fn check_prime_count() {
-        const N: usize = 100;
-        const PRIME_COUNTS: [usize; N] = prime_counts();
-        let mut counts = [0; N];
-        for n in 0..N {
-            let mut i = 0;
-            while PRECOMPUTED_PRIMES[i] <= n as u32 {
-                counts[n] += 1;
-                i += 1;
-            }
+        macro_rules! test_prime_counts_up_to {
+            ($($n:expr),+) => {
+                $(
+                    {
+                        const N: usize = $n;
+                        const PRIME_COUNTS: [usize; N] = prime_counts();
+                        let mut counts = [0; N];
+                        for n in 0..N {
+                            let mut i = 0;
+                            while PRECOMPUTED_PRIMES[i] <= n as u32 {
+                                counts[n] += 1;
+                                i += 1;
+                            }
+                        }
+
+                        assert_eq!(PRIME_COUNTS, counts);
+                    }
+                )+
+            };
         }
 
-        assert_eq!(PRIME_COUNTS, counts);
+        test_prime_counts_up_to!(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100);
     }
 
     #[test]
