@@ -472,7 +472,7 @@ pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
-/// Computes primes with [`are_prime`] and then counts them.
+/// Sieves primes with [`are_prime`] and then counts them.
 ///
 /// # Example
 /// Basic usage
