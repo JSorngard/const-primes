@@ -533,6 +533,22 @@ mod test {
     }
 
     #[test]
+    fn check_prime_count() {
+        const N: usize = 100;
+        const PRIME_COUNTS: [usize; N] = prime_counts();
+        let mut counts = [0; N];
+        for n in 0..N {
+            let mut i = 0;
+            while PRECOMPUTED_PRIMES[i] <= n as u32 {
+                counts[n] += 1;
+                i += 1;
+            }
+        }
+
+        assert_eq!(PRIME_COUNTS, counts);
+    }
+
+    #[test]
     fn check_möbius() {
         #[rustfmt::skip]
         const TEST_CASES: [i8; 51] = [0, 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
