@@ -496,7 +496,10 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
             count += 1;
         }
         counts[i] = count;
-        i += 1;
+        if i + 1 < N {
+            counts[i + 1] = count;
+        }
+        i += 2;
     }
     counts
 }
