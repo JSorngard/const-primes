@@ -490,9 +490,6 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
     if N > 2 {
         counts[2] = 1;
     }
-    if N > 3 {
-        counts[3] = 2;
-    }
 
     let prime_status: [bool; N] = are_prime();
     let mut count = 1;
