@@ -329,6 +329,7 @@ impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
 impl<const N: usize> IntoIterator for Primes<N> {
     type Item = <[Underlying; N] as IntoIterator>::Item;
     type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
+    #[inline]
     fn into_iter(self) -> Self::IntoIter {
         self.primes.into_iter()
     }
@@ -337,18 +338,21 @@ impl<const N: usize> IntoIterator for Primes<N> {
 // region: PartialEq
 
 impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
+    #[inline]
     fn eq(&self, other: &T) -> bool {
         other == &self.primes
     }
 }
 
 impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
+    #[inline]
     fn eq(&self, other: &Primes<N>) -> bool {
         self == &other.primes
     }
 }
 
 impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
+    #[inline]
     fn eq(&self, other: &Primes<N>) -> bool {
         self == &other.primes
     }
@@ -360,18 +364,21 @@ impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
 
 use core::cmp::Ordering;
 impl<const N: usize, T: PartialOrd<[Underlying; N]>> PartialOrd<T> for Primes<N> {
+    #[inline]
     fn partial_cmp(&self, other: &T) -> Option<Ordering> {
         other.partial_cmp(&self.primes)
     }
 }
 
 impl<const N: usize> PartialOrd<Primes<N>> for [Underlying; N] {
+    #[inline]
     fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
         other.primes.partial_cmp(self)
     }
 }
 
 impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
+    #[inline]
     fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
         other.primes.as_slice().partial_cmp(self)
     }
