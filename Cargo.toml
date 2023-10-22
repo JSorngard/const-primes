@@ -1,7 +1,7 @@
 [package]
 name = "const-primes"
 authors = ["Johanna Sörngård (jsorngard@gmail.com)"]
-version = "0.4.7"
+version = "0.4.8"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Generate and work with prime numbers in const contexts"
