@@ -200,15 +200,16 @@ pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64;
 
     // This will be used to sieve all upper ranges.
     let base_sieve: [bool; N] = are_prime();
-    let mut primes = [0; N];
-    let mut total_primes_found = 0;
-    'generate: while total_primes_found < N {
-        let upper_sieve = sieve_segment(&base_sieve, upper_limit);
-        let mut i = 0;
+    let mut primes: [u64; N] = [0; N];
+    let mut total_primes_found: usize = 0;
+    'generate: while total_primes_found < N && upper_limit > 1 {
+        let upper_sieve: [bool; N] = sieve_segment(&base_sieve, upper_limit);
+        let mut smallest_found_prime = upper_limit;
+        let mut i: usize = 0;
         while i < N {
-            let j = N - 1 - i;
-            if upper_sieve[j] {
-                primes[N - total_primes_found - 1] = upper_limit - 1 - i as u64;
+            if upper_sieve[N - 1 - i] {
+                smallest_found_prime = upper_limit - 1 - i as u64;
+                primes[N - total_primes_found - 1] = smallest_found_prime;
                 total_primes_found += 1;
                 if total_primes_found >= N {
                     break 'generate;
@@ -216,7 +217,7 @@ pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64;
             }
             i += 1;
         }
-        upper_limit -= N as u64;
+        upper_limit = smallest_found_prime;
     }
 
     primes
@@ -666,13 +667,14 @@ mod test {
                 $(
                     {
                         println!("{}", $n);
-                        assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], largest_primes_below::<$n>(100).map(|i| i as u32));
+                        const P: [u64; $n] = largest_primes_below(100);
+                        assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], P.map(|i|i as u32));
                     }
                 )+
             };
         }
 
-        test_n_below_100!(10, 15);
+        test_n_below_100!(10, 15, 20, 100);
     }
 
     #[test]
