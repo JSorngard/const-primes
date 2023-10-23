@@ -222,7 +222,7 @@ pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64;
     primes
 }
 
-/// Uses the primalities in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
+/// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 const fn sieve_segment<const N: usize>(base_sieve: &[bool; N], upper_limit: u64) -> [bool; N] {
     let mut segment_sieve = [true; N];
 
