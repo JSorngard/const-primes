@@ -188,7 +188,16 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// const P: [u64; 10] = largest_primes_below(100);
 /// assert_eq!(P, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
 /// ```
+/// # Panics
+/// Panics if `upper_limit` is not in the range `[N, N^2]`.
 pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64; N] {
+    let n64 = N as u64;
+    assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
+    match (n64).checked_mul(n64) {
+        Some(prod) => assert!(upper_limit <= prod, "`upper_limit` must be below `N^2`"),
+        None => panic!("`N^2` must fit in a `u64`"),
+    }
+
     // This will be used to sieve all upper ranges.
     let base_sieve: [bool; N] = are_prime();
     let mut primes = [0; N];
