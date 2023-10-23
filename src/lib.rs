@@ -181,6 +181,79 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
+/// Returns the `N` largest primes below the given upper limit.
+/// # Example
+/// ```
+/// # use const_primes::largest_primes_below;
+/// const P: [u64; 10] = largest_primes_below(100);
+/// assert_eq!(P, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
+/// ```
+pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64; N] {
+    // This will be used to sieve all upper ranges.
+    let base_sieve: [bool; N] = are_prime();
+    let mut primes = [0; N];
+    let mut total_primes_found = 0;
+    'generate: while total_primes_found < N {
+        let upper_sieve = sieve_segment(&base_sieve, upper_limit);
+        let mut i = 0;
+        while i < N {
+            let j = N - 1 - i;
+            if upper_sieve[j] {
+                primes[N - total_primes_found - 1] = upper_limit - 1 - i as u64;
+                total_primes_found += 1;
+                if total_primes_found >= N {
+                    break 'generate;
+                }
+            }
+            i += 1;
+        }
+        upper_limit -= N as u64;
+    }
+
+    primes
+}
+
+/// Uses the primalities in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
+const fn sieve_segment<const N: usize>(base_sieve: &[bool; N], upper_limit: u64) -> [bool; N] {
+    let mut segment_sieve = [true; N];
+
+    let lower_limit = upper_limit - N as u64;
+
+    // In case 0 and/or 1 are included in the upper sieve we need to treat them as a special case
+    // since they are not multiples of any prime in `base_sieve` even though they are not primes.
+    if lower_limit == 0 && N > 1 {
+        segment_sieve[0] = false;
+        segment_sieve[1] = false;
+    } else if lower_limit == 1 && N > 0 {
+        segment_sieve[0] = false;
+    }
+
+    let mut i = 0;
+    while i < N {
+        if base_sieve[i] {
+            let prime = i as u64;
+
+            // Find the smallest multiple of the prime larger than or equal to `lower_limit`.
+            let mut composite = (lower_limit / prime) * prime;
+            if composite < lower_limit {
+                composite += prime;
+            }
+            if composite == prime {
+                composite += prime;
+            }
+
+            // Sieve all numbers in the segment that are multiples of the prime.
+            while composite < upper_limit {
+                segment_sieve[(composite - lower_limit) as usize] = false;
+                composite += prime;
+            }
+        }
+        i += 1;
+    }
+
+    segment_sieve
+}
+
 /// Returns an array of size `N` that indicates which of the integers in `[upper_limit - N, upper_limit)` are prime,
 /// or in other words: the value at a given index represents whether `index + upper_limit - N` is prime.
 ///
@@ -248,45 +321,7 @@ pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
         return base_sieve;
     }
 
-    // Otherwise we use the base sieve to sieve the upper range
-    let mut segment_sieve = [true; N];
-
-    let lower_limit = upper_limit - n64;
-
-    // In case 0 and/or 1 are included in the upper sieve we need to treat them as a special case
-    // since they are not multiples of any prime in `base_sieve` even though they are not primes.
-    if lower_limit == 0 && N > 1 {
-        segment_sieve[0] = false;
-        segment_sieve[1] = false;
-    } else if lower_limit == 1 && N > 0 {
-        segment_sieve[0] = false;
-    }
-
-    // For all the found primes
-    let mut i = 0;
-    while i < N {
-        if base_sieve[i] {
-            let prime = i as u64;
-
-            // Find the smallest multiple of the prime larger than or equal to `lower_limit`.
-            let mut composite = (lower_limit / prime) * prime;
-            if composite < lower_limit {
-                composite += prime;
-            }
-            if composite == prime {
-                composite += prime;
-            }
-
-            // Sieve all numbers in the segment that are multiples of the prime.
-            while composite < upper_limit {
-                segment_sieve[(composite - lower_limit) as usize] = false;
-                composite += prime;
-            }
-        }
-        i += 1;
-    }
-
-    segment_sieve
+    sieve_segment(&base_sieve, upper_limit)
 }
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
