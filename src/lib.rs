@@ -651,6 +651,22 @@ mod test {
     }
 
     #[test]
+    fn check_largest_primes_below() {
+        macro_rules! test_n_below_100 {
+            ($($n:expr),+) => {
+                $(
+                    {
+                        println!("{}", $n);
+                        assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], largest_primes_below::<$n>(100).map(|i| i as u32));
+                    }
+                )+
+            };
+        }
+
+        test_n_below_100!(10, 15);
+    }
+
+    #[test]
     fn check_next_prime() {
         for i in 1..PRECOMPUTED_PRIMES.len() - 1 {
             assert_eq!(
