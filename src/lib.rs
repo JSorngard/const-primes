@@ -577,6 +577,7 @@ mod test {
         for (n, ans) in BIG_TEST_CASES.into_iter().enumerate() {
             assert_eq!(moebius(n as u64 + 1000), ans);
         }
+        assert_eq!(moebius(u32::MAX.into()), -1);
     }
 
     #[test]
