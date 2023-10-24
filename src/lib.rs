@@ -241,18 +241,24 @@ pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64;
 
     // This will be used to sieve all upper ranges.
     let base_sieve: [bool; N] = are_prime();
+
     let mut total_primes_found: usize = 0;
     'generate: while total_primes_found < N && upper_limit > 2 {
+        // This is the smallest prime we have found so far.
+        let mut smallest_found_prime = primes[N - 1 - total_primes_found];
+        // Sieve for primes in the segment.
         let upper_sieve: [bool; N] = sieve_segment(&base_sieve, upper_limit);
-        let mut smallest_found_prime = primes[N - total_primes_found - 1];
+        
         let mut i: usize = 0;
         while i < N {
-            let j = N - 1 - i;
-            if upper_sieve[j] {
+            // Iterate backwards through the upper sieve.
+            if upper_sieve[N - 1 - i] {
                 smallest_found_prime = upper_limit - 1 - i as u64;
-                primes[N - total_primes_found - 1] = smallest_found_prime;
+                // Write every found prime to the primes array.
+                primes[N - 1 - total_primes_found] = smallest_found_prime;
                 total_primes_found += 1;
                 if total_primes_found >= N {
+                    // If we have found enough primes we stop sieving.
                     break 'generate;
                 }
             }
