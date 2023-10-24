@@ -185,16 +185,19 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// The return array fills from the end until either it is full or there are no more primes.
 /// If the primes run out before the array is filled the first elements will have a value of zero.
+/// 
+/// Due to the limitations on memory allocation in `const` contexts the value of `N`
+/// must satisfy the bounds `N < upper_limit <= N^2`.
 ///
 /// # Example
-/// Basic usage
+/// Basic usage:
 /// ```
 /// # use const_primes::largest_primes_below;
 /// const PRIMES: [u64; 10] = largest_primes_below(100);
 ///
 /// assert_eq!(PRIMES, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
 /// ```
-/// Compute larger primes without starting from zero
+/// Compute larger primes without starting from zero:
 /// ```
 /// # use const_primes::largest_primes_below;
 /// const N: usize = 70711;
@@ -205,7 +208,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(&BIG_PRIMES[N - 3..], &[4_999_999_903, 4_999_999_937, 5_000_000_029]);
 /// ```
 /// If there are not enough primes to fill the requested array, the first
-/// elements will have a value of zero.
+/// elements will have a value of zero:
 /// ```
 /// # use const_primes::largest_primes_below;
 /// const PRIMES: [u64; 9] = largest_primes_below(10);
@@ -214,7 +217,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 /// # Panics
 /// Panics if `upper_limit` is not in the range `(N, N^2]`. This is a compile error
-/// in const contexts
+/// in const contexts:
 /// ```compile_fail
 /// # use const_primes::largest_primes_below;
 /// const PRIMES: [u64; 5] = largest_primes_below(5);
