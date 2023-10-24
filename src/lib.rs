@@ -213,7 +213,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(PRIMES, [0, 0, 0, 0, 0, 2, 3, 5, 7]);
 /// ```
 /// # Panics
-/// Panics if `upper_limit` is not in the range `(N, N^2]`.
+/// Panics if `upper_limit` is not in the range `(N, N^2]`. This is a compile error
+/// in const contexts
 /// ```compile_fail
 /// # use const_primes::largest_primes_below;
 /// const PRIMES: [u64; 5] = largest_primes_below(5);
