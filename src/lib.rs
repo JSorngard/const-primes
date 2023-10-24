@@ -197,11 +197,12 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Compute larger primes without starting from zero
 /// ```
 /// # use const_primes::largest_primes_below;
-/// const N: usize = 2237;
-/// const BIG_PRIMES: [u64; N] = largest_primes_below(5_000_035);
+/// const N: usize = 70711;
+/// # #[allow(long_running_const_eval)]
+/// const BIG_PRIMES: [u64; N] = largest_primes_below(5_000_000_030);
 ///
-/// assert_eq!(&BIG_PRIMES[..3], &[4_965_731, 4_965_739, 4_965_743]);
-/// assert_eq!(&BIG_PRIMES[N - 3..], &[4_999_963, 4_999_999, 5_000_011]);
+/// assert_eq!(&BIG_PRIMES[..3], &[4_998_417_421, 4_998_417_427, 4_998_417_443]);
+/// assert_eq!(&BIG_PRIMES[N - 3..], &[4_999_999_903, 4_999_999_937, 5_000_000_029]);
 /// ```
 /// If there are not enough primes to fill the requested array, the first
 /// elements will have a value of zero.
