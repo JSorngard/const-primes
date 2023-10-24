@@ -182,23 +182,53 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 }
 
 /// Returns the `N` largest primes below the given upper limit.
+///
 /// The return array fills from the end until either it is full or there are no more primes.
 /// If the primes run out before the array is filled the first elements will have a value of zero.
 ///
 /// # Example
-///
+/// Basic usage
 /// ```
 /// # use const_primes::largest_primes_below;
-/// const P: [u64; 10] = largest_primes_below(100);
-/// assert_eq!(P, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
+/// const PRIMES: [u64; 10] = largest_primes_below(100);
+///
+/// assert_eq!(PRIMES, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
+/// ```
+/// Compute larger primes without starting from zero
+/// ```
+/// # use const_primes::largest_primes_below;
+/// const N: usize = 2237;
+/// const BIG_PRIMES: [u64; N] = largest_primes_below(5_000_035);
+///
+/// assert_eq!(&BIG_PRIMES[..3], &[4_965_731, 4_965_739, 4_965_743]);
+/// assert_eq!(&BIG_PRIMES[N - 3..], &[4_999_963, 4_999_999, 5_000_011]);
+/// ```
+/// If there are not enough primes to fill the requested array, the first
+/// elements will have a value of zero.
+/// ```
+/// # use const_primes::largest_primes_below;
+/// const PRIMES: [u64; 9] = largest_primes_below(10);
+///
+/// assert_eq!(PRIMES, [0, 0, 0, 0, 0, 2, 3, 5, 7]);
 /// ```
 /// # Panics
-/// Panics if `upper_limit` is not in the range `[N, N^2]`.
+/// Panics if `upper_limit` is not in the range `(N, N^2]`.
+/// ```compile_fail
+/// # use const_primes::largest_primes_below;
+/// const PRIMES: [u64; 5] = largest_primes_below(5);
+/// ```
+/// ```compile_fail
+/// # use const_primes::largest_primes_below;
+/// const PRIMES: [u64; 5] = largest_primes_below(26);
+/// ```
 pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64; N] {
     let n64 = N as u64;
-    assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
+    assert!(upper_limit > n64, "`upper_limit` must be larger than `N`");
     match (n64).checked_mul(n64) {
-        Some(prod) => assert!(upper_limit <= prod, "`upper_limit` must be below `N^2`"),
+        Some(prod) => assert!(
+            upper_limit <= prod,
+            "`upper_limit` must be less than or equal to `N^2`"
+        ),
         None => panic!("`N^2` must fit in a `u64`"),
     }
 
@@ -214,7 +244,6 @@ pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64;
 
     // This will be used to sieve all upper ranges.
     let base_sieve: [bool; N] = are_prime();
-
     let mut total_primes_found: usize = 0;
     'generate: while total_primes_found < N && upper_limit > 2 {
         let upper_sieve: [bool; N] = sieve_segment(&base_sieve, upper_limit);
@@ -691,7 +720,7 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!([0, 0, 0, 0, 2, 3, 5, 7], largest_primes_below(10));
+        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], largest_primes_below(10));
     }
 
     #[test]
