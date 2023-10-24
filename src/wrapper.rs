@@ -527,7 +527,7 @@ mod test {
     }
 
     #[test]
-    fn verity_as_slice() {
+    fn verify_as_slice() {
         const N: usize = 10;
         const P: Primes<N> = Primes::new();
         const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];

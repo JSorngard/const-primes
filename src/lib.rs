@@ -182,7 +182,11 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 }
 
 /// Returns the `N` largest primes below the given upper limit.
+/// The return array fills from the end until either it is full or there are no more primes.
+/// If the primes run out before the array is filled the first elements will have a value of zero.
+///
 /// # Example
+///
 /// ```
 /// # use const_primes::largest_primes_below;
 /// const P: [u64; 10] = largest_primes_below(100);
@@ -198,16 +202,27 @@ pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64;
         None => panic!("`N^2` must fit in a `u64`"),
     }
 
+    let mut primes: [u64; N] = [0; N];
+
+    // If the user requested only a single prime we just scan for it with `is_prime`.
+    if N == 1 {
+        if let Some(p) = largest_prime_leq(upper_limit - 1) {
+            primes[0] = p;
+        }
+        return primes;
+    }
+
     // This will be used to sieve all upper ranges.
     let base_sieve: [bool; N] = are_prime();
-    let mut primes: [u64; N] = [0; N];
+
     let mut total_primes_found: usize = 0;
-    'generate: while total_primes_found < N && upper_limit > 1 {
+    'generate: while total_primes_found < N && upper_limit > 2 {
         let upper_sieve: [bool; N] = sieve_segment(&base_sieve, upper_limit);
-        let mut smallest_found_prime = upper_limit;
+        let mut smallest_found_prime = primes[N - total_primes_found - 1];
         let mut i: usize = 0;
         while i < N {
-            if upper_sieve[N - 1 - i] {
+            let j = N - 1 - i;
+            if upper_sieve[j] {
                 smallest_found_prime = upper_limit - 1 - i as u64;
                 primes[N - total_primes_found - 1] = smallest_found_prime;
                 total_primes_found += 1;
@@ -674,7 +689,9 @@ mod test {
             };
         }
 
-        test_n_below_100!(10, 15, 20, 100);
+        test_n_below_100!(10, 15, 20);
+
+        assert_eq!([0, 0, 0, 0, 2, 3, 5, 7], largest_primes_below(10));
     }
 
     #[test]
