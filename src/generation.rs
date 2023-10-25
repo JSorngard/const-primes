@@ -109,17 +109,17 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// # Example
 /// Basic usage:
 /// ```
-/// # use const_primes::primes_below;
-/// const PRIMES: [u64; 10] = primes_below(100);
+/// # use const_primes::primes_less_than;
+/// const PRIMES: [u64; 10] = primes_less_than(100);
 ///
 /// assert_eq!(PRIMES, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
-/// # use const_primes::primes_below;
+/// # use const_primes::primes_less_than;
 /// const N: usize = 70711;
 /// # #[allow(long_running_const_eval)]
-/// const BIG_PRIMES: [u64; N] = primes_below(5_000_000_030);
+/// const BIG_PRIMES: [u64; N] = primes_less_than(5_000_000_030);
 ///
 /// assert_eq!(&BIG_PRIMES[..3], &[4_998_417_421, 4_998_417_427, 4_998_417_443]);
 /// assert_eq!(&BIG_PRIMES[N - 3..], &[4_999_999_903, 4_999_999_937, 5_000_000_029]);
@@ -127,8 +127,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// If there are not enough primes to fill the requested array, the first
 /// elements will have a value of zero:
 /// ```
-/// # use const_primes::primes_below;
-/// const PRIMES: [u64; 9] = primes_below(10);
+/// # use const_primes::primes_less_than;
+/// const PRIMES: [u64; 9] = primes_less_than(10);
 ///
 /// assert_eq!(PRIMES, [0, 0, 0, 0, 0, 2, 3, 5, 7]);
 /// ```
@@ -136,14 +136,14 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Panics if `upper_limit` is not in the range `(N, N^2]`. This is a compile error
 /// in const contexts:
 /// ```compile_fail
-/// # use const_primes::primes_below;
-/// const PRIMES: [u64; 5] = primes_below(5);
+/// # use const_primes::primes_less_than;
+/// const PRIMES: [u64; 5] = primes_less_than(5);
 /// ```
 /// ```compile_fail
-/// # use const_primes::primes_below;
-/// const PRIMES: [u64; 5] = primes_below(26);
+/// # use const_primes::primes_less_than;
+/// const PRIMES: [u64; 5] = primes_less_than(26);
 /// ```
-pub const fn primes_below<const N: usize>(mut upper_limit: u64) -> [u64; N] {
+pub const fn primes_less_than<const N: usize>(mut upper_limit: u64) -> [u64; N] {
     let n64 = N as u64;
     assert!(upper_limit > n64, "`upper_limit` must be larger than `N`");
     match (n64).checked_mul(n64) {
@@ -188,7 +188,33 @@ pub const fn primes_below<const N: usize>(mut upper_limit: u64) -> [u64; N] {
 }
 
 /// Returns an array of the `N` smallest primes greater than or equal to `lower_limit`.
-pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
+/// 
+/// This function will fill the output array from index 0 and stop generating primes if they exceed `N^2`.
+/// In that case the remaining elements of the output array will be 0.
+/// 
+/// # Example
+/// Basic usage:
+/// ```
+/// # use const_primes::primes_greater_than_or_equal_to;
+/// const PRIMES: [u64; 5] = primes_greater_than_or_equal_to(10);
+/// assert_eq!(PRIMES, [11, 13, 17, 19, 23]);
+/// ```
+/// Compute larger primes without starting from zero:
+/// ```
+/// # use const_primes::primes_greater_than_or_equal_to;
+/// const N: usize = 71_000;
+/// # #[allow(long_running_const_eval)]
+/// const P: [u64; N] = primes_greater_than_or_equal_to(5_000_000_030);
+/// assert_eq!(P[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+/// assert_eq!(P[N - 3..], [5_001_586_727, 5_001_586_729, 5_001_586_757]);
+/// ```
+/// Only primes smaller than or equal to `N^2` will be generated:
+/// ```
+/// # use const_primes::primes_greater_than_or_equal_to;
+/// const PRIMES: [u64; 3] = primes_greater_than_or_equal_to(5);
+/// assert_eq!(PRIMES, [5, 7, 0]);
+/// ```
+pub const fn primes_greater_than_or_equal_to<const N: usize>(mut lower_limit: u64) -> [u64; N] {
     let n64 = N as u64;
     if n64.checked_mul(n64).is_none() {
         panic!("`N^2` must fit in a `u64`");
@@ -223,31 +249,22 @@ mod test {
     use super::*;
 
     #[test]
-    fn sanity_check_primes_geq() {
+    fn sanity_check_primes_greater_than_or_equal_to() {
         {
-            const P: [u64; 5] = primes_geq(10);
+            const P: [u64; 5] = primes_greater_than_or_equal_to(10);
             assert_eq!(P, [11, 13, 17, 19, 23]);
         }
         {
-            const P: [u64; 5] = primes_geq(0);
+            const P: [u64; 5] = primes_greater_than_or_equal_to(0);
             assert_eq!(P, [2, 3, 5, 7, 11]);
         }
         {
-            const P: [u64; 0] = primes_geq(0);
+            const P: [u64; 0] = primes_greater_than_or_equal_to(0);
             assert_eq!(P, []);
         }
         {
-            const P: [u64; 1] = primes_geq(0);
+            const P: [u64; 1] = primes_greater_than_or_equal_to(0);
             assert_eq!(P, [0]);
         }
-    }
-
-    #[test]
-    fn check_primes_geq_large() {
-        const N: usize = 71_000;
-        #[allow(long_running_const_eval)]
-        const P: [u64; N] = primes_geq(5_000_000_030);
-        assert_eq!(P[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
-        assert_eq!(P[N - 3..], [5_001_586_727, 5_001_586_729, 5_001_586_757]);
     }
 }

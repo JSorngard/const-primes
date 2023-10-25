@@ -83,7 +83,7 @@ mod next_prime;
 mod sieve;
 mod wrapper;
 
-pub use generation::{primes, primes_below, primes_geq};
+pub use generation::{primes_less_than, primes, primes_greater_than_or_equal_to};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use next_prime::{largest_prime_leq, smallest_prime_geq};
@@ -279,13 +279,13 @@ mod test {
     }
 
     #[test]
-    fn check_primes_below() {
+    fn check_primes_less_than() {
         macro_rules! test_n_below_100 {
             ($($n:expr),+) => {
                 $(
                     {
                         println!("{}", $n);
-                        const P: [u64; $n] = primes_below(100);
+                        const P: [u64; $n] = primes_less_than(100);
                         assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], P.map(|i|i as u32));
                     }
                 )+
@@ -294,9 +294,9 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], primes_below(10));
+        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], primes_less_than(10));
 
-        assert_eq!([0, 2], primes_below(3));
+        assert_eq!([0, 2], primes_less_than(3));
     }
 
     #[test]
