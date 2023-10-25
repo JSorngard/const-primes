@@ -50,19 +50,19 @@
 //! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 //! assert!(CHECK);
 //! ```
-//! or [`are_prime`] to compute the prime status of the `N` first integers,
+//! or [`sieve_numbers`] to compute the prime status of the `N` first integers,
 //! ```
-//! # use const_primes::are_prime;
+//! # use const_primes::sieve_numbers;
 //! const N: usize = 10;
-//! const PRIME_STATUS: [bool; N] = are_prime();
+//! const PRIME_STATUS: [bool; N] = sieve_numbers();
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//! or [`are_prime_below`] to compute the prime status of the `N` largest integers below a given value,
+//! or [`sieve_numbers_less_than`] to compute the prime status of the `N` largest integers below a given value,
 //! ```
-//! # use const_primes::are_prime_below;
+//! # use const_primes::sieve_numbers_less_than;
 //! const N: usize = 70711;
-//! const BIG_PRIME_STATUS: [bool; N] = are_prime_below(5_000_000_031);
+//! const BIG_PRIME_STATUS: [bool; N] = sieve_numbers_less_than(5_000_000_031);
 //! //                                     5_000_000_028  5_000_000_029  5_000_000_030
 //! assert_eq!(BIG_PRIME_STATUS[N - 3..], [false,         true,          false]);
 //! ```
@@ -83,11 +83,13 @@ mod next_prime;
 mod sieve;
 mod wrapper;
 
-pub use generation::{primes_less_than, primes, primes_greater_than_or_equal_to};
+pub use generation::{primes, primes_greater_than_or_equal_to, primes_less_than};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
-pub use next_prime::{largest_prime_leq, smallest_prime_geq};
-pub use sieve::{are_prime, are_prime_below};
+pub use next_prime::{
+    largest_prime_less_than_or_equal_to, smallest_prime_greater_than_or_equal_to,
+};
+pub use sieve::{sieve_numbers, sieve_numbers_less_than};
 pub use wrapper::Primes;
 
 /// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
@@ -154,7 +156,7 @@ pub const fn moebius(mut x: u64) -> i8 {
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
-/// Sieves primes with [`are_prime`] and then counts them.
+/// Sieves primes with [`sieve_numbers`] and then counts them.
 ///
 /// # Example
 /// Basic usage
@@ -170,7 +172,7 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
         return counts;
     }
     counts[2] = 1;
-    let prime_status: [bool; N] = are_prime();
+    let prime_status: [bool; N] = sieve_numbers();
     let mut count = 1;
     let mut i = 3;
     while i < N {
@@ -203,12 +205,12 @@ mod test {
     }
 
     #[test]
-    fn check_are_prime() {
+    fn check_sieve_numbers() {
         macro_rules! test_to {
             ($($n:expr),+) => {
                 $(
                     println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[..$n], are_prime::<$n>());
+                    assert_eq!(&PRIMALITIES[..$n], sieve_numbers::<$n>());
                 )+
             };
         }
@@ -300,12 +302,12 @@ mod test {
     }
 
     #[test]
-    fn check_are_prime_below() {
+    fn check_sieve_numbers_less_than() {
         macro_rules! test_n_below_100 {
             ($($n:expr),+) => {
                 $(
                     println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[100-$n..], are_prime_below::<$n>(100));
+                    assert_eq!(&PRIMALITIES[100-$n..], sieve_numbers_less_than::<$n>(100));
                 )+
             };
         }
@@ -322,21 +324,21 @@ mod test {
     fn check_next_prime() {
         for i in 1..PRECOMPUTED_PRIMES.len() - 1 {
             assert_eq!(
-                smallest_prime_geq(PRECOMPUTED_PRIMES[i] as u64 + 1),
+                smallest_prime_greater_than_or_equal_to(PRECOMPUTED_PRIMES[i] as u64 + 1),
                 Some(PRECOMPUTED_PRIMES[i + 1] as u64)
             );
             assert_eq!(
-                largest_prime_leq(PRECOMPUTED_PRIMES[i] as u64 - 1),
+                largest_prime_less_than_or_equal_to(PRECOMPUTED_PRIMES[i] as u64 - 1),
                 Some(PRECOMPUTED_PRIMES[i - 1] as u64)
             );
         }
 
-        assert_eq!(smallest_prime_geq(0), Some(2));
-        assert_eq!(smallest_prime_geq(1), Some(2));
-        assert_eq!(smallest_prime_geq(2), Some(2));
-        assert_eq!(largest_prime_leq(0), None);
-        assert_eq!(largest_prime_leq(1), None);
-        assert_eq!(largest_prime_leq(2), Some(2));
+        assert_eq!(smallest_prime_greater_than_or_equal_to(0), Some(2));
+        assert_eq!(smallest_prime_greater_than_or_equal_to(1), Some(2));
+        assert_eq!(smallest_prime_greater_than_or_equal_to(2), Some(2));
+        assert_eq!(largest_prime_less_than_or_equal_to(0), None);
+        assert_eq!(largest_prime_less_than_or_equal_to(1), None);
+        assert_eq!(largest_prime_less_than_or_equal_to(2), Some(2));
     }
 
     #[rustfmt::skip]

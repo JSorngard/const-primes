@@ -1,8 +1,8 @@
-use crate::{are_prime, sieve::sieve_segment, Underlying};
+use crate::{sieve::sieve_segment, sieve_numbers, Underlying};
 
 /// Returns the `N` first prime numbers.
 ///
-/// [`Primes`] might be relevant for you if you intend to later use these prime numbers for related computations.
+/// [`Primes`](crate::Primes) might be relevant for you if you intend to later use these prime numbers for related computations.
 ///
 /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ///
@@ -35,7 +35,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     let mut prime_count = 0;
 
     // Sieve the first primes below N
-    let mut sieve: [bool; N] = are_prime();
+    let mut sieve: [bool; N] = sieve_numbers();
 
     // Count how many primes we found
     // and store them in the final array
@@ -98,7 +98,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
-/// Returns the `N` largest primes below the given upper limit.
+/// Returns the `N` largest primes less than `upper_limit`.
 ///
 /// The return array fills from the end until either it is full or there are no more primes.
 /// If the primes run out before the array is filled the first elements will have a value of zero.
@@ -157,7 +157,7 @@ pub const fn primes_less_than<const N: usize>(mut upper_limit: u64) -> [u64; N] 
     let mut primes: [u64; N] = [0; N];
 
     // This will be used to sieve all upper ranges.
-    let base_sieve: [bool; N] = are_prime();
+    let base_sieve: [bool; N] = sieve_numbers();
 
     let mut total_primes_found: usize = 0;
     'generate: while total_primes_found < N && upper_limit > 2 {
@@ -187,11 +187,11 @@ pub const fn primes_less_than<const N: usize>(mut upper_limit: u64) -> [u64; N] 
     primes
 }
 
-/// Returns an array of the `N` smallest primes greater than or equal to `lower_limit`.
-/// 
+/// Returns the `N` smallest primes greater than or equal to `lower_limit`.
+///
 /// This function will fill the output array from index 0 and stop generating primes if they exceed `N^2`.
 /// In that case the remaining elements of the output array will be 0.
-/// 
+///
 /// # Example
 /// Basic usage:
 /// ```
@@ -221,7 +221,7 @@ pub const fn primes_greater_than_or_equal_to<const N: usize>(mut lower_limit: u6
     }
 
     let mut primes = [0; N];
-    let base_sieve: [bool; N] = are_prime();
+    let base_sieve: [bool; N] = sieve_numbers();
     let mut total_found_primes = 0;
     'generate: while total_found_primes < N && lower_limit + n64 <= n64 * n64 {
         let mut largest_found_prime = primes[total_found_primes];
