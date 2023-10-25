@@ -1,7 +1,7 @@
 use crate::isqrt;
 
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
-pub const fn sieve_segment<const N: usize>(base_sieve: &[bool; N], upper_limit: u64) -> [bool; N] {
+pub(crate) const fn sieve_segment<const N: usize>(base_sieve: &[bool; N], upper_limit: u64) -> [bool; N] {
     let mut segment_sieve = [true; N];
 
     let lower_limit = upper_limit - N as u64;
