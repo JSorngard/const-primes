@@ -76,357 +76,19 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
+mod generation;
 mod imath;
 mod miller_rabin;
+mod next_prime;
+mod sieve;
 mod wrapper;
+
+pub use generation::{primes, primes_below, primes_geq};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
+pub use next_prime::{largest_prime_leq, smallest_prime_geq};
+pub use sieve::{are_prime, are_prime_below};
 pub use wrapper::Primes;
-
-/// Returns the `N` first prime numbers.
-///
-/// [`Primes`] might be relevant for you if you intend to later use these prime numbers for related computations.
-///
-/// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
-///
-/// # Example
-/// ```
-/// # use const_primes::primes;
-/// const PRIMES: [u32; 10] = primes();
-/// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
-/// ```
-/// # Panics
-/// Panics if a computed prime overflows a `u32`. This will result in a compile error in a const context.  
-#[must_use = "the function only returns a new value"]
-pub const fn primes<const N: usize>() -> [Underlying; N] {
-    if N == 0 {
-        return [0; N];
-    } else if N == 1 {
-        return [2; N];
-    } else if N == 2 {
-        let mut primes = [0; N];
-        primes[0] = 2;
-        primes[1] = 3;
-        return primes;
-    }
-
-    // This is a segmented sieve that runs until it has found enough primes.
-
-    // This array is the output in the end
-    let mut primes = [0; N];
-    // This keeps track of how many primes we've found so far.
-    let mut prime_count = 0;
-
-    // Sieve the first primes below N
-    let mut sieve: [bool; N] = are_prime();
-
-    // Count how many primes we found
-    // and store them in the final array
-    let mut number = 0;
-    while number < N {
-        if sieve[number] {
-            primes[prime_count] = number as Underlying;
-            prime_count += 1;
-        }
-
-        number += 1;
-    }
-
-    // For every segment of N numbers
-    let mut low = N - 1;
-    let mut high = 2 * N - 1;
-    'generate: while prime_count < N {
-        // reset the sieve for the segment
-        sieve = [true; N];
-        let mut i = 0;
-
-        // and repeat for each prime found so far:
-        while i < prime_count {
-            let prime = primes[i] as usize;
-
-            // Find the smallest composite in the current segment,
-            let mut composite = (low / prime) * prime;
-            if composite < low {
-                composite += prime;
-            }
-
-            // and sieve all numbers in the segment that are multiples of the prime.
-            while composite < high {
-                sieve[composite - low] = false;
-                composite += prime;
-            }
-
-            i += 1;
-        }
-
-        // Move the found primes into the final array
-        i = low;
-        while i < high {
-            if sieve[i - low] {
-                primes[prime_count] = i as Underlying;
-                prime_count += 1;
-                // and stop the generation of primes if we're done.
-                if prime_count == N {
-                    break 'generate;
-                }
-            }
-            i += 1;
-        }
-
-        // Update low and high for the next segment
-        low += N;
-        high += N;
-    }
-
-    primes
-}
-
-/// Returns the `N` largest primes below the given upper limit.
-///
-/// The return array fills from the end until either it is full or there are no more primes.
-/// If the primes run out before the array is filled the first elements will have a value of zero.
-/// 
-/// Due to the limitations on memory allocation in `const` contexts the value of `N`
-/// must satisfy the bounds `N < upper_limit <= N^2`.
-///
-/// # Example
-/// Basic usage:
-/// ```
-/// # use const_primes::largest_primes_below;
-/// const PRIMES: [u64; 10] = largest_primes_below(100);
-///
-/// assert_eq!(PRIMES, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
-/// ```
-/// Compute larger primes without starting from zero:
-/// ```
-/// # use const_primes::largest_primes_below;
-/// const N: usize = 70711;
-/// # #[allow(long_running_const_eval)]
-/// const BIG_PRIMES: [u64; N] = largest_primes_below(5_000_000_030);
-///
-/// assert_eq!(&BIG_PRIMES[..3], &[4_998_417_421, 4_998_417_427, 4_998_417_443]);
-/// assert_eq!(&BIG_PRIMES[N - 3..], &[4_999_999_903, 4_999_999_937, 5_000_000_029]);
-/// ```
-/// If there are not enough primes to fill the requested array, the first
-/// elements will have a value of zero:
-/// ```
-/// # use const_primes::largest_primes_below;
-/// const PRIMES: [u64; 9] = largest_primes_below(10);
-///
-/// assert_eq!(PRIMES, [0, 0, 0, 0, 0, 2, 3, 5, 7]);
-/// ```
-/// # Panics
-/// Panics if `upper_limit` is not in the range `(N, N^2]`. This is a compile error
-/// in const contexts:
-/// ```compile_fail
-/// # use const_primes::largest_primes_below;
-/// const PRIMES: [u64; 5] = largest_primes_below(5);
-/// ```
-/// ```compile_fail
-/// # use const_primes::largest_primes_below;
-/// const PRIMES: [u64; 5] = largest_primes_below(26);
-/// ```
-pub const fn largest_primes_below<const N: usize>(mut upper_limit: u64) -> [u64; N] {
-    let n64 = N as u64;
-    assert!(upper_limit > n64, "`upper_limit` must be larger than `N`");
-    match (n64).checked_mul(n64) {
-        Some(prod) => assert!(
-            upper_limit <= prod,
-            "`upper_limit` must be less than or equal to `N^2`"
-        ),
-        None => panic!("`N^2` must fit in a `u64`"),
-    }
-
-    let mut primes: [u64; N] = [0; N];
-
-    // This will be used to sieve all upper ranges.
-    let base_sieve: [bool; N] = are_prime();
-
-    let mut total_primes_found: usize = 0;
-    'generate: while total_primes_found < N && upper_limit > 2 {
-        // This is the smallest prime we have found so far.
-        let mut smallest_found_prime = primes[N - 1 - total_primes_found];
-        // Sieve for primes in the segment.
-        let upper_sieve: [bool; N] = sieve_segment(&base_sieve, upper_limit);
-        
-        let mut i: usize = 0;
-        while i < N {
-            // Iterate backwards through the upper sieve.
-            if upper_sieve[N - 1 - i] {
-                smallest_found_prime = upper_limit - 1 - i as u64;
-                // Write every found prime to the primes array.
-                primes[N - 1 - total_primes_found] = smallest_found_prime;
-                total_primes_found += 1;
-                if total_primes_found >= N {
-                    // If we have found enough primes we stop sieving.
-                    break 'generate;
-                }
-            }
-            i += 1;
-        }
-        upper_limit = smallest_found_prime;
-    }
-
-    primes
-}
-
-/// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
-const fn sieve_segment<const N: usize>(base_sieve: &[bool; N], upper_limit: u64) -> [bool; N] {
-    let mut segment_sieve = [true; N];
-
-    let lower_limit = upper_limit - N as u64;
-
-    // In case 0 and/or 1 are included in the upper sieve we need to treat them as a special case
-    // since they are not multiples of any prime in `base_sieve` even though they are not primes.
-    if lower_limit == 0 && N > 1 {
-        segment_sieve[0] = false;
-        segment_sieve[1] = false;
-    } else if lower_limit == 1 && N > 0 {
-        segment_sieve[0] = false;
-    }
-
-    let mut i = 0;
-    while i < N {
-        if base_sieve[i] {
-            let prime = i as u64;
-
-            // Find the smallest multiple of the prime larger than or equal to `lower_limit`.
-            let mut composite = (lower_limit / prime) * prime;
-            if composite < lower_limit {
-                composite += prime;
-            }
-            if composite == prime {
-                composite += prime;
-            }
-
-            // Sieve all numbers in the segment that are multiples of the prime.
-            while composite < upper_limit {
-                segment_sieve[(composite - lower_limit) as usize] = false;
-                composite += prime;
-            }
-        }
-        i += 1;
-    }
-
-    segment_sieve
-}
-
-/// Returns an array of size `N` that indicates which of the integers in `[upper_limit - N, upper_limit)` are prime,
-/// or in other words: the value at a given index represents whether `index + upper_limit - N` is prime.
-///
-/// If you just want the prime status of the first `N` integers, see [`are_prime`].
-///
-/// Uses a sieve of Eratosthenes to sieve the first `N` integers
-/// and then uses the result to sieve the output range if needed.
-///
-/// # Examples
-/// Basic usage
-/// ```
-/// # use const_primes::are_prime_below;
-/// const PRIME_STATUSES: [bool; 10] = are_prime_below(30);
-///
-/// assert_eq!(
-///     PRIME_STATUSES,
-/// //   20     21     22     23    24     25     26     27     28     29
-///     [false, false, false, true, false, false, false, false, false, true],
-/// );
-/// ```
-/// Sieve limited ranges of very large values
-/// ```
-/// # use const_primes::are_prime_below;
-/// const BIG_NUMBER: u64 = 5_000_000_031;
-/// const CEIL_SQRT_BIG_NUMBER: usize = 70711;
-/// const BIG_PRIME_STATUSES: [bool; CEIL_SQRT_BIG_NUMBER] = are_prime_below(BIG_NUMBER);
-/// assert_eq!(
-///     BIG_PRIME_STATUSES[CEIL_SQRT_BIG_NUMBER - 3..],
-/// //  5_000_000_028  5_000_000_029  5_000_000_030
-///     [false,        true,          false],
-/// );
-/// ```
-///
-/// # Panics
-/// Panics if `upper_limit` is not in the range `[N, N^2]`, or if `N^2` overflows a `u64`.
-/// These are compile errors in const contexts.
-/// ```compile_fail
-/// # use const_primes::are_prime_below;
-/// const PRIME_STATUSES: [bool; 5] = are_prime_below(26);
-/// ```
-/// ```compile_fail
-/// # use const_primes::are_prime_below;
-/// const PRIME_STATUSES: [bool; 5] = are_prime_below(4);
-/// ```
-#[must_use = "the function returns a new value and does not modify its input"]
-pub const fn are_prime_below<const N: usize>(upper_limit: u64) -> [bool; N] {
-    let n64 = N as u64;
-
-    // Since panics are compile time errors in const contexts
-    // we check all the preconditions here and panic early.
-    match n64.checked_mul(n64) {
-        Some(prod) => assert!(
-            upper_limit <= prod,
-            "`upper_limit` must be smaller than or equal to `N`^2"
-        ),
-        None => panic!("`N`^2 must fit in a `u64`"),
-    }
-    assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
-
-    // Use a normal sieve of Eratosthenes for the first N numbers.
-    let base_sieve: [bool; N] = are_prime();
-
-    if upper_limit == n64 {
-        // If we are not interested in sieving a larger range we can just return early.
-        return base_sieve;
-    }
-
-    sieve_segment(&base_sieve, upper_limit)
-}
-
-/// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
-///
-/// Uses a sieve of Eratosthenes.
-///
-/// # Example
-/// ```
-/// # use const_primes::are_prime;
-/// const PRIMALITY: [bool; 10] = are_prime();
-/// //                     0      1      2     3     4      5     6      7     8      9
-/// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
-/// ```
-#[must_use = "the function only returns a new value"]
-pub const fn are_prime<const N: usize>() -> [bool; N] {
-    let mut sieve = [true; N];
-    if N > 0 {
-        sieve[0] = false;
-    }
-    if N > 1 {
-        sieve[1] = false;
-    }
-
-    let mut number: usize = 2;
-    let bound = isqrt(N as u64);
-    // For all numbers up to and including sqrt(n):
-    while (number as u64) <= bound {
-        if sieve[number] {
-            // If a number is prime we enumerate all multiples of it
-            // starting from its square,
-            let Some(mut composite) = number.checked_mul(number) else {
-                break;
-            };
-
-            // and mark them as not prime.
-            while composite < N {
-                sieve[composite] = false;
-                composite = match composite.checked_add(number) {
-                    Some(sum) => sum,
-                    None => break,
-                };
-            }
-        }
-        number += 1;
-    }
-
-    sieve
-}
 
 /// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
 ///
@@ -487,78 +149,6 @@ pub const fn moebius(mut x: u64) -> i8 {
         1
     } else {
         -1
-    }
-}
-
-/// Returns the largest prime smaller than or equal to `n` if there is one.
-///
-/// Scans for primes downwards from the input with [`is_prime`].
-///
-/// # Examples
-/// ```
-/// # use const_primes::largest_prime_leq;
-/// const LPLEQ: Option<u64> = largest_prime_leq(400);
-/// assert_eq!(LPLEQ, Some(397));
-/// ```
-/// There's no prime smaller than or equal to one
-/// ```
-/// # use const_primes::largest_prime_leq;
-/// const NOSUCH: Option<u64> = largest_prime_leq(1);
-/// assert!(NOSUCH.is_none());
-/// ```
-#[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn largest_prime_leq(mut n: u64) -> Option<u64> {
-    if n == 0 || n == 1 {
-        None
-    } else if n == 2 {
-        Some(2)
-    } else {
-        if n % 2 == 0 {
-            n -= 1;
-        }
-
-        while !is_prime(n) {
-            n -= 2;
-        }
-
-        Some(n)
-    }
-}
-
-/// Returns the smallest prime greater than or equal to `n` if there is one that
-/// can be represented by a `u64`.
-///
-/// Scans for primes upwards from the input with [`is_prime`].
-///
-/// # Example
-/// ```
-/// # use const_primes::smallest_prime_geq;
-/// const SPGEQ: Option<u64> = smallest_prime_geq(400);
-/// assert_eq!(SPGEQ, Some(401));
-/// ```
-/// Primes larger than 18446744073709551557 can not be represented by a `u64`
-/// ```
-/// # use const_primes::smallest_prime_geq;
-/// const NOSUCH: Option<u64> = smallest_prime_geq(18_446_744_073_709_551_558);
-/// assert!(NOSUCH.is_none());
-/// ```
-#[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn smallest_prime_geq(mut n: u64) -> Option<u64> {
-    // The largest prime smaller than 2^64
-    if n > 18_446_744_073_709_551_557 {
-        None
-    } else if n <= 2 {
-        Some(2)
-    } else {
-        if n % 2 == 0 {
-            n += 1;
-        }
-
-        while !is_prime(n) {
-            n += 2;
-        }
-
-        Some(n)
     }
 }
 
@@ -673,25 +263,6 @@ mod test {
     }
 
     #[test]
-    fn check_are_prime_below() {
-        macro_rules! test_n_below_100 {
-            ($($n:expr),+) => {
-                $(
-                    println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[100-$n..], are_prime_below::<$n>(100));
-                )+
-            };
-        }
-        test_n_below_100!(
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
-            54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
-            76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
-            98, 99
-        );
-    }
-
-    #[test]
     fn verify_primes() {
         macro_rules! test_to_n {
             ($($n:expr),+) => {
@@ -708,13 +279,13 @@ mod test {
     }
 
     #[test]
-    fn check_largest_primes_below() {
+    fn check_primes_below() {
         macro_rules! test_n_below_100 {
             ($($n:expr),+) => {
                 $(
                     {
                         println!("{}", $n);
-                        const P: [u64; $n] = largest_primes_below(100);
+                        const P: [u64; $n] = primes_below(100);
                         assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], P.map(|i|i as u32));
                     }
                 )+
@@ -723,9 +294,28 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], largest_primes_below(10));
+        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], primes_below(10));
 
-        assert_eq!([0, 2], largest_primes_below(3));
+        assert_eq!([0, 2], primes_below(3));
+    }
+
+    #[test]
+    fn check_are_prime_below() {
+        macro_rules! test_n_below_100 {
+            ($($n:expr),+) => {
+                $(
+                    println!("{}", $n);
+                    assert_eq!(&PRIMALITIES[100-$n..], are_prime_below::<$n>(100));
+                )+
+            };
+        }
+        test_n_below_100!(
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
+            54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+            76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
+            98, 99
+        );
     }
 
     #[test]
