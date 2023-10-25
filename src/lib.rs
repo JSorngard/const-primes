@@ -89,7 +89,7 @@ pub use miller_rabin::is_prime;
 pub use next_prime::{
     largest_prime_less_than_or_equal_to, smallest_prime_greater_than_or_equal_to,
 };
-pub use sieve::{sieve_numbers, sieve_numbers_less_than};
+pub use sieve::{sieve_numbers, sieve_numbers_greater_than_or_equal_to, sieve_numbers_less_than};
 pub use wrapper::Primes;
 
 /// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).

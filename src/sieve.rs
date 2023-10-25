@@ -78,8 +78,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// ```
 ///
 /// # Panics
-/// Panics if `upper_limit` is not in the range `[N, N^2]`, or if `N^2` overflows a `u64`.
-/// These are compile errors in const contexts.
+/// Panics if `upper_limit` is not in the range `[N, N^2]`. In const contexts these are compile errors:
 /// ```compile_fail
 /// # use const_primes::sieve_numbers_less_than;
 /// const PRIME_STATUSES: [bool; 5] = sieve_numbers_less_than(26);
@@ -159,4 +158,50 @@ pub const fn sieve_numbers<const N: usize>() -> [bool; N] {
     }
 
     sieve
+}
+
+/// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
+/// 
+/// # Example
+/// Basic usage:
+/// ```
+/// # use const_primes::sieve_numbers_greater_than_or_equal_to;
+/// const PRIME_STATUS: [bool; 5] = sieve_numbers_greater_than_or_equal_to(10);
+/// //                        10     11    12     13    14
+/// assert_eq!(PRIME_STATUS, [false, true, false, true, false]);
+/// ```
+/// # Panics
+/// Panics if `N + lower_limit` is larger than `N^2`. In const contexts this is a compile error:
+/// ```compile_fail
+/// # use const_primes::sieve_numbers_greater_than_or_equal_to;
+/// const P: [bool; 5] = sieve_numbers_greater_than_or_equal_to(21);
+/// ```
+pub const fn sieve_numbers_greater_than_or_equal_to<const N: usize>(lower_limit: u64) -> [bool; N] {
+    let n64 = N as u64;
+
+    // Since panics are compile time errors in const contexts
+    // we check all the preconditions here and panic early.
+    let upper_limit = if let Some(sum) = n64.checked_add(lower_limit) {
+        sum
+    } else {
+        panic!("`N + lower_limit` must fit in a `u64`")
+    };
+    if let Some(n_sqr) = n64.checked_mul(n64) {
+        assert!(
+            upper_limit <= n_sqr,
+            "`lower_limit + N` must be less than or equal to `N^2`"
+        );
+    } else {
+        panic!("`N^2` must fit in a `u64`")
+    }
+    
+    let base_sieve: [bool; N] = sieve_numbers();
+    
+    // If `lower_limit` is zero the upper range is the same as what we already sieved,
+    // so we return early.
+    if lower_limit == 0 {
+        return base_sieve;
+    }
+
+    sieve_segment(&base_sieve, upper_limit)
 }
