@@ -161,7 +161,7 @@ pub const fn sieve_numbers<const N: usize>() -> [bool; N] {
 }
 
 /// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
-/// 
+///
 /// # Example
 /// Basic usage:
 /// ```
@@ -194,9 +194,9 @@ pub const fn sieve_numbers_greater_than_or_equal_to<const N: usize>(lower_limit:
     } else {
         panic!("`N^2` must fit in a `u64`")
     }
-    
+
     let base_sieve: [bool; N] = sieve_numbers();
-    
+
     // If `lower_limit` is zero the upper range is the same as what we already sieved,
     // so we return early.
     if lower_limit == 0 {

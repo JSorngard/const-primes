@@ -92,68 +92,6 @@ pub use next_prime::{
 pub use sieve::{sieve_numbers, sieve_numbers_greater_than_or_equal_to, sieve_numbers_less_than};
 pub use wrapper::Primes;
 
-/// Returns the value of the [Möbius function](https://en.wikipedia.org/wiki/M%C3%B6bius_function).
-///
-/// This function is
-/// - 1 if `x` is a square-free integer with an even number of prime factors,  
-/// - -1 if `x` is a square-free integer with an odd number of prime factors,  
-/// - 0 if `x` has a squared prime factor.
-///
-/// Uses a small wheel to check prime factors up to `√x` and exits early if
-/// there is a squared factor.
-///
-/// # Example
-/// ```
-/// # use const_primes::moebius;
-/// const N: u64 = 1001;
-/// const MÖBIUS1001: i8 = moebius(N);
-/// assert_eq!(MÖBIUS1001, -1);
-/// ```
-// I have added this code to Rosettacode: https://www.rosettacode.org/wiki/M%C3%B6bius_function#Rust
-// as of the writing of this comment.
-pub const fn moebius(mut x: u64) -> i8 {
-    let mut prime_count: u64 = 0;
-
-    /// If x is divisible by the any of the given factors this macro counts the factor and divides it out.
-    /// It then returns zero if x is still divisible by the factor.
-    macro_rules! handle_factors {
-        ($($factor:expr),+) => {
-            $(
-                if x % $factor == 0 {
-                    x /= $factor;
-                    prime_count += 1;
-                    // If x is still divisible by the factor that means x has a
-                    // square or more prime factor, and we return 0.
-                    if x % $factor == 0 { return 0; }
-                }
-            )+
-        };
-    }
-
-    // Handle 2 and 3 separately, since the wheel will not find these factors.
-    handle_factors!(2, 3);
-
-    // Handle the remaining factors <= √x with the wheel.
-    let mut i = 5;
-    let bound = isqrt(x);
-    while i <= bound {
-        handle_factors!(i, i + 2);
-        i += 6;
-    }
-
-    // There can exist one prime factor larger than √x,
-    // in that case we can check if x is still larger than one, and then count it.
-    if x > 1 {
-        prime_count += 1;
-    }
-
-    if prime_count % 2 == 0 {
-        1
-    } else {
-        -1
-    }
-}
-
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
 /// Sieves primes with [`sieve_numbers`] and then counts them.
@@ -247,21 +185,6 @@ mod test {
         }
 
         test_prime_counts_up_to!(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100);
-    }
-
-    #[test]
-    fn check_möbius() {
-        #[rustfmt::skip]
-        const TEST_CASES: [i8; 51] = [0, 1, -1, -1, 0, -1, 1, -1, 0, 0, 1, -1, 0, -1, 1, 1, 0, -1, 0, -1, 0, 1, 1, -1, 0, 0, 1, 0, 0, -1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, -1, -1, 0, 0, 1, -1, 0, 0, 0];
-        for (n, ans) in TEST_CASES.into_iter().enumerate() {
-            assert_eq!(moebius(n as u64), ans);
-        }
-        #[rustfmt::skip]
-        const BIG_TEST_CASES: [i8; 51] = [0, -1, -1, 1, 0, -1, 1, 1, 0, -1, -1, 1, 0, -1, 0, -1, 0, 0, 1, -1, 0, -1, -1, -1, 0, 0, 0, 1, 0, 0, -1, -1, 0, -1, -1, 0, 0, 1, -1, -1, 0, 1, 1, 1, 0, -1, 1, 1, 0, -1, 0];
-        for (n, ans) in BIG_TEST_CASES.into_iter().enumerate() {
-            assert_eq!(moebius(n as u64 + 1000), ans);
-        }
-        assert_eq!(moebius(u32::MAX.into()), -1);
     }
 
     #[test]

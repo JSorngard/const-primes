@@ -1,4 +1,4 @@
-use const_primes::{is_prime, moebius, primes, sieve_numbers};
+use const_primes::{is_prime, primes, sieve_numbers};
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 use rand::prelude::*;
 use std::hint::black_box;
@@ -22,15 +22,6 @@ fn benchmarks(c: &mut Criterion) {
 
     c.bench_function("sieve 10000 integers", |b| {
         b.iter(|| black_box(sieve_numbers::<10_000>()))
-    });
-
-    let ints: Vec<_> = (1..1_000_000).map(|n| n).collect();
-    c.bench_function("möbius of first 1e6 integers", |b| {
-        b.iter(|| {
-            for &i in &ints {
-                black_box(moebius(i));
-            }
-        })
     });
 }
 
