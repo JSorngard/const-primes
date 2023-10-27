@@ -4,21 +4,21 @@
 //!
 //! # Examples
 //! Generate arrays of prime numbers with the function [`primes`] which uses a
-//! [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
+//! [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
 //! ```
 //! use const_primes::primes;
 //! const PRIMES: [u32; 10] = primes();
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
-//! or with the type [`Primes`], which ensures that a non-zero number of primes are generated
+//! or with the wrapping type [`Primes`]:
 //! ```
 //! use const_primes::Primes;
 //! const PRIMES: Primes<10> = Primes::new();
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
-//! It also lets you reuse it as a cache of primes for related computations
+//! which lets you reuse it as a cache of primes for related computations:
 //! ```
 //! # use const_primes::Primes;
 //! const CACHE: Primes<100> = Primes::new();
@@ -37,12 +37,14 @@
 //! assert!(CACHE.is_prime(1000).is_none());
 //! assert!(CACHE.count_primes_leq(1000).is_none());
 //! ```
-//! Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.
-//! ```compile_fail
-//! # use const_primes::Primes;
-//! const PRIMES: Primes<0> = Primes::new();
+//! Sieve a range of numbers for their prime status with [`sieve`]:
 //! ```
-//!
+//! # use const_primes::sieve;
+//! const N: usize = 10;
+//! const PRIME_STATUS: [bool; N] = sieve();
+//! //                        0      1      2     3     4      5     6      7     8      9
+//! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
+//! ```
 //! ## Arbitrary ranges
 //!
 //! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
@@ -68,19 +70,22 @@
 //!
 //! ## Other functionality
 //!
-//! Use [`is_prime`] to test whether a given number is prime,
+//! Use [`is_prime`] to test whether a given number is prime:
 //! ```
 //! # use const_primes::is_prime;
 //! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 //! assert!(CHECK);
 //! ```
-//! or [`sieve`] to compute the prime status of the `N` first integers.
+//! Find the next or previous prime numbers with [`next_prime`] and [`previous_prime`] if they exist:
 //! ```
-//! # use const_primes::sieve;
-//! const N: usize = 10;
-//! const PRIME_STATUS: [bool; N] = sieve();
-//! //                        0      1      2     3     4      5     6      7     8      9
-//! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
+//! # use const_primes::{next_prime, previous_prime};
+//! const NEXT: Option<u64> = next_prime(25);
+//! const PREV: Option<u64> = previous_prime(25);
+//! const NOSUCH: Option<u64> = previous_prime(2);
+//!
+//! assert_eq!(NEXT, Some(29));
+//! assert_eq!(PREV, Some(23));
+//! assert_eq!(NOSUCH, None);
 //! ```
 //! and more!
 
