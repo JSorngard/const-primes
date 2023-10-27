@@ -42,6 +42,30 @@
 //! # use const_primes::Primes;
 //! const PRIMES: Primes<0> = Primes::new();
 //! ```
+//!
+//! ## Arbitrary ranges
+//!
+//! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
+//! that can be used to work with ranges that don't start at zero.
+//! ```
+//! # use const_primes::{sieve_lt, primes_geq};
+//! const N: usize = 70722;
+//! # #[allow(long_running_const_eval)]
+//! const PRIMES_GEQ: [u64; N] = primes_geq(5_000_000_031);
+//!
+//! assert_eq!(PRIMES_GEQ[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+//! ```
+//! ```
+//! # use const_primes::{sieve_lt, primes_geq};
+//! const N: usize = 70711;
+//! const PRIME_STATUS_LT: [bool; N] = sieve_lt(5_000_000_031);
+//! //                                    5_000_000_028  5_000_000_029  5_000_000_030
+//! assert_eq!(PRIME_STATUS_LT[N - 3..], [false,         true,          false]);
+//! ```
+//! Unfortunately the output array must be large enough to contain the prime sieve, which scales with
+//! the square root of largest relavant number, which is why the examples use a size of over 70000 even though
+//! they're only interested in three numbers.
+//!
 //! ## Other functionality
 //!
 //! Use [`is_prime`] to test whether a given number is prime,
@@ -50,24 +74,13 @@
 //! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 //! assert!(CHECK);
 //! ```
-//! or [`sieve`] to compute the prime status of the `N` first integers,
+//! or [`sieve`] to compute the prime status of the `N` first integers.
 //! ```
 //! # use const_primes::sieve;
 //! const N: usize = 10;
 //! const PRIME_STATUS: [bool; N] = sieve();
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
-//! ```
-//! or [`sieve_lt`] and [`sieve_geq`] to compute the prime status of the integers below or above a given value,
-//! ```
-//! # use const_primes::{sieve_lt, sieve_geq};
-//! const N: usize = 70800;
-//! const PRIME_STATUS_BELOW: [bool; N] = sieve_lt(5_000_000_031);
-//! const PRIME_STATUS_ABOVE: [bool; N] = sieve_geq(5_000_000_031);
-//! //                                       5_000_000_028  5_000_000_029  5_000_000_030
-//! assert_eq!(PRIME_STATUS_BELOW[N - 3..], [false,         true,          false]);
-//! //                                       5_000_000_031  5_000_000_032  5_000_000_033
-//! assert_eq!(PRIME_STATUS_ABOVE[..3],     [false,         false,          false]);
 //! ```
 //! and more!
 

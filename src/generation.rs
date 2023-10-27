@@ -104,6 +104,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Due to the limitations on memory allocation in `const` contexts the value of `N`
 /// must satisfy the bounds `N < upper_limit <= N^2`.
 ///
+/// If you want to compute primes that are larger than the input, take a look at [`primes_geq`].
+///
 /// # Example
 /// Basic usage:
 /// ```
@@ -190,6 +192,8 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
 /// This function will fill the output array from index 0 and stop generating primes if they exceed `N^2`.
 /// In that case the remaining elements of the output array will be 0.
 ///
+/// If you want to compute primes smaller than the input, take a look at [`primes_lt`].
+///
 /// # Example
 /// Basic usage:
 /// ```
@@ -206,11 +210,17 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
 /// assert_eq!(P[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
 /// assert_eq!(P[N - 3..], [5_001_586_727, 5_001_586_729, 5_001_586_757]);
 /// ```
-/// Only primes smaller than or equal to `N^2` will be generated:
+/// Only primes smaller than to `N^2` will be generated:
 /// ```
 /// # use const_primes::primes_geq;
 /// const PRIMES: [u64; 3] = primes_geq(5);
 /// assert_eq!(PRIMES, [5, 7, 0]);
+/// ```
+/// # Panics
+/// Panics if `N^2` does not fit in a `u64`.
+/// ```compile_fail
+/// # use const_primes::primes_geq;
+/// const P: [u64; u32::MAX as usize + 1] = primes_geq(0);
 /// ```
 pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
     let n64 = N as u64;
