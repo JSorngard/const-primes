@@ -7,18 +7,18 @@ use crate::is_prime;
 /// # Examples
 /// Basic usage:
 /// ```
-/// # use const_primes::largest_prime_less_than;
-/// const LPLEQ: Option<u64> = largest_prime_less_than(400);
+/// # use const_primes::largest_prime_lt;
+/// const LPLEQ: Option<u64> = largest_prime_lt(400);
 /// assert_eq!(LPLEQ, Some(397));
 /// ```
 /// There's no prime smaller than two:
 /// ```
-/// # use const_primes::largest_prime_less_than;
-/// const NOSUCH: Option<u64> = largest_prime_less_than(2);
+/// # use const_primes::largest_prime_lt;
+/// const NOSUCH: Option<u64> = largest_prime_lt(2);
 /// assert!(NOSUCH.is_none());
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn largest_prime_less_than(mut n: u64) -> Option<u64> {
+pub const fn largest_prime_lt(mut n: u64) -> Option<u64> {
     if n <= 2 {
         None
     } else if n == 3 {
@@ -46,18 +46,18 @@ pub const fn largest_prime_less_than(mut n: u64) -> Option<u64> {
 /// # Example
 /// Basic usage:
 /// ```
-/// # use const_primes::smallest_prime_greater_than;
-/// const SPGEQ: Option<u64> = smallest_prime_greater_than(400);
+/// # use const_primes::smallest_prime_gt;
+/// const SPGEQ: Option<u64> = smallest_prime_gt(400);
 /// assert_eq!(SPGEQ, Some(401));
 /// ```
 /// Primes larger than 18446744073709551557 can not be represented by a `u64`:
 /// ```
-/// # use const_primes::smallest_prime_greater_than;
-/// const NOSUCH: Option<u64> = smallest_prime_greater_than(18_446_744_073_709_551_557);
+/// # use const_primes::smallest_prime_gt;
+/// const NOSUCH: Option<u64> = smallest_prime_gt(18_446_744_073_709_551_557);
 /// assert!(NOSUCH.is_none());
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn smallest_prime_greater_than(mut n: u64) -> Option<u64> {
+pub const fn smallest_prime_gt(mut n: u64) -> Option<u64> {
     // The largest prime smaller than u64::MAX
     if n >= 18_446_744_073_709_551_557 {
         None

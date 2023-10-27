@@ -55,8 +55,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # Examples
 /// Basic usage
 /// ```
-/// # use const_primes::sieve_less_than;
-/// const PRIME_STATUSES: [bool; 10] = sieve_less_than(30);
+/// # use const_primes::sieve_lt;
+/// const PRIME_STATUSES: [bool; 10] = sieve_lt(30);
 ///
 /// assert_eq!(
 ///     PRIME_STATUSES,
@@ -66,10 +66,10 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// ```
 /// Sieve limited ranges of very large values
 /// ```
-/// # use const_primes::sieve_less_than;
+/// # use const_primes::sieve_lt;
 /// const BIG_NUMBER: u64 = 5_000_000_031;
 /// const CEIL_SQRT_BIG_NUMBER: usize = 70711;
-/// const BIG_PRIME_STATUSES: [bool; CEIL_SQRT_BIG_NUMBER] = sieve_less_than(BIG_NUMBER);
+/// const BIG_PRIME_STATUSES: [bool; CEIL_SQRT_BIG_NUMBER] = sieve_lt(BIG_NUMBER);
 /// assert_eq!(
 ///     BIG_PRIME_STATUSES[CEIL_SQRT_BIG_NUMBER - 3..],
 /// //  5_000_000_028  5_000_000_029  5_000_000_030
@@ -80,15 +80,15 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # Panics
 /// Panics if `upper_limit` is not in the range `[N, N^2]`. In const contexts these are compile errors:
 /// ```compile_fail
-/// # use const_primes::sieve_less_than;
-/// const PRIME_STATUSES: [bool; 5] = sieve_less_than(26);
+/// # use const_primes::sieve_lt;
+/// const PRIME_STATUSES: [bool; 5] = sieve_lt(26);
 /// ```
 /// ```compile_fail
-/// # use const_primes::sieve_less_than;
-/// const PRIME_STATUSES: [bool; 5] = sieve_less_than(4);
+/// # use const_primes::sieve_lt;
+/// const PRIME_STATUSES: [bool; 5] = sieve_lt(4);
 /// ```
 #[must_use = "the function returns a new value and does not modify its input"]
-pub const fn sieve_less_than<const N: usize>(upper_limit: u64) -> [bool; N] {
+pub const fn sieve_lt<const N: usize>(upper_limit: u64) -> [bool; N] {
     let n64 = N as u64;
 
     // Since panics are compile time errors in const contexts
@@ -165,18 +165,18 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// # Example
 /// Basic usage:
 /// ```
-/// # use const_primes::sieve_greater_than_or_equal_to;
-/// const PRIME_STATUS: [bool; 5] = sieve_greater_than_or_equal_to(10);
+/// # use const_primes::sieve_geq;
+/// const PRIME_STATUS: [bool; 5] = sieve_geq(10);
 /// //                        10     11    12     13    14
 /// assert_eq!(PRIME_STATUS, [false, true, false, true, false]);
 /// ```
 /// # Panics
 /// Panics if `N + lower_limit` is larger than `N^2`. In const contexts this is a compile error:
 /// ```compile_fail
-/// # use const_primes::sieve_greater_than_or_equal_to;
-/// const P: [bool; 5] = sieve_greater_than_or_equal_to(21);
+/// # use const_primes::sieve_geq;
+/// const P: [bool; 5] = sieve_geq(21);
 /// ```
-pub const fn sieve_greater_than_or_equal_to<const N: usize>(lower_limit: u64) -> [bool; N] {
+pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {
     let n64 = N as u64;
 
     // Since panics are compile time errors in const contexts

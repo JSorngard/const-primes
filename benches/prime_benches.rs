@@ -1,7 +1,4 @@
-use const_primes::{
-    is_prime, primes, primes_greater_than_or_equal_to, primes_less_than, sieve,
-    sieve_greater_than_or_equal_to, sieve_less_than,
-};
+use const_primes::{is_prime, primes, primes_geq, primes_lt, sieve, sieve_geq, sieve_lt};
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
 use rand::prelude::*;
 use std::hint::black_box;
@@ -14,10 +11,10 @@ fn benchmarks(c: &mut Criterion) {
             b.iter(|| black_box(primes::<N>()))
         });
         prime_generation.bench_function(format!("{N} primes < 100000000"), |b| {
-            b.iter(|| black_box(primes_less_than::<N>(100000000)))
+            b.iter(|| black_box(primes_lt::<N>(100000000)))
         });
         prime_generation.bench_function(format!("{N} primes >= 99990000"), |b| {
-            b.iter(|| black_box(primes_greater_than_or_equal_to::<N>(99990000)))
+            b.iter(|| black_box(primes_geq::<N>(99990000)))
         });
     }
 
@@ -45,10 +42,10 @@ fn benchmarks(c: &mut Criterion) {
             b.iter(|| black_box(sieve::<N>()))
         });
         sieving.bench_function(format!("{N} integers < 100000000"), |b| {
-            b.iter(|| black_box(sieve_less_than::<N>(100000000)))
+            b.iter(|| black_box(sieve_lt::<N>(100000000)))
         });
         sieving.bench_function(format!("{N} integers >= 99990000"), |b| {
-            b.iter(|| black_box(sieve_greater_than_or_equal_to::<N>(99990000)))
+            b.iter(|| black_box(sieve_geq::<N>(99990000)))
         });
     }
 }

@@ -58,12 +58,12 @@
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//! or [`sieve_less_than`] and [`sieve_greater_than_or_equal_to`] to compute the prime status of the integers below or above a given value,
+//! or [`sieve_lt`] and [`sieve_geq`] to compute the prime status of the integers below or above a given value,
 //! ```
-//! # use const_primes::{sieve_less_than, sieve_greater_than_or_equal_to};
+//! # use const_primes::{sieve_lt, sieve_geq};
 //! const N: usize = 70800;
-//! const PRIME_STATUS_BELOW: [bool; N] = sieve_less_than(5_000_000_031);
-//! const PRIME_STATUS_ABOVE: [bool; N] = sieve_greater_than_or_equal_to(5_000_000_031);
+//! const PRIME_STATUS_BELOW: [bool; N] = sieve_lt(5_000_000_031);
+//! const PRIME_STATUS_ABOVE: [bool; N] = sieve_geq(5_000_000_031);
 //! //                                       5_000_000_028  5_000_000_029  5_000_000_030
 //! assert_eq!(PRIME_STATUS_BELOW[N - 3..], [false,         true,          false]);
 //! //                                       5_000_000_031  5_000_000_032  5_000_000_033
@@ -86,11 +86,11 @@ mod next_prime;
 mod sieving;
 mod wrapper;
 
-pub use generation::{primes, primes_greater_than_or_equal_to, primes_less_than};
+pub use generation::{primes, primes_geq, primes_lt};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
-pub use next_prime::{largest_prime_less_than, smallest_prime_greater_than};
-pub use sieving::{sieve, sieve_greater_than_or_equal_to, sieve_less_than};
+pub use next_prime::{largest_prime_lt, smallest_prime_gt};
+pub use sieving::{sieve, sieve_geq, sieve_lt};
 pub use wrapper::Primes;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
@@ -209,16 +209,16 @@ mod test {
     }
 
     #[test]
-    fn check_primes_less_than() {
+    fn check_primes_lt() {
         macro_rules! test_n_below_100 {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [u64; $n] = primes_less_than(100);
+                        const P: [u64; $n] = primes_lt(100);
                         assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], P.map(|i|i as u32));
                         assert_eq!(
                             PRECOMPUTED_PRIMES[25-$n..25],
-                            primes_less_than::<$n>(100).into_iter().map(|i|i as u32).collect::<Vec<_>>()
+                            primes_lt::<$n>(100).into_iter().map(|i|i as u32).collect::<Vec<_>>()
                         );
                     }
                 )+
@@ -227,20 +227,20 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], primes_less_than(10));
+        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], primes_lt(10));
 
-        assert_eq!([0, 2], primes_less_than(3));
+        assert_eq!([0, 2], primes_lt(3));
     }
 
     #[test]
-    fn check_sieve_less_than() {
+    fn check_sieve_lt() {
         macro_rules! test_n_below_100 {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [bool; $n] = sieve_less_than(100);
+                        const P: [bool; $n] = sieve_lt(100);
                         assert_eq!(&PRIMALITIES[100-$n..], P);
-                        assert_eq!(&PRIMALITIES[100-$n..], sieve_less_than::<$n>(100));
+                        assert_eq!(&PRIMALITIES[100-$n..], sieve_lt::<$n>(100));
                     }
                 )+
             };
@@ -260,9 +260,9 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [bool; $n] = sieve_greater_than_or_equal_to(10);
+                        const P: [bool; $n] = sieve_geq(10);
                         assert_eq!(&PRIMALITIES[10..10+$n], P);
-                        assert_eq!(&PRIMALITIES[10..10+$n], sieve_greater_than_or_equal_to::<$n>(10));
+                        assert_eq!(&PRIMALITIES[10..10+$n], sieve_geq::<$n>(10));
                     }
                 )+
             };
@@ -274,26 +274,23 @@ mod test {
     fn check_next_prime() {
         for i in 1..PRECOMPUTED_PRIMES.len() - 1 {
             assert_eq!(
-                smallest_prime_greater_than(PRECOMPUTED_PRIMES[i] as u64),
+                smallest_prime_gt(PRECOMPUTED_PRIMES[i] as u64),
                 Some(PRECOMPUTED_PRIMES[i + 1] as u64)
             );
             assert_eq!(
-                largest_prime_less_than(PRECOMPUTED_PRIMES[i] as u64),
+                largest_prime_lt(PRECOMPUTED_PRIMES[i] as u64),
                 Some(PRECOMPUTED_PRIMES[i - 1] as u64)
             );
         }
 
-        assert_eq!(
-            smallest_prime_greater_than(18_446_744_073_709_551_558),
-            None
-        );
-        assert_eq!(smallest_prime_greater_than(0), Some(2));
-        assert_eq!(smallest_prime_greater_than(1), Some(2));
-        assert_eq!(smallest_prime_greater_than(2), Some(3));
-        assert_eq!(largest_prime_less_than(0), None);
-        assert_eq!(largest_prime_less_than(1), None);
-        assert_eq!(largest_prime_less_than(2), None);
-        assert_eq!(largest_prime_less_than(3), Some(2));
+        assert_eq!(smallest_prime_gt(18_446_744_073_709_551_558), None);
+        assert_eq!(smallest_prime_gt(0), Some(2));
+        assert_eq!(smallest_prime_gt(1), Some(2));
+        assert_eq!(smallest_prime_gt(2), Some(3));
+        assert_eq!(largest_prime_lt(0), None);
+        assert_eq!(largest_prime_lt(1), None);
+        assert_eq!(largest_prime_lt(2), None);
+        assert_eq!(largest_prime_lt(3), Some(2));
     }
 
     #[rustfmt::skip]
