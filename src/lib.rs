@@ -89,9 +89,7 @@ mod wrapper;
 pub use generation::{primes, primes_greater_than_or_equal_to, primes_less_than};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
-pub use next_prime::{
-    largest_prime_less_than_or_equal_to, smallest_prime_greater_than_or_equal_to,
-};
+pub use next_prime::{largest_prime_less_than, smallest_prime_greater_than};
 pub use sieving::{sieve, sieve_greater_than_or_equal_to, sieve_less_than};
 pub use wrapper::Primes;
 
@@ -276,25 +274,26 @@ mod test {
     fn check_next_prime() {
         for i in 1..PRECOMPUTED_PRIMES.len() - 1 {
             assert_eq!(
-                smallest_prime_greater_than_or_equal_to(PRECOMPUTED_PRIMES[i] as u64 + 1),
+                smallest_prime_greater_than(PRECOMPUTED_PRIMES[i] as u64),
                 Some(PRECOMPUTED_PRIMES[i + 1] as u64)
             );
             assert_eq!(
-                largest_prime_less_than_or_equal_to(PRECOMPUTED_PRIMES[i] as u64 - 1),
+                largest_prime_less_than(PRECOMPUTED_PRIMES[i] as u64),
                 Some(PRECOMPUTED_PRIMES[i - 1] as u64)
             );
         }
 
         assert_eq!(
-            smallest_prime_greater_than_or_equal_to(18_446_744_073_709_551_558),
+            smallest_prime_greater_than(18_446_744_073_709_551_558),
             None
         );
-        assert_eq!(smallest_prime_greater_than_or_equal_to(0), Some(2));
-        assert_eq!(smallest_prime_greater_than_or_equal_to(1), Some(2));
-        assert_eq!(smallest_prime_greater_than_or_equal_to(2), Some(2));
-        assert_eq!(largest_prime_less_than_or_equal_to(0), None);
-        assert_eq!(largest_prime_less_than_or_equal_to(1), None);
-        assert_eq!(largest_prime_less_than_or_equal_to(2), Some(2));
+        assert_eq!(smallest_prime_greater_than(0), Some(2));
+        assert_eq!(smallest_prime_greater_than(1), Some(2));
+        assert_eq!(smallest_prime_greater_than(2), Some(3));
+        assert_eq!(largest_prime_less_than(0), None);
+        assert_eq!(largest_prime_less_than(1), None);
+        assert_eq!(largest_prime_less_than(2), None);
+        assert_eq!(largest_prime_less_than(3), Some(2));
     }
 
     #[rustfmt::skip]
