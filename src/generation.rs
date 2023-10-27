@@ -229,7 +229,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
     let mut primes = [0; N];
     let base_sieve: [bool; N] = sieve();
     let mut total_found_primes = 0;
-    'generate: while total_found_primes < N && lower_limit + n64 <= n64 * n64 {
+    'generate: while total_found_primes < N {
         let mut largest_found_prime = primes[total_found_primes];
         let upper_sieve = sieve_segment(&base_sieve, lower_limit + n64);
         let mut i = 0;
@@ -240,7 +240,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
                 if largest_found_prime >= n64 * n64 {
                     // We do not know if this is actually a prime
                     // since the base sieve does not contain information about
-                    // the prime status of N.
+                    // the prime status of numbers larger than or equal to N.
                     break 'generate;
                 }
                 primes[total_found_primes] = largest_found_prime;
