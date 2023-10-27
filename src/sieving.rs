@@ -171,10 +171,10 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// assert_eq!(PRIME_STATUS, [false, true, false, true, false]);
 /// ```
 /// # Panics
-/// Panics if `N + lower_limit` is larger than `N^2`. In const contexts this is a compile error:
+/// Panics if `N + lower_limit` is larger than or equal to `N^2`. In const contexts this is a compile error:
 /// ```compile_fail
 /// # use const_primes::sieve_geq;
-/// const P: [bool; 5] = sieve_geq(21);
+/// const P: [bool; 5] = sieve_geq(20);
 /// ```
 pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {
     let n64 = N as u64;
@@ -188,7 +188,7 @@ pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {
     };
     if let Some(n_sqr) = n64.checked_mul(n64) {
         assert!(
-            upper_limit <= n_sqr,
+            upper_limit < n_sqr,
             "`lower_limit + N` must be less than or equal to `N^2`"
         );
     } else {
