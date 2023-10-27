@@ -101,9 +101,6 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// The return array fills from the end until either it is full or there are no more primes.
 /// If the primes run out before the array is filled the first elements will have a value of zero.
 ///
-/// Due to the limitations on memory allocation in `const` contexts the value of `N`
-/// must satisfy the bounds `N < upper_limit <= N^2`.
-///
 /// If you want to compute primes that are larger than the input, take a look at [`primes_geq`].
 ///
 /// # Example
@@ -133,11 +130,11 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(PRIMES, [0, 0, 0, 0, 0, 2, 3, 5, 7]);
 /// ```
 /// # Panics
-/// Panics if `upper_limit` is not in the range `(N, N^2]`. This is a compile error
+/// Panics if `N^2` does not fit in a `u64` or if `upper_limit` is larger than `N^2`. This is a compile error
 /// in const contexts:
 /// ```compile_fail
 /// # use const_primes::primes_lt;
-/// const PRIMES: [u64; 5] = primes_lt(5);
+/// const PRIMES: [u64; u32::MAX as usize + 1] = primes_lt(100);
 /// ```
 /// ```compile_fail
 /// # use const_primes::primes_lt;
@@ -145,7 +142,6 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
     let n64 = N as u64;
-    assert!(upper_limit > n64, "`upper_limit` must be larger than `N`");
     match (n64).checked_mul(n64) {
         Some(prod) => assert!(
             upper_limit <= prod,
