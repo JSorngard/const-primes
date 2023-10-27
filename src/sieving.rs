@@ -47,7 +47,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// Returns an array of size `N` that indicates which of the integers in `[upper_limit - N, upper_limit)` are prime,
 /// or in other words: the value at a given index represents whether `index + upper_limit - N` is prime.
 ///
-/// If you just want the prime status of the first `N` integers, see [`sieve_numbers`].
+/// If you just want the prime status of the first `N` integers, see [`sieve`].
 ///
 /// Uses a sieve of Eratosthenes to sieve the first `N` integers
 /// and then uses the result to sieve the output range if needed.
@@ -55,8 +55,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # Examples
 /// Basic usage
 /// ```
-/// # use const_primes::sieve_numbers_less_than;
-/// const PRIME_STATUSES: [bool; 10] = sieve_numbers_less_than(30);
+/// # use const_primes::sieve_less_than;
+/// const PRIME_STATUSES: [bool; 10] = sieve_less_than(30);
 ///
 /// assert_eq!(
 ///     PRIME_STATUSES,
@@ -66,10 +66,10 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// ```
 /// Sieve limited ranges of very large values
 /// ```
-/// # use const_primes::sieve_numbers_less_than;
+/// # use const_primes::sieve_less_than;
 /// const BIG_NUMBER: u64 = 5_000_000_031;
 /// const CEIL_SQRT_BIG_NUMBER: usize = 70711;
-/// const BIG_PRIME_STATUSES: [bool; CEIL_SQRT_BIG_NUMBER] = sieve_numbers_less_than(BIG_NUMBER);
+/// const BIG_PRIME_STATUSES: [bool; CEIL_SQRT_BIG_NUMBER] = sieve_less_than(BIG_NUMBER);
 /// assert_eq!(
 ///     BIG_PRIME_STATUSES[CEIL_SQRT_BIG_NUMBER - 3..],
 /// //  5_000_000_028  5_000_000_029  5_000_000_030
@@ -80,15 +80,15 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # Panics
 /// Panics if `upper_limit` is not in the range `[N, N^2]`. In const contexts these are compile errors:
 /// ```compile_fail
-/// # use const_primes::sieve_numbers_less_than;
-/// const PRIME_STATUSES: [bool; 5] = sieve_numbers_less_than(26);
+/// # use const_primes::sieve_less_than;
+/// const PRIME_STATUSES: [bool; 5] = sieve_less_than(26);
 /// ```
 /// ```compile_fail
-/// # use const_primes::sieve_numbers_less_than;
-/// const PRIME_STATUSES: [bool; 5] = sieve_numbers_less_than(4);
+/// # use const_primes::sieve_less_than;
+/// const PRIME_STATUSES: [bool; 5] = sieve_less_than(4);
 /// ```
 #[must_use = "the function returns a new value and does not modify its input"]
-pub const fn sieve_numbers_less_than<const N: usize>(upper_limit: u64) -> [bool; N] {
+pub const fn sieve_less_than<const N: usize>(upper_limit: u64) -> [bool; N] {
     let n64 = N as u64;
 
     // Since panics are compile time errors in const contexts
@@ -103,7 +103,7 @@ pub const fn sieve_numbers_less_than<const N: usize>(upper_limit: u64) -> [bool;
     assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
 
     // Use a normal sieve of Eratosthenes for the first N numbers.
-    let base_sieve: [bool; N] = sieve_numbers();
+    let base_sieve: [bool; N] = sieve();
 
     if upper_limit == n64 {
         // If we are not interested in sieving a larger range we can just return early.
@@ -119,13 +119,13 @@ pub const fn sieve_numbers_less_than<const N: usize>(upper_limit: u64) -> [bool;
 ///
 /// # Example
 /// ```
-/// # use const_primes::sieve_numbers;
-/// const PRIMALITY: [bool; 10] = sieve_numbers();
+/// # use const_primes::sieve;
+/// const PRIMALITY: [bool; 10] = sieve();
 /// //                     0      1      2     3     4      5     6      7     8      9
 /// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
 /// ```
 #[must_use = "the function only returns a new value"]
-pub const fn sieve_numbers<const N: usize>() -> [bool; N] {
+pub const fn sieve<const N: usize>() -> [bool; N] {
     let mut sieve = [true; N];
     if N > 0 {
         sieve[0] = false;
@@ -165,18 +165,18 @@ pub const fn sieve_numbers<const N: usize>() -> [bool; N] {
 /// # Example
 /// Basic usage:
 /// ```
-/// # use const_primes::sieve_numbers_greater_than_or_equal_to;
-/// const PRIME_STATUS: [bool; 5] = sieve_numbers_greater_than_or_equal_to(10);
+/// # use const_primes::sieve_greater_than_or_equal_to;
+/// const PRIME_STATUS: [bool; 5] = sieve_greater_than_or_equal_to(10);
 /// //                        10     11    12     13    14
 /// assert_eq!(PRIME_STATUS, [false, true, false, true, false]);
 /// ```
 /// # Panics
 /// Panics if `N + lower_limit` is larger than `N^2`. In const contexts this is a compile error:
 /// ```compile_fail
-/// # use const_primes::sieve_numbers_greater_than_or_equal_to;
-/// const P: [bool; 5] = sieve_numbers_greater_than_or_equal_to(21);
+/// # use const_primes::sieve_greater_than_or_equal_to;
+/// const P: [bool; 5] = sieve_greater_than_or_equal_to(21);
 /// ```
-pub const fn sieve_numbers_greater_than_or_equal_to<const N: usize>(lower_limit: u64) -> [bool; N] {
+pub const fn sieve_greater_than_or_equal_to<const N: usize>(lower_limit: u64) -> [bool; N] {
     let n64 = N as u64;
 
     // Since panics are compile time errors in const contexts
@@ -195,7 +195,7 @@ pub const fn sieve_numbers_greater_than_or_equal_to<const N: usize>(lower_limit:
         panic!("`N^2` must fit in a `u64`")
     }
 
-    let base_sieve: [bool; N] = sieve_numbers();
+    let base_sieve: [bool; N] = sieve();
 
     // If `lower_limit` is zero the upper range is the same as what we already sieved,
     // so we return early.

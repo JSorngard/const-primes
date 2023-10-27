@@ -50,19 +50,19 @@
 //! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 //! assert!(CHECK);
 //! ```
-//! or [`sieve_numbers`] to compute the prime status of the `N` first integers,
+//! or [`sieve`] to compute the prime status of the `N` first integers,
 //! ```
-//! # use const_primes::sieve_numbers;
+//! # use const_primes::sieve;
 //! const N: usize = 10;
-//! const PRIME_STATUS: [bool; N] = sieve_numbers();
+//! const PRIME_STATUS: [bool; N] = sieve();
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//! or [`sieve_numbers_less_than`] to compute the prime status of the `N` largest integers below a given value,
+//! or [`sieve_less_than`] to compute the prime status of the `N` largest integers below a given value,
 //! ```
-//! # use const_primes::sieve_numbers_less_than;
+//! # use const_primes::sieve_less_than;
 //! const N: usize = 70711;
-//! const BIG_PRIME_STATUS: [bool; N] = sieve_numbers_less_than(5_000_000_031);
+//! const BIG_PRIME_STATUS: [bool; N] = sieve_less_than(5_000_000_031);
 //! //                                     5_000_000_028  5_000_000_029  5_000_000_030
 //! assert_eq!(BIG_PRIME_STATUS[N - 3..], [false,         true,          false]);
 //! ```
@@ -76,25 +76,25 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-mod generate;
+mod generation;
 mod imath;
 mod miller_rabin;
 mod next_prime;
-mod sieve;
+mod sieving;
 mod wrapper;
 
-pub use generate::{primes, primes_greater_than_or_equal_to, primes_less_than};
+pub use generation::{primes, primes_greater_than_or_equal_to, primes_less_than};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use next_prime::{
     largest_prime_less_than_or_equal_to, smallest_prime_greater_than_or_equal_to,
 };
-pub use sieve::{sieve_numbers, sieve_numbers_greater_than_or_equal_to, sieve_numbers_less_than};
+pub use sieving::{sieve, sieve_greater_than_or_equal_to, sieve_less_than};
 pub use wrapper::Primes;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
-/// Sieves primes with [`sieve_numbers`] and then counts them.
+/// Sieves primes with [`sieve`] and then counts them.
 ///
 /// # Example
 /// Basic usage
@@ -110,7 +110,7 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
         return counts;
     }
     counts[2] = 1;
-    let prime_status: [bool; N] = sieve_numbers();
+    let prime_status: [bool; N] = sieve();
     let mut count = 1;
     let mut i = 3;
     while i < N {
@@ -143,12 +143,12 @@ mod test {
     }
 
     #[test]
-    fn check_sieve_numbers() {
+    fn check_sieve() {
         macro_rules! test_to {
             ($($n:expr),+) => {
                 $(
                     println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[..$n], sieve_numbers::<$n>());
+                    assert_eq!(&PRIMALITIES[..$n], sieve::<$n>());
                 )+
             };
         }
@@ -230,7 +230,7 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[100-$n..], sieve_numbers_less_than::<$n>(100));
+                    assert_eq!(&PRIMALITIES[100-$n..], sieve_less_than::<$n>(100));
                 )+
             };
         }

@@ -1,4 +1,4 @@
-use const_primes::{is_prime, primes, sieve_numbers};
+use const_primes::{is_prime, primes, sieve};
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 use rand::prelude::*;
 use std::hint::black_box;
@@ -21,7 +21,7 @@ fn benchmarks(c: &mut Criterion) {
     });
 
     c.bench_function("sieve 10000 integers", |b| {
-        b.iter(|| black_box(sieve_numbers::<10_000>()))
+        b.iter(|| black_box(sieve::<10_000>()))
     });
 }
 

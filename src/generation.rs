@@ -1,4 +1,4 @@
-use crate::{sieve::sieve_segment, sieve_numbers, Underlying};
+use crate::{sieve, sieving::sieve_segment, Underlying};
 
 /// Returns the `N` first prime numbers.
 ///
@@ -33,7 +33,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     let mut prime_count = 0;
 
     // Sieve the first primes below N
-    let mut sieve: [bool; N] = sieve_numbers();
+    let mut sieve: [bool; N] = sieve();
 
     // Count how many primes we found
     // and store them in the final array
@@ -155,7 +155,7 @@ pub const fn primes_less_than<const N: usize>(mut upper_limit: u64) -> [u64; N] 
     let mut primes: [u64; N] = [0; N];
 
     // This will be used to sieve all upper ranges.
-    let base_sieve: [bool; N] = sieve_numbers();
+    let base_sieve: [bool; N] = sieve();
 
     let mut total_primes_found: usize = 0;
     'generate: while total_primes_found < N && upper_limit > 2 {
@@ -219,7 +219,7 @@ pub const fn primes_greater_than_or_equal_to<const N: usize>(mut lower_limit: u6
     }
 
     let mut primes = [0; N];
-    let base_sieve: [bool; N] = sieve_numbers();
+    let base_sieve: [bool; N] = sieve();
     let mut total_found_primes = 0;
     'generate: while total_found_primes < N && lower_limit + n64 <= n64 * n64 {
         let mut largest_found_prime = primes[total_found_primes];
