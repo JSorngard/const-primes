@@ -58,13 +58,16 @@
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
-//! or [`sieve_less_than`] to compute the prime status of the `N` largest integers below a given value,
+//! or [`sieve_less_than`] and [`sieve_greater_than_or_equal_to`] to compute the prime status of the integers below or above a given value,
 //! ```
-//! # use const_primes::sieve_less_than;
-//! const N: usize = 70711;
-//! const BIG_PRIME_STATUS: [bool; N] = sieve_less_than(5_000_000_031);
-//! //                                     5_000_000_028  5_000_000_029  5_000_000_030
-//! assert_eq!(BIG_PRIME_STATUS[N - 3..], [false,         true,          false]);
+//! # use const_primes::{sieve_less_than, sieve_greater_than_or_equal_to};
+//! const N: usize = 70800;
+//! const LOW_BIG_PRIME_STATUS: [bool; N] = sieve_less_than(5_000_000_031);
+//! const HIGH_BIG_PRIME_STATUS: [bool; N] = sieve_greater_than_or_equal_to(5_000_000_031);
+//! //                                          5_000_000_028  5_000_000_029  5_000_000_030
+//! assert_eq!(LOW_BIG_PRIME_STATUS[N - 3..],  [false,         true,          false]);
+//! //                                          5_000_000_031  5_000_000_032  5_000_000_033
+//! assert_eq!(HIGH_BIG_PRIME_STATUS[..3],     [false,         false,          false]);
 //! ```
 //! and more!
 
