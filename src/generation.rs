@@ -239,6 +239,8 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
                 largest_found_prime = lower_limit + i as u64;
                 if largest_found_prime >= n64 * n64 {
                     // We do not know if this is actually a prime
+                    // since the base sieve does not contain information about
+                    // the prime status of N.
                     break 'generate;
                 }
                 primes[total_found_primes] = largest_found_prime;
