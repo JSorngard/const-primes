@@ -147,8 +147,10 @@ mod test {
         macro_rules! test_to {
             ($($n:expr),+) => {
                 $(
-                    println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[..$n], sieve::<$n>());
+                    {
+                        const P: [bool; $n] = sieve();
+                        assert_eq!(&PRIMALITIES[..$n], P);
+                    }
                 )+
             };
         }
@@ -209,7 +211,6 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        println!("{}", $n);
                         const P: [u64; $n] = primes_less_than(100);
                         assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], P.map(|i|i as u32));
                     }
@@ -229,8 +230,10 @@ mod test {
         macro_rules! test_n_below_100 {
             ($($n:expr),+) => {
                 $(
-                    println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[100-$n..], sieve_less_than::<$n>(100));
+                    {
+                        const P: [bool; $n] = sieve_less_than(100);
+                        assert_eq!(&PRIMALITIES[100-$n..], P);
+                    }
                 )+
             };
         }
@@ -248,8 +251,10 @@ mod test {
         macro_rules! test_n_geq_10 {
             ($($n:expr),+) => {
                 $(
-                    println!("{}", $n);
-                    assert_eq!(&PRIMALITIES[10..10+$n], sieve_greater_than_or_equal_to::<$n>(10));
+                    {
+                        const P: [bool; $n] = sieve_greater_than_or_equal_to(10);
+                        assert_eq!(&PRIMALITIES[10..10+$n], P);
+                    }
                 )+
             };
         }
