@@ -5,12 +5,13 @@ use crate::is_prime;
 /// Scans for primes downwards from the input with [`is_prime`].
 ///
 /// # Examples
+/// Basic usage:
 /// ```
 /// # use const_primes::largest_prime_less_than;
 /// const LPLEQ: Option<u64> = largest_prime_less_than(400);
 /// assert_eq!(LPLEQ, Some(397));
 /// ```
-/// There's no prime smaller than two
+/// There's no prime smaller than two:
 /// ```
 /// # use const_primes::largest_prime_less_than;
 /// const NOSUCH: Option<u64> = largest_prime_less_than(2);
@@ -43,12 +44,13 @@ pub const fn largest_prime_less_than(mut n: u64) -> Option<u64> {
 /// Scans for primes upwards from the input with [`is_prime`].
 ///
 /// # Example
+/// Basic usage:
 /// ```
 /// # use const_primes::smallest_prime_greater_than;
 /// const SPGEQ: Option<u64> = smallest_prime_greater_than(400);
 /// assert_eq!(SPGEQ, Some(401));
 /// ```
-/// Primes larger than 18446744073709551557 can not be represented by a `u64`
+/// Primes larger than 18446744073709551557 can not be represented by a `u64`:
 /// ```
 /// # use const_primes::smallest_prime_greater_than;
 /// const NOSUCH: Option<u64> = smallest_prime_greater_than(18_446_744_073_709_551_557);
