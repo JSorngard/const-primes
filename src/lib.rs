@@ -285,6 +285,7 @@ mod test {
             );
         }
 
+        assert_eq!(smallest_prime_greater_than_or_equal_to(18_446_744_073_709_551_558), None);
         assert_eq!(smallest_prime_greater_than_or_equal_to(0), Some(2));
         assert_eq!(smallest_prime_greater_than_or_equal_to(1), Some(2));
         assert_eq!(smallest_prime_greater_than_or_equal_to(2), Some(2));
