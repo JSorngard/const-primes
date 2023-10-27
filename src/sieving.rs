@@ -3,6 +3,7 @@ use crate::isqrt;
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
 /// for the numbers below `N^2`.
+#[must_use = "the function only returns a new value and does not modify its inputs"]
 pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
@@ -89,7 +90,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # use const_primes::sieve_lt;
 /// const PRIME_STATUSES: [bool; 5] = sieve_lt(4);
 /// ```
-#[must_use = "the function returns a new value and does not modify its input"]
+#[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_lt<const N: usize>(upper_limit: u64) -> [bool; N] {
     let n64 = N as u64;
 
@@ -178,6 +179,7 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// # use const_primes::sieve_geq;
 /// const P: [bool; 5] = sieve_geq(20);
 /// ```
+#[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {
     let n64 = N as u64;
 

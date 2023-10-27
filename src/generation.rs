@@ -142,6 +142,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// //                  N              upper_limit > N^2
 /// const PRIMES: [u64; 5] = primes_lt(26);
 /// ```
+#[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
     let n64 = N as u64;
     match (n64).checked_mul(n64) {
@@ -220,6 +221,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
 /// # use const_primes::primes_geq;
 /// const P: [u64; u32::MAX as usize + 1] = primes_geq(0);
 /// ```
+#[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
     let n64 = N as u64;
     if n64.checked_mul(n64).is_none() {
