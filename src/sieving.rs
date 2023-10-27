@@ -1,6 +1,8 @@
 use crate::isqrt;
 
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
+/// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
+/// for the numbers below `N^2`.
 pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
