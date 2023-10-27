@@ -12,8 +12,6 @@ use crate::{sieve::sieve_segment, sieve_numbers, Underlying};
 /// const PRIMES: [u32; 10] = primes();
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
-/// # Panics
-/// Panics if a computed prime overflows a `u32`. This will result in a compile error in a const context.  
 #[must_use = "the function only returns a new value"]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
     if N == 0 {
@@ -83,7 +81,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
                 primes[prime_count] = i as Underlying;
                 prime_count += 1;
                 // and stop the generation of primes if we're done.
-                if prime_count == N {
+                if prime_count >= N {
                     break 'generate;
                 }
             }
