@@ -252,6 +252,8 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
 
 #[cfg(test)]
 mod test {
+    use crate::is_prime;
+
     use super::*;
 
     #[test]
@@ -271,6 +273,12 @@ mod test {
         {
             const P: [u64; 1] = primes_geq(0);
             assert_eq!(P, [0]);
+        }
+        for prime in primes_geq::<2_000>(3_998_000) {
+            if prime == 0 {
+                break;
+            }
+            assert!(is_prime(prime));
         }
     }
 }
