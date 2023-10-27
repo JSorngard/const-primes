@@ -62,12 +62,12 @@
 //! ```
 //! # use const_primes::{sieve_less_than, sieve_greater_than_or_equal_to};
 //! const N: usize = 70800;
-//! const LOW_BIG_PRIME_STATUS: [bool; N] = sieve_less_than(5_000_000_031);
-//! const HIGH_BIG_PRIME_STATUS: [bool; N] = sieve_greater_than_or_equal_to(5_000_000_031);
-//! //                                          5_000_000_028  5_000_000_029  5_000_000_030
-//! assert_eq!(LOW_BIG_PRIME_STATUS[N - 3..],  [false,         true,          false]);
-//! //                                          5_000_000_031  5_000_000_032  5_000_000_033
-//! assert_eq!(HIGH_BIG_PRIME_STATUS[..3],     [false,         false,          false]);
+//! const PRIME_STATUS_BELOW: [bool; N] = sieve_less_than(5_000_000_031);
+//! const PRIME_STATUS_ABOVE: [bool; N] = sieve_greater_than_or_equal_to(5_000_000_031);
+//! //                                       5_000_000_028  5_000_000_029  5_000_000_030
+//! assert_eq!(PRIME_STATUS_BELOW[N - 3..], [false,         true,          false]);
+//! //                                       5_000_000_031  5_000_000_032  5_000_000_033
+//! assert_eq!(PRIME_STATUS_ABOVE[..3],     [false,         false,          false]);
 //! ```
 //! and more!
 

@@ -48,19 +48,22 @@ Use `is_prime` to test whether a given number is prime
 const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 assert!(CHECK);
 ```
-or `are_prime` to compute the prime status of the `N` first integers,
+or `sieve` to compute the prime status of the `N` first integers,
 ```rust
 const N: usize = 10;
-const PRIME_STATUS: [bool; N] = are_prime();
+const PRIME_STATUS: [bool; N] = sieve();
 //                        0      1      2     3     4      5     6      7     8      9
 assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 ```
-or `are_prime_below` to compute the prime status of the `N` largest integers below a given value,
+or `sieve_less_than` and `sieve_greater_than_or_equal_to` to compute the prime status of the integers below or above a given value,
 ```rust
-const N: usize = 70711;
-const BIG_PRIME_STATUS: [bool; N] = are_prime_below(5_000_000_031);
-//                                     5_000_000_028  5_000_000_029  5_000_000_030
-assert_eq!(BIG_PRIME_STATUS[N - 3..], [false,         true,          false]);
+const N: usize = 70800;
+const PRIME_STATUS_BELOW: [bool; N] = sieve_less_than(5_000_000_031);
+const PRIME_STATUS_ABOVE: [bool; N] = sieve_greater_than_or_equal_to(5_000_000_031);
+//                                       5_000_000_028  5_000_000_029  5_000_000_030
+assert_eq!(PRIME_STATUS_BELOW[N - 3..], [false,         true,          false]);
+//                                       5_000_000_031  5_000_000_032  5_000_000_033
+assert_eq!(PRIME_STATUS_ABOVE[..3],     [false,         false,          false]);
 ```
 and more!
 
