@@ -95,14 +95,14 @@ type Underlying = u32;
 mod generation;
 mod imath;
 mod miller_rabin;
-mod next_prime;
+mod other_prime;
 mod sieving;
 mod wrapper;
 
 pub use generation::{primes, primes_geq, primes_lt};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
-pub use next_prime::{largest_prime_lt, smallest_prime_gt};
+pub use other_prime::{next_prime, previous_prime};
 pub use sieving::{sieve, sieve_geq, sieve_lt};
 pub use wrapper::Primes;
 
@@ -287,23 +287,23 @@ mod test {
     fn check_next_prime() {
         for i in 1..PRECOMPUTED_PRIMES.len() - 1 {
             assert_eq!(
-                smallest_prime_gt(PRECOMPUTED_PRIMES[i] as u64),
+                next_prime(PRECOMPUTED_PRIMES[i] as u64),
                 Some(PRECOMPUTED_PRIMES[i + 1] as u64)
             );
             assert_eq!(
-                largest_prime_lt(PRECOMPUTED_PRIMES[i] as u64),
+                previous_prime(PRECOMPUTED_PRIMES[i] as u64),
                 Some(PRECOMPUTED_PRIMES[i - 1] as u64)
             );
         }
 
-        assert_eq!(smallest_prime_gt(18_446_744_073_709_551_558), None);
-        assert_eq!(smallest_prime_gt(0), Some(2));
-        assert_eq!(smallest_prime_gt(1), Some(2));
-        assert_eq!(smallest_prime_gt(2), Some(3));
-        assert_eq!(largest_prime_lt(0), None);
-        assert_eq!(largest_prime_lt(1), None);
-        assert_eq!(largest_prime_lt(2), None);
-        assert_eq!(largest_prime_lt(3), Some(2));
+        assert_eq!(next_prime(18_446_744_073_709_551_558), None);
+        assert_eq!(next_prime(0), Some(2));
+        assert_eq!(next_prime(1), Some(2));
+        assert_eq!(next_prime(2), Some(3));
+        assert_eq!(previous_prime(0), None);
+        assert_eq!(previous_prime(1), None);
+        assert_eq!(previous_prime(2), None);
+        assert_eq!(previous_prime(3), Some(2));
     }
 
     #[rustfmt::skip]
