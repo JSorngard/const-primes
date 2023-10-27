@@ -134,10 +134,12 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// in const contexts:
 /// ```compile_fail
 /// # use const_primes::primes_lt;
+/// //                  N is too large
 /// const PRIMES: [u64; u32::MAX as usize + 1] = primes_lt(100);
 /// ```
 /// ```compile_fail
 /// # use const_primes::primes_lt;
+/// //                  N              upper_limit > N^2
 /// const PRIMES: [u64; 5] = primes_lt(26);
 /// ```
 pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
