@@ -225,7 +225,7 @@ mod test {
     }
 
     #[test]
-    fn check_sieve_numbers_less_than() {
+    fn check_sieve_less_than() {
         macro_rules! test_n_below_100 {
             ($($n:expr),+) => {
                 $(
@@ -241,6 +241,19 @@ mod test {
             76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97,
             98, 99
         );
+    }
+
+    #[test]
+    fn check_sieve_geq() {
+        macro_rules! test_n_geq_10 {
+            ($($n:expr),+) => {
+                $(
+                    println!("{}", $n);
+                    assert_eq!(&PRIMALITIES[10..10+$n], sieve_greater_than_or_equal_to::<$n>(10));
+                )+
+            };
+        }
+        test_n_geq_10!(4, 5, 10, 20, 30, 40, 50);
     }
 
     #[test]
