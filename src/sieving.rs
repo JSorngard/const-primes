@@ -96,9 +96,9 @@ pub const fn sieve_lt<const N: usize>(upper_limit: u64) -> [bool; N] {
     match n64.checked_mul(n64) {
         Some(prod) => assert!(
             upper_limit <= prod,
-            "`upper_limit` must be smaller than or equal to `N`^2"
+            "`upper_limit` must be smaller than or equal to `N^2`"
         ),
-        None => panic!("`N`^2 must fit in a `u64`"),
+        None => panic!("`N^2` must fit in a `u64`"),
     }
     assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
 
