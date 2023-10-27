@@ -9,12 +9,12 @@ pub(crate) const fn sieve_segment<const N: usize>(
 
     let lower_limit = upper_limit - N as u64;
 
-    // In case 0 and/or 1 are included in the upper sieve we need to treat them as a special case
-    // since they are not multiples of any prime in `base_sieve` even though they are not primes.
     if lower_limit == 0 && N > 1 {
-        segment_sieve[0] = false;
-        segment_sieve[1] = false;
+        // If the lower limit is 0 we can just return the base sieve.
+        return *base_sieve;
     } else if lower_limit == 1 && N > 0 {
+        // In case 1 is included in the upper sieve we need to treat it as a special case
+        // since it's not a multiple of any prime in `base_sieve` even though it's not prime.
         segment_sieve[0] = false;
     }
 
@@ -204,4 +204,17 @@ pub const fn sieve_greater_than_or_equal_to<const N: usize>(lower_limit: u64) ->
     }
 
     sieve_segment(&base_sieve, upper_limit)
+}
+
+#[cfg(test)]
+mod test {
+    use super::{sieve, sieve_segment};
+
+    #[test]
+    fn test_consistency_of_sieve_segment() {
+        const P: [bool; 10] = sieve_segment(&sieve(), 10);
+        const PP: [bool; 10] = sieve_segment(&sieve(), 11);
+        assert_eq!(P, sieve());
+        assert_eq!(PP, sieve::<11>()[1..]);
+    }
 }
