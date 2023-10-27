@@ -153,6 +153,7 @@ mod test {
                     {
                         const P: [bool; $n] = sieve();
                         assert_eq!(&PRIMALITIES[..$n], P);
+                        assert_eq!(&PRIMALITIES[..$n], sieve::<$n>());
                     }
                 )+
             };
@@ -182,8 +183,8 @@ mod test {
                                 i += 1;
                             }
                         }
-
                         assert_eq!(PRIME_COUNTS, counts);
+                        assert_eq!(counts, prime_counts());
                     }
                 )+
             };
@@ -198,8 +199,9 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const PRIMES: [Underlying; $n] = $crate::primes();
+                        const PRIMES: [Underlying; $n] = primes();
                         assert_eq!(PRIMES, PRECOMPUTED_PRIMES[..$n]);
+                        assert_eq!(PRECOMPUTED_PRIMES[..$n], primes::<$n>());
                     }
                 )+
             };
@@ -216,6 +218,10 @@ mod test {
                     {
                         const P: [u64; $n] = primes_less_than(100);
                         assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], P.map(|i|i as u32));
+                        assert_eq!(
+                            PRECOMPUTED_PRIMES[25-$n..25],
+                            primes_less_than::<$n>(100).into_iter().map(|i|i as u32).collect::<Vec<_>>()
+                        );
                     }
                 )+
             };
@@ -236,6 +242,7 @@ mod test {
                     {
                         const P: [bool; $n] = sieve_less_than(100);
                         assert_eq!(&PRIMALITIES[100-$n..], P);
+                        assert_eq!(&PRIMALITIES[100-$n..], sieve_less_than::<$n>(100));
                     }
                 )+
             };
@@ -257,6 +264,7 @@ mod test {
                     {
                         const P: [bool; $n] = sieve_greater_than_or_equal_to(10);
                         assert_eq!(&PRIMALITIES[10..10+$n], P);
+                        assert_eq!(&PRIMALITIES[10..10+$n], sieve_greater_than_or_equal_to::<$n>(10));
                     }
                 )+
             };
