@@ -208,7 +208,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
 /// assert_eq!(P[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
 /// assert_eq!(P[N - 3..], [5_001_586_727, 5_001_586_729, 5_001_586_757]);
 /// ```
-/// Only primes smaller than to `N^2` will be generated:
+/// Only primes smaller than `N^2` will be generated:
 /// ```
 /// # use const_primes::primes_geq;
 /// const PRIMES: [u64; 3] = primes_geq(5);
