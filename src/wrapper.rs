@@ -598,4 +598,12 @@ mod test {
             assert!(P.count_primes_leq(n as u32).is_none());
         }
     }
+
+    #[test]
+    fn check_iter() {
+        const P: Primes<10> = Primes::new();
+        for (p1, p2) in P.iter().zip([2, 3, 5, 7, 11, 13, 17, 19, 23, 29].iter()) {
+            assert_eq!(p1, p2);
+        }
+    }
 }
