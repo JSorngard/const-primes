@@ -234,6 +234,12 @@ impl<const N: usize> Primes<N> {
         self.primes.as_slice()
     }
 
+    /// Returns an iterator over the primes.
+    #[inline]
+    pub fn iter(&self) -> core::slice::Iter<'_, Underlying> {
+        self.primes.iter()
+    }
+
     // endregion: Conversions
 
     /// Returns a reference to the element at the given index if it is within bounds.
