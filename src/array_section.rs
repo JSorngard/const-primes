@@ -30,7 +30,7 @@ impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<N, T>> for Restr
 }
 
 impl<const N: usize, T> RestrictedArray<N, T> {
-    /// Restrict a given array so that only elements within the given range are viewable.
+    /// Restrict an array so that only elements within the given range are viewable.
     ///
     /// # Panics
     /// Panics if the range of indices is out of bounds of the array.
