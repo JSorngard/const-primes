@@ -156,13 +156,29 @@ impl<const N: usize, T> IntoIterator for RestrictedArray<T, N> {
     }
 }
 
-impl<const N: usize, T, U> PartialEq<U> for RestrictedArray<T, N>
+// region: PartialEq impls
+impl<const N: usize, T, U> PartialEq<[U]> for RestrictedArray<T, N>
 where
-    U: PartialEq<[T]>,
+    U: PartialEq<T>,
 {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
     /// Only compares the *unrestricted* part of `self` against `other`.
-    fn eq(&self, other: &U) -> bool {
+    fn eq(&self, other: &[U]) -> bool {
         other == self.as_slice()
+    }
+}
+
+impl<const N: usize, T, U: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for [U] {
+    /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
+    /// Only compares the *unrestricted* part of `other` against `self`.
+    fn eq(&self, other: &RestrictedArray<T, N>) -> bool {
+        self == other.as_slice()
+    }
+}
+// endregion: PartialEq impls
+
+impl<const N: usize, T> AsRef<[T]> for RestrictedArray<T, N> {
+    fn as_ref(&self) -> &[T] {
+        self.as_slice()
     }
 }

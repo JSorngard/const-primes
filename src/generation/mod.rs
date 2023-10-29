@@ -1,5 +1,8 @@
-use crate::{sieve, sieving::sieve_segment, Underlying};
+use crate::{restricted_array::RestrictedArray, sieve, sieving::sieve_segment, Underlying};
 
+pub mod segmented_generation_result;
+
+pub use segmented_generation_result::SegmentedGenerationResult;
 /// Returns the `N` first prime numbers.
 ///
 /// [`Primes`](crate::Primes) might be relevant for you if you intend to later use these prime numbers for related computations.
@@ -106,44 +109,46 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// # Example
 /// Basic usage:
 /// ```
-/// # use const_primes::primes_lt;
-/// const PRIMES: [u64; 10] = primes_lt(100);
-///
+/// # use const_primes::generation::{SegmentedGenerationResult, primes_lt};
+/// const PRIMES: SegmentedGenerationResult<10> = primes_lt(100);
+/// assert_eq!(PRIMES[2], 61);
 /// assert_eq!(PRIMES, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
-/// # use const_primes::primes_lt;
+/// # use const_primes::generation::{SegmentedGenerationResult, primes_lt};
 /// const N: usize = 70711;
 /// # #[allow(long_running_const_eval)]
-/// const BIG_PRIMES: [u64; N] = primes_lt(5_000_000_030);
+/// // If the generation results in a completely filled array, it can be extracted like this:
+/// const BIG_PRIMES: [u64; N] = match primes_lt(5_000_000_030).complete() {Some(array) => array, _ => panic!()};
 ///
-/// assert_eq!(&BIG_PRIMES[..3], &[4_998_417_421, 4_998_417_427, 4_998_417_443]);
-/// assert_eq!(&BIG_PRIMES[N - 3..], &[4_999_999_903, 4_999_999_937, 5_000_000_029]);
+/// assert_eq!(BIG_PRIMES[..3],     [4_998_417_421, 4_998_417_427, 4_998_417_443]);
+/// assert_eq!(BIG_PRIMES[N - 3..], [4_999_999_903, 4_999_999_937, 5_000_000_029]);
 /// ```
-/// If there are not enough primes to fill the requested array, the first
-/// elements will have a value of zero:
+/// If there are not enough primes to fill the requested array, 
+/// the output will be the [`SegmentedGenerationResult::Partial`] variant,
+/// which contains fewer primes than requested:
 /// ```
-/// # use const_primes::primes_lt;
-/// const PRIMES: [u64; 9] = primes_lt(10);
-///
-/// assert_eq!(PRIMES, [0, 0, 0, 0, 0, 2, 3, 5, 7]);
+/// # use const_primes::generation::{SegmentedGenerationResult, primes_lt};
+/// const PRIMES: SegmentedGenerationResult<9> = primes_lt(10);
+/// // There are only four primes less than 10:
+/// assert_eq!(PRIMES, [2, 3, 5, 7]);
 /// ```
 /// # Panics
 /// Panics if `N^2` does not fit in a `u64` or if `upper_limit` is larger than `N^2`. This is a compile error
 /// in const contexts:
 /// ```compile_fail
-/// # use const_primes::primes_lt;
-/// //                  N is too large
-/// const PRIMES: [u64; u32::MAX as usize + 1] = primes_lt(100);
+/// # use const_primes::generation::{SegmentedGenerationResult,primes_lt};
+/// //                                       N is too large
+/// const PRIMES: SegmentedGenerationResult<{u32::MAX as usize + 1}> = primes_lt(100);
 /// ```
 /// ```compile_fail
-/// # use const_primes::primes_lt;
-/// //                  N              upper_limit > N^2
-/// const PRIMES: [u64; 5] = primes_lt(26);
+/// # use const_primes::generation::{primes_lt, SegmentedGenerationResult};
+/// //                                      N              upper_limit > N^2
+/// const PRIMES: SegmentedGenerationResult<5> = primes_lt(26);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
+pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerationResult<N> {
     let n64 = N as u64;
     match (n64).checked_mul(n64) {
         Some(prod) => assert!(
@@ -159,7 +164,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
     let base_sieve: [bool; N] = sieve();
 
     let mut total_primes_found: usize = 0;
-    'generate: while total_primes_found < N && upper_limit > 2 {
+    'generate: while total_primes_found < N {
         // This is the smallest prime we have found so far.
         let mut smallest_found_prime = primes[N - 1 - total_primes_found];
         // Sieve for primes in the segment.
@@ -181,9 +186,13 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
             i += 1;
         }
         upper_limit = smallest_found_prime;
+        if upper_limit <= 2 {
+            let restricted = RestrictedArray::new(N - total_primes_found..N, primes);
+            return SegmentedGenerationResult::Partial(restricted);
+        }
     }
 
-    primes
+    SegmentedGenerationResult::Complete(primes)
 }
 
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
@@ -222,7 +231,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> [u64; N] {
 /// const P: [u64; u32::MAX as usize + 1] = primes_geq(0);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
+pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenerationResult<N> {
     let n64 = N as u64;
     if n64.checked_mul(n64).is_none() {
         panic!("`N^2` must fit in a `u64`");
@@ -243,7 +252,8 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
                     // We do not know if this is actually a prime
                     // since the base sieve does not contain information about
                     // the prime status of numbers larger than or equal to N.
-                    break 'generate;
+                    let restricted = RestrictedArray::new(0..total_found_primes, primes);
+                    return SegmentedGenerationResult::Partial(restricted);
                 }
                 primes[total_found_primes] = largest_found_prime;
                 total_found_primes += 1;
@@ -256,7 +266,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> [u64; N] {
         }
         lower_limit = largest_found_prime + 1;
     }
-    primes
+    SegmentedGenerationResult::Complete(primes)
 }
 
 #[cfg(test)]
@@ -268,20 +278,20 @@ mod test {
     #[test]
     fn sanity_check_primes_geq() {
         {
-            const P: [u64; 5] = primes_geq(10);
+            const P: [u64; 5] = match primes_geq(10).complete() {Some(a) => a, _ => panic!()};
             assert_eq!(P, [11, 13, 17, 19, 23]);
         }
         {
-            const P: [u64; 5] = primes_geq(0);
+            const P: [u64; 5] = match primes_geq(0).complete() {Some(a) => a, _ => panic!()};
             assert_eq!(P, [2, 3, 5, 7, 11]);
         }
         {
-            const P: [u64; 0] = primes_geq(0);
-            assert_eq!(P, []);
+            const P: SegmentedGenerationResult<0> = primes_geq(0);
+            assert_eq!(P.as_ref(), []);
         }
         {
-            const P: [u64; 1] = primes_geq(0);
-            assert_eq!(P, [0]);
+            const P: SegmentedGenerationResult<1> = primes_geq(0);
+            assert_eq!(P, [2]);
         }
         for prime in primes_geq::<2_000>(3_998_000) {
             if prime == 0 {

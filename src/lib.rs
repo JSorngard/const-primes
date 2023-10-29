@@ -47,10 +47,10 @@
 //! ```
 //! ## Arbitrary ranges
 //!
-//! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
+//! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`](crate::generation::primes_geq) and [`sieve_lt`]
 //! that can be used to work with ranges that don't start at zero.
 //! ```
-//! # use const_primes::primes_geq;
+//! # use const_primes::generation::primes_geq;
 //! const N: usize = 70722;
 //! # #[allow(long_running_const_eval)]
 //! const PRIMES_GEQ: [u64; N] = primes_geq(5_000_000_031);
@@ -97,7 +97,7 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-mod generation;
+pub mod generation;
 mod imath;
 mod miller_rabin;
 mod other_prime;
@@ -105,7 +105,7 @@ pub mod restricted_array;
 mod sieving;
 mod wrapper;
 
-pub use generation::{primes, primes_geq, primes_lt};
+pub use generation::primes;
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
@@ -149,6 +149,8 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
 #[cfg(test)]
 mod test {
     use super::*;
+
+    use generation::{primes_lt, segmented_generation_result::SegmentedGenerationResult};
 
     #[test]
     fn check_primes_is_prime() {
@@ -233,8 +235,10 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [u64; $n] = primes_lt(100);
-                        assert_eq!(PRECOMPUTED_PRIMES[25-$n..25], P.map(|i|i as u32));
+                        const P: SegmentedGenerationResult<$n> = primes_lt(100);
+                        for (i, prime) in P.into_iter().enumerate() {
+                            assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], prime as u32);
+                        }
                         assert_eq!(
                             PRECOMPUTED_PRIMES[25-$n..25],
                             primes_lt::<$n>(100).into_iter().map(|i|i as u32).collect::<Vec<_>>()
@@ -246,9 +250,9 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!([0, 0, 0, 0, 0, 2, 3, 5, 7], primes_lt(10));
+        assert_eq!([2, 3, 5, 7], primes_lt::<9>(10).as_ref());
 
-        assert_eq!([0, 2], primes_lt(3));
+        assert_eq!(primes_lt::<2>(3), [2]);
     }
 
     #[test]
