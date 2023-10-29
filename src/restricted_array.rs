@@ -3,13 +3,13 @@ use core::{iter::FusedIterator, ops::Range};
 /// An array where only a section of the data may be viewed,
 /// as the other data may e.g. not uphold some invariant.
 #[derive(Debug)]
-pub struct RestrictedArray<const N: usize, T> {
+pub struct RestrictedArray<T, const N: usize> {
     start: usize,
     end: usize,
     array: [T; N],
 }
 
-impl<const N: usize, T: Clone> Clone for RestrictedArray<N, T> {
+impl<const N: usize, T: Clone> Clone for RestrictedArray<T, N> {
     fn clone(&self) -> Self {
         Self {
             start: self.start,
@@ -19,19 +19,19 @@ impl<const N: usize, T: Clone> Clone for RestrictedArray<N, T> {
     }
 }
 
-impl<const N: usize, T: Copy> Copy for RestrictedArray<N, T> {}
+impl<const N: usize, T: Copy> Copy for RestrictedArray<T, N> {}
 
-impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<N, T>> for RestrictedArray<N, T> {
+impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for RestrictedArray<T, N> {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
     /// Only compares the *unrestricted* part of `self` against the *unrestricted* part of `other`.
-    fn eq(&self, other: &RestrictedArray<N, T>) -> bool {
+    fn eq(&self, other: &RestrictedArray<T, N>) -> bool {
         self.as_slice() == other.as_slice()
     }
 }
 
-impl<const N: usize, T: Eq> Eq for RestrictedArray<N, T> {}
+impl<const N: usize, T: Eq> Eq for RestrictedArray<T, N> {}
 
-impl<const N: usize, T> RestrictedArray<N, T> {
+impl<const N: usize, T> RestrictedArray<T, N> {
     /// Restrict an array so that only elements within the given range are viewable.
     ///
     /// # Panics
@@ -107,7 +107,7 @@ impl<const N: usize, T> RestrictedArray<N, T> {
     }
 }
 
-impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<N, T> {
+impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<T, N> {
     type Output = T;
     fn index(&self, index: usize) -> &Self::Output {
         let i = match self.start.checked_add(index) {
@@ -146,7 +146,7 @@ impl<const N: usize, T> DoubleEndedIterator for RestrictedArrayIntoIter<N, T> {
     }
 }
 
-impl<const N: usize, T> IntoIterator for RestrictedArray<N, T> {
+impl<const N: usize, T> IntoIterator for RestrictedArray<T, N> {
     type IntoIter = RestrictedArrayIntoIter<N, T>;
     type Item = <RestrictedArrayIntoIter<N, T> as Iterator>::Item;
     fn into_iter(self) -> Self::IntoIter {
@@ -156,7 +156,7 @@ impl<const N: usize, T> IntoIterator for RestrictedArray<N, T> {
     }
 }
 
-impl<const N: usize, T, U> PartialEq<U> for RestrictedArray<N, T>
+impl<const N: usize, T, U> PartialEq<U> for RestrictedArray<T, N>
 where
     U: PartialEq<[T]>,
 {
