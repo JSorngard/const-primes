@@ -97,6 +97,7 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
+pub mod restricted_array;
 mod generation;
 mod imath;
 mod miller_rabin;

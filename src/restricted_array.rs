@@ -73,6 +73,17 @@ impl<const N: usize, T> RestrictedArray<N, T> {
         tail.split_at(self.end - self.start).0
     }
 
+    /// Returns the index of the first element of the underlying array that's not restricted.
+    pub const fn start(&self) -> usize {
+        self.start
+    }
+
+    /// Returns the index of the first element of the underlying array that is
+    /// restricted again after the end of the unrestricted part.
+    pub const fn end(&self) -> usize {
+        self.end
+    }
+
     /// Returns the length of the unrestricted part of the array.
     pub const fn len(&self) -> usize {
         self.end - self.start
