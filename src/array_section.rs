@@ -1,4 +1,4 @@
-use core::ops::Range;
+use core::{iter::FusedIterator, ops::Range};
 
 /// An array where only a section of the data may be viewed,
 /// as the other data may be e.g. not uphold some invariant.
@@ -110,13 +110,35 @@ impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<N, T> {
     }
 }
 
+pub struct RestrictedArrayIntoIter<const N: usize, T>(
+    core::iter::Take<core::iter::Skip<core::array::IntoIter<T, N>>>,
+);
+
+impl<const N: usize, T> Iterator for RestrictedArrayIntoIter<N, T> {
+    type Item = T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.0.size_hint()
+    }
+}
+impl<const N: usize, T> FusedIterator for RestrictedArrayIntoIter<N, T> {}
+impl<const N: usize, T> ExactSizeIterator for RestrictedArrayIntoIter<N, T> {}
+impl<const N: usize, T> DoubleEndedIterator for RestrictedArrayIntoIter<N, T> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        self.0.next_back()
+    }
+}
+
 impl<const N: usize, T> IntoIterator for RestrictedArray<N, T> {
-    type IntoIter = core::iter::Take<core::iter::Skip<core::array::IntoIter<T, N>>>;
-    type Item = <[T; N] as IntoIterator>::Item;
+    type IntoIter = RestrictedArrayIntoIter<N, T>;
+    type Item = <RestrictedArrayIntoIter<N, T> as Iterator>::Item;
     fn into_iter(self) -> Self::IntoIter {
         let start = self.start;
         let len = self.len();
-        self.array.into_iter().skip(start).take(len)
+        RestrictedArrayIntoIter(self.array.into_iter().skip(start).take(len))
     }
 }
 
