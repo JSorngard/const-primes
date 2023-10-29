@@ -29,6 +29,8 @@ impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<N, T>> for Restr
     }
 }
 
+impl<const N: usize, T: Eq> Eq for RestrictedArray<N, T> {}
+
 impl<const N: usize, T> RestrictedArray<N, T> {
     /// Restrict an array so that only elements within the given range are viewable.
     ///
