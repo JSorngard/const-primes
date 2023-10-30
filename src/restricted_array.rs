@@ -1,7 +1,9 @@
 use core::{iter::FusedIterator, ops::Range};
 
 /// An array where only a section of the data may be viewed,
-/// as the other data may e.g. not uphold some invariant.
+/// as the other data may e.g. not uphold some invariant.  
+/// When this type is compared against some other type, only
+/// data in the visible part is compared.
 #[derive(Debug)]
 pub struct RestrictedArray<T, const N: usize> {
     start: usize,
