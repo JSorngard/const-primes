@@ -23,7 +23,7 @@ impl<const N: usize, T: Copy> Copy for RestrictedArray<T, N> {}
 
 impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for RestrictedArray<T, N> {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
-    /// Only compares the *unrestricted* part of `self` against the *unrestricted* part of `other`.
+    /// Only compares the *visible* part of `self` against the *visible* part of `other`.
     fn eq(&self, other: &RestrictedArray<T, N>) -> bool {
         self.as_slice() == other.as_slice()
     }
@@ -32,7 +32,7 @@ impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for Restr
 impl<const N: usize, T: Eq> Eq for RestrictedArray<T, N> {}
 
 impl<const N: usize, T> RestrictedArray<T, N> {
-    /// Restrict an array so that only elements within the given range are viewable.
+    /// Restrict an array so that only elements within the given range are visible.
     ///
     /// # Panics
     /// Panics if the range of indices is out of bounds of the array.
@@ -57,51 +57,53 @@ impl<const N: usize, T> RestrictedArray<T, N> {
         }
     }
 
-    /// Returns a reference to the full underlying array.
+    /// Returns a reference to the full underlying array. There is no guarantee about the data
+    /// outside the visible region.
     pub const fn as_full_array(&self) -> &[T; N] {
         &self.array
     }
 
-    /// Converts `self` into the full underlying array.
+    /// Converts `self` into the full underlying array. There is no guarantee about the data
+    /// outside the visible region.
     pub fn into_full_array(self) -> [T; N] {
         self.array
     }
 
-    /// Returns the unrestricted part of the array as a slice.
+    /// Returns the visible part of the array as a slice.
     pub const fn as_slice(&self) -> &[T] {
         let (_, tail) = self.array.split_at(self.start);
         tail.split_at(self.end - self.start).0
     }
 
-    /// Returns the index of the first element of the underlying array that's not restricted.
+    /// Returns the index of the first element of the underlying array that's inside the visible region.
     pub const fn start(&self) -> usize {
         self.start
     }
 
     /// Returns the index of the first element of the underlying array that is
-    /// restricted again after the end of the unrestricted part.
+    /// invisible again after the end of the visible part.
     pub const fn end(&self) -> usize {
         self.end
     }
 
-    /// Returns the length of the unrestricted part of the array.
+    /// Returns the length of the visible part of the array.
     pub const fn len(&self) -> usize {
         self.end - self.start
     }
 
-    /// Returns whether the unrestricted part is empty.
+    /// Returns whether the visible part is empty.
     pub const fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
-    /// Returns whether there are parts of the array that are restricted.
-    /// If this is `false` it is completely fine to call [`as_full_array`](RestrictedArray::as_full_array)
+    /// Returns whether there are no parts of the array that are invisible.
+    /// If this is `true` it is completely fine to call [`as_full_array`](RestrictedArray::as_full_array)
     /// or [`into_full_array`](RestrictedArray::into_full_array).
-    pub const fn is_restricted(&self) -> bool {
+    pub const fn is_fully_visible(&self) -> bool {
         self.len() == N
     }
 
-    /// Returns an iterator over the unrestricted section.
+    /// Returns an iterator over the visible section.
     pub fn iter(&self) -> core::slice::Iter<'_, T> {
         self.as_slice().iter()
     }
@@ -162,7 +164,7 @@ where
     U: PartialEq<T>,
 {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
-    /// Only compares the *unrestricted* part of `self` against `other`.
+    /// Only compares the *visible* part of `self` against `other`.
     fn eq(&self, other: &[U]) -> bool {
         other == self.as_slice()
     }
@@ -170,7 +172,7 @@ where
 
 impl<const N: usize, T, U: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for [U] {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
-    /// Only compares the *unrestricted* part of `other` against `self`.
+    /// Only compares the *visible* part of `other` against `self`.
     fn eq(&self, other: &RestrictedArray<T, N>) -> bool {
         self == other.as_slice()
     }

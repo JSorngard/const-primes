@@ -1,4 +1,7 @@
-use const_primes::{is_prime, primes, generation::{primes_geq, primes_lt}, sieve, sieve_geq, sieve_lt};
+use const_primes::{
+    generation::{primes_geq, primes_lt},
+    is_prime, primes, sieve, sieve_geq, sieve_lt,
+};
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
 use rand::prelude::*;
 use std::hint::black_box;

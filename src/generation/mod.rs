@@ -125,7 +125,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(BIG_PRIMES[..3],     [4_998_417_421, 4_998_417_427, 4_998_417_443]);
 /// assert_eq!(BIG_PRIMES[N - 3..], [4_999_999_903, 4_999_999_937, 5_000_000_029]);
 /// ```
-/// If there are not enough primes to fill the requested array, 
+/// If there are not enough primes to fill the requested array,
 /// the output will be the [`SegmentedGenerationResult::Partial`] variant,
 /// which contains fewer primes than requested:
 /// ```
@@ -278,11 +278,17 @@ mod test {
     #[test]
     fn sanity_check_primes_geq() {
         {
-            const P: [u64; 5] = match primes_geq(10).complete() {Some(a) => a, _ => panic!()};
+            const P: [u64; 5] = match primes_geq(10).complete() {
+                Some(a) => a,
+                _ => panic!(),
+            };
             assert_eq!(P, [11, 13, 17, 19, 23]);
         }
         {
-            const P: [u64; 5] = match primes_geq(0).complete() {Some(a) => a, _ => panic!()};
+            const P: [u64; 5] = match primes_geq(0).complete() {
+                Some(a) => a,
+                _ => panic!(),
+            };
             assert_eq!(P, [2, 3, 5, 7, 11]);
         }
         {
