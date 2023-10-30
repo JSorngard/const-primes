@@ -9,10 +9,9 @@ use crate::restricted_array::RestrictedArray;
 /// region of numbers that exceed the square of the size of the requested array.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SegmentedGenerationResult<const N: usize> {
-    /// The complete range could be sieved, and the entire output array contains prime numbers.
+    /// The entire output array contains prime numbers.
     Complete([u64; N]),
-    /// Only a part of the range could be sieved before the primes either exceeded `N^2` or ran out,
-    /// and so only a part of the output array contains prime numbers.
+    /// Only a part of the output array contains prime numbers as they either exceeded `N^2` or ran out.
     Partial(RestrictedArray<u64, N>),
 }
 
