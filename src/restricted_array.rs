@@ -125,7 +125,7 @@ impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<T, N> {
     }
 }
 
-/// Created by the [`IntoIterator`] trait implementation on [`RestrictedArray`].
+/// Created by the [`into_iter`](RestrictedArray::into_iter) function on [`RestrictedArray`], see it for more information.
 pub struct RestrictedArrayIntoIter<const N: usize, T>(
     core::iter::Take<core::iter::Skip<core::array::IntoIter<T, N>>>,
 );
