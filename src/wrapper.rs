@@ -151,21 +151,28 @@ impl<const N: usize> Primes<N> {
         }
     }
 
-    /// Returns the smallest prime greater than or equal to `n`.  
-    /// If `n` is larger than the largest prime in `self` this returns `None`.
+    /// Returns the smallest prime greater than `n`.  
+    /// If `n` is larger than or equal to the largest prime in `self` this returns `None`.
     ///
     /// Uses a binary search.
     /// # Example
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const SPGEQ: Option<u32> = CACHE.smallest_prime_geq(400);
-    /// assert_eq!(SPGEQ, Some(401));
+    /// const NEXT: Option<u32> = CACHE.next_prime(400);
+    /// assert_eq!(NEXT, Some(401));
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn smallest_prime_geq(&self, n: Underlying) -> Option<Underlying> {
+    pub const fn next_prime(&self, n: Underlying) -> Option<Underlying> {
         match self.binary_search(n) {
-            Ok(i) | Err(Some(i)) => Some(self.primes[i]),
+            Ok(i) => {
+                if i + 1 < self.len() {
+                    Some(self.primes[i + 1])
+                } else {
+                    None
+                }
+            }
+            Err(Some(i)) => Some(self.primes[i]),
             Err(None) => None,
         }
     }
@@ -494,27 +501,27 @@ mod test {
     }
 
     #[test]
-    fn check_smallest_prime_geq() {
+    fn check_next_prime() {
         const CACHE: Primes<100> = Primes::new();
-        const SPGEQ0: Option<Underlying> = CACHE.smallest_prime_geq(0);
-        const SPGEQ400: Option<Underlying> = CACHE.smallest_prime_geq(400);
-        const SPGEQ541: Option<Underlying> = CACHE.smallest_prime_geq(541);
-        const SPGEQ542: Option<Underlying> = CACHE.smallest_prime_geq(542);
+        const SPGEQ0: Option<Underlying> = CACHE.next_prime(0);
+        const SPGEQ400: Option<Underlying> = CACHE.next_prime(400);
+        const SPGEQ541: Option<Underlying> = CACHE.next_prime(540);
+        const SPGEQ542: Option<Underlying> = CACHE.next_prime(541);
         assert_eq!(SPGEQ0, Some(2));
         assert_eq!(SPGEQ400, Some(401));
         assert_eq!(SPGEQ541, Some(541));
         assert_eq!(SPGEQ542, None);
 
-        const N: usize = 32;
+        const N: usize = 31;
         const NEXT_PRIME: [u32; N] = [
-            2, 2, 2, 3, 5, 5, 7, 7, 11, 11, 11, 11, 13, 13, 17, 17, 17, 17, 19, 19, 23, 23, 23, 23,
+            2, 2, 3, 5, 5, 7, 7, 11, 11, 11, 11, 13, 13, 17, 17, 17, 17, 19, 19, 23, 23, 23, 23,
             29, 29, 29, 29, 29, 29, 31, 31,
         ];
         const P: Primes<N> = Primes::new();
 
         for n in 0..N {
             println!("{n}");
-            assert_eq!(P.smallest_prime_geq(n as u32), Some(NEXT_PRIME[n]));
+            assert_eq!(P.next_prime(n as u32), Some(NEXT_PRIME[n]));
         }
     }
 
