@@ -150,7 +150,7 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
 mod test {
     use super::*;
 
-    use generation::{primes_lt, segmented_generation_result::SegmentedGenerationResult};
+    use generation::{primes_lt, SegmentedGenerationError};
 
     #[test]
     fn check_primes_is_prime() {
@@ -235,13 +235,13 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: SegmentedGenerationResult<$n> = primes_lt(100);
-                        for (i, prime) in P.into_iter().enumerate() {
+                        const P: Result<[u64; 10], SegmentedGenerationError<10>> = primes_lt(100);
+                        for (i, prime) in P.unwrap().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], prime as u32);
                         }
                         assert_eq!(
                             PRECOMPUTED_PRIMES[25-$n..25],
-                            primes_lt::<$n>(100).into_iter().map(|i|i as u32).collect::<Vec<_>>()
+                            primes_lt::<$n>(100).unwrap().into_iter().map(|i|i as u32).collect::<Vec<_>>()
                         );
                     }
                 )+
@@ -250,9 +250,25 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!([2, 3, 5, 7], primes_lt::<9>(10).as_ref());
+        assert_eq!(
+            [2, 3, 5, 7],
+            primes_lt::<9>(10)
+                .err()
+                .unwrap()
+                .partial_ok()
+                .unwrap()
+                .as_slice()
+        );
 
-        assert_eq!(primes_lt::<2>(3), [2]);
+        assert_eq!(
+            primes_lt::<2>(3)
+                .err()
+                .unwrap()
+                .partial_ok()
+                .unwrap()
+                .as_slice(),
+            [2]
+        );
     }
 
     #[test]
