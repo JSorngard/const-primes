@@ -127,25 +127,30 @@ impl<const N: usize> Primes<N> {
 
     // region: Next prime
 
-    /// Returns the largest prime less than or equal to `n`.  
-    /// If `n` is 0, 1, or larger than the largest prime in `self` this returns `None`.
+    /// Returns the largest prime less than `n`.  
+    /// If `n` is 0, 1, 2, or larger than the largest prime in `self` this returns `None`.
     ///
     /// Uses a binary search.
     /// # Example
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const LPLEQ400: Option<u32> = CACHE.largest_prime_leq(400);
-    /// assert_eq!(LPLEQ400, Some(397));
+    /// const PREV400: Option<u32> = CACHE.previous_prime(400);
+    /// assert_eq!(PREV400, Some(397));
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn largest_prime_leq(&self, n: Underlying) -> Option<Underlying> {
-        if n <= 1 {
+    pub const fn previous_prime(&self, n: Underlying) -> Option<Underlying> {
+        if n <= 2 {
             None
         } else {
             match self.binary_search(n) {
-                Ok(i) => Some(self.primes[i]),
-                Err(Some(i)) => Some(self.primes[i - 1]),
+                Ok(i) | Err(Some(i)) => {
+                    if i > 0 {
+                        Some(self.primes[i - 1])
+                    } else {
+                        None
+                    }
+                }
                 Err(None) => None,
             }
         }
@@ -488,16 +493,23 @@ mod test {
     }
 
     #[test]
-    fn check_largest_prime_leq() {
+    fn check_previous_prime() {
         const CACHE: Primes<100> = Primes::new();
-        const LPLEQ0: Option<Underlying> = CACHE.largest_prime_leq(0);
-        const LPLEQ400: Option<Underlying> = CACHE.largest_prime_leq(400);
-        const LPLEQ541: Option<Underlying> = CACHE.largest_prime_leq(541);
-        const LPLEQ542: Option<Underlying> = CACHE.largest_prime_leq(542);
-        assert_eq!(LPLEQ0, None);
-        assert_eq!(LPLEQ400, Some(397));
-        assert_eq!(LPLEQ541, Some(541));
-        assert_eq!(LPLEQ542, None);
+        const PREV0: Option<Underlying> = CACHE.previous_prime(0);
+        const PREV400: Option<Underlying> = CACHE.previous_prime(400);
+        const PREV541: Option<Underlying> = CACHE.previous_prime(541);
+        const PREV542: Option<Underlying> = CACHE.previous_prime(542);
+        const PREVS: [Underlying; 18] = [
+            2, 3, 3, 5, 5, 7, 7, 7, 7, 11, 11, 13, 13, 13, 13, 17, 17, 19,
+        ];
+        for (i, prev) in PREVS.into_iter().enumerate() {
+            println!("n = {}", i + 3);
+            assert_eq!(Some(prev), CACHE.previous_prime(i as u32 + 3));
+        }
+        assert_eq!(PREV0, None);
+        assert_eq!(PREV400, Some(397));
+        assert_eq!(PREV541, Some(523));
+        assert_eq!(PREV542, None);
     }
 
     #[test]
