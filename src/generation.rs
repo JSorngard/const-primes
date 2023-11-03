@@ -339,7 +339,13 @@ mod test {
         }
         {
             const P: SegmentedGenerationResult<1> = primes_geq(0);
-            assert_eq!(P, Err(SegmentedGenerationError::PartialOk(RestrictedArray::new(0..0, [0]))));
+            assert_eq!(
+                P,
+                Err(SegmentedGenerationError::PartialOk(RestrictedArray::new(
+                    0..0,
+                    [0]
+                )))
+            );
         }
         for prime in primes_geq::<2_000>(3_998_000)
             .unwrap_err()
