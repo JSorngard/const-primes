@@ -246,14 +246,6 @@ impl<const N: usize> Primes<N> {
         self.primes.as_slice()
     }
 
-    #[cfg(feature = "alloc")]
-    /// Returns a newly allocated `Vec` that contains the underlying prime numbers.
-    #[inline]
-    #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub fn to_vec(&self) -> alloc::vec::Vec<Underlying> {
-        self.primes.to_vec()
-    }
-
     // endregion: Conversions
 
     /// Returns a reference to the element at the given index if it is within bounds.

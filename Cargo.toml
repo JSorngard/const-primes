@@ -15,9 +15,6 @@ repository = "https://github.com/JSorngard/const-primes"
 criterion = {version = "0.5", features = ["html_reports"]}
 rand = "0.8"
 
-[features]
-alloc = []
-
 [[bench]]
 name = "prime_benches"
 harness = false

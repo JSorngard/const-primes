@@ -92,9 +92,6 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
 
-#[cfg(feature = "alloc")]
-extern crate alloc;
-
 /// The type that `Primes<N>` stores, and `primes::<N>()`` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
