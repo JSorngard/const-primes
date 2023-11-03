@@ -278,9 +278,9 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenera
 }
 
 /// An enum describing whether the requested array could be filled completely, or only a partially.
-/// A partial array can be returned by [`primes_lt`](crate::generation::primes_lt) if the size of the requested
+/// A partial array can be returned by [`primes_lt`] if the size of the requested
 /// array is larger than the actual number of primes less than the given `upper_limit`.
-/// It can also be returned by [`primes_geq`](crate::generation::primes_geq) if it needs to sieve into a
+/// It can also be returned by [`primes_geq`] if it needs to sieve into a
 /// region of numbers that exceed the square of the size of the requested array.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SegmentedGenerationError<const N: usize> {
