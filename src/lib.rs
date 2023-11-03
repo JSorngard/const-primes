@@ -90,7 +90,7 @@
 //! and more!
 
 #![forbid(unsafe_code)]
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(all(not(test), not(feature = "std")), no_std)]
 
 /// The type that `Primes<N>` stores, and `primes::<N>()`` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
@@ -150,7 +150,7 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
 mod test {
     use super::*;
 
-    use generation::{primes_lt, SegmentedGenerationError};
+    use generation::{primes_lt, SegmentedGenerationResult};
 
     #[test]
     fn check_primes_is_prime() {
@@ -235,7 +235,7 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: Result<[u64; 10], SegmentedGenerationError<10>> = primes_lt(100);
+                        const P: SegmentedGenerationResult<10> = primes_lt(100);
                         for (i, prime) in P.unwrap().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], prime as u32);
                         }

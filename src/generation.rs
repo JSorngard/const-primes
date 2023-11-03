@@ -244,6 +244,9 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenera
     if n64.checked_mul(n64).is_none() {
         return Err(SegmentedGenerationError::TooLargeN);
     }
+    if lower_limit >= n64 * n64 {
+        return Err(SegmentedGenerationError::TooLargeLimit);
+    }
 
     let mut primes = [0; N];
     let base_sieve: [bool; N] = sieve();
@@ -255,6 +258,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenera
         // Move the found primes into the output vector.
         while i < N {
             if upper_sieve[i] {
+                // FIXME: BUG IDENTIFIED: THIS COULD BE 0
                 largest_found_prime = lower_limit + i as u64;
                 if largest_found_prime >= n64 * n64 {
                     // We do not know if this is actually a prime
@@ -335,7 +339,7 @@ mod test {
         }
         {
             const P: SegmentedGenerationResult<1> = primes_geq(0);
-            assert_eq!(P, Err(SegmentedGenerationError::TooLargeLimit));
+            assert_eq!(P, Err(SegmentedGenerationError::PartialOk(RestrictedArray::new(0..0, [0]))));
         }
         for prime in primes_geq::<2_000>(3_998_000)
             .unwrap_err()
