@@ -4,7 +4,7 @@ authors = ["Johanna Sörngård (jsorngard@gmail.com)"]
 version = "0.4.8"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-keywords = ["prime", "const"]
+keywords = ["primes", "const"]
 description = "Generate and work with prime numbers in const contexts"
 repository = "https://github.com/JSorngard/const-primes"
 
@@ -13,7 +13,7 @@ repository = "https://github.com/JSorngard/const-primes"
 [dependencies]
 
 [dev-dependencies]
-criterion = {version = "0.5", features = ["html_reports"]}
+criterion = { version = "0.5", features = ["html_reports"] }
 rand = "0.8"
 
 [[bench]]
