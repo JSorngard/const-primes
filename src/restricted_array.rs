@@ -4,7 +4,7 @@ use core::{iter::FusedIterator, ops::Range};
 /// as the other data may e.g. not uphold some invariant.  
 /// When this type is compared against some other type, only
 /// data in the visible part is compared.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq)]
 pub struct RestrictedArray<T, const N: usize> {
     start: usize,
     end: usize,
@@ -18,8 +18,6 @@ impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for Restr
         self.as_slice() == other.as_slice()
     }
 }
-
-impl<const N: usize, T: Eq> Eq for RestrictedArray<T, N> {}
 
 impl<const N: usize, T> RestrictedArray<T, N> {
     /// Restrict an array so that only elements within the given range are visible.
