@@ -4,24 +4,12 @@ use core::{iter::FusedIterator, ops::Range};
 /// as the other data may e.g. not uphold some invariant.  
 /// When this type is compared against some other type, only
 /// data in the visible part is compared.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct RestrictedArray<T, const N: usize> {
     start: usize,
     end: usize,
     array: [T; N],
 }
-
-impl<const N: usize, T: Clone> Clone for RestrictedArray<T, N> {
-    fn clone(&self) -> Self {
-        Self {
-            start: self.start,
-            end: self.end,
-            array: self.array.clone(),
-        }
-    }
-}
-
-impl<const N: usize, T: Copy> Copy for RestrictedArray<T, N> {}
 
 impl<const N: usize, T: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for RestrictedArray<T, N> {
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
