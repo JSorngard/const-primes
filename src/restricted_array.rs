@@ -63,12 +63,6 @@ impl<const N: usize, T> RestrictedArray<T, N> {
         tail.split_at(self.end - self.start).0
     }
 
-    /// Returns the visible part of the array as a mutable slice.
-    pub fn as_slice_mut(&mut self) -> &mut [T] {
-        let (_, tail) = self.array.split_at_mut(self.start);
-        tail.split_at_mut(self.end - self.start).0
-    }
-
     /// Returns the index of the first element of the underlying array that's inside the visible region.
     pub const fn start(&self) -> usize {
         self.start
@@ -109,13 +103,6 @@ impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<T, N> {
     #[inline]
     fn index(&self, index: usize) -> &Self::Output {
         &self.as_slice()[index]
-    }
-}
-
-impl<const N: usize, T> core::ops::IndexMut<usize> for RestrictedArray<T, N> {
-    #[inline]
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.as_slice_mut()[index]
     }
 }
 
