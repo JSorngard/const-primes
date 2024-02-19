@@ -133,7 +133,8 @@ impl<const N: usize, T> Iterator for RestrictedArrayIntoIter<N, T> {
 
     #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
-        self.0.size_hint()
+        let l = self.0.len();
+        (l, Some(l))
     }
 
     #[inline]
