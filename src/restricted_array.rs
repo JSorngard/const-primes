@@ -186,7 +186,10 @@ where
     }
 }
 
-impl<const N: usize, T, U: PartialEq<T>> PartialEq<RestrictedArray<T, N>> for [U] {
+impl<const N: usize, T, U> PartialEq<RestrictedArray<T, N>> for [U]
+where
+    U: PartialEq<T>,
+{
     /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
     /// Only compares the *visible* part of `other` against `self`.
     fn eq(&self, other: &RestrictedArray<T, N>) -> bool {
