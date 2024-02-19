@@ -108,29 +108,14 @@ impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<T, N> {
     type Output = T;
     #[inline]
     fn index(&self, index: usize) -> &Self::Output {
-        match self.as_slice().get(index) {
-            Some(element) => element,
-            None => panic!(
-                "the index was {index} but the len was {}",
-                self.end - self.start
-            ),
-        }
+        &self.as_slice()[index]
     }
 }
 
 impl<const N: usize, T> core::ops::IndexMut<usize> for RestrictedArray<T, N> {
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        let i = match self.start.checked_add(index) {
-            Some(sum) => sum,
-            None => panic!("index overflowed"),
-        };
-
-        if i >= self.end {
-            panic!("index was {i} when len was {}", self.end - self.start);
-        }
-
-        &mut self.array[i]
+        &mut self.as_slice_mut()[index]
     }
 }
 
