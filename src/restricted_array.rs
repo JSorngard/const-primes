@@ -92,6 +92,7 @@ impl<const N: usize, T> RestrictedArray<T, N> {
     }
 
     /// Returns an iterator over the visible section.
+    #[inline]
     pub fn iter(&self) -> core::slice::Iter<'_, T> {
         self.as_slice().iter()
     }
@@ -99,6 +100,7 @@ impl<const N: usize, T> RestrictedArray<T, N> {
 
 impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<T, N> {
     type Output = T;
+    #[inline]
     fn index(&self, index: usize) -> &Self::Output {
         let i = match self.start.checked_add(index) {
             Some(sum) => sum,
@@ -120,17 +122,30 @@ pub struct RestrictedArrayIntoIter<const N: usize, T>(
 
 impl<const N: usize, T> Iterator for RestrictedArrayIntoIter<N, T> {
     type Item = T;
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         self.0.next()
     }
 
+    #[inline]
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.0.size_hint()
+    }
+
+    #[inline]
+    fn last(self) -> Option<T> {
+        self.0.last()
+    }
+
+    #[inline]
+    fn count(self) -> usize {
+        self.0.count()
     }
 }
 impl<const N: usize, T> FusedIterator for RestrictedArrayIntoIter<N, T> {}
 impl<const N: usize, T> ExactSizeIterator for RestrictedArrayIntoIter<N, T> {}
 impl<const N: usize, T> DoubleEndedIterator for RestrictedArrayIntoIter<N, T> {
+    #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back()
     }
@@ -143,6 +158,15 @@ impl<const N: usize, T> IntoIterator for RestrictedArray<T, N> {
         let start = self.start;
         let len = self.len();
         RestrictedArrayIntoIter(self.array.into_iter().skip(start).take(len))
+    }
+}
+
+impl<'a, const N: usize, T> IntoIterator for &'a RestrictedArray<T, N> {
+    type IntoIter = core::slice::Iter<'a, T>;
+    type Item = &'a <RestrictedArrayIntoIter<N, T> as Iterator>::Item;
+    #[inline]
+    fn into_iter(self) -> Self::IntoIter {
+        self.as_slice().iter()
     }
 }
 
