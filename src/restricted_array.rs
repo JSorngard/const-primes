@@ -115,6 +115,21 @@ impl<const N: usize, T> core::ops::Index<usize> for RestrictedArray<T, N> {
     }
 }
 
+impl<const N: usize, T> core::ops::IndexMut<usize> for RestrictedArray<T, N> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        let i = match self.start.checked_add(index) {
+            Some(sum) => sum,
+            None => panic!("index overflowed"),
+        };
+
+        if i >= self.end {
+            panic!("index was {i} when len was {}", self.end - self.start);
+        }
+
+        &mut self.array[i]
+    }
+}
+
 /// Created by the [`into_iter`](RestrictedArray::into_iter) function on [`RestrictedArray`], see it for more information.
 pub struct RestrictedArrayIntoIter<const N: usize, T>(
     core::iter::Take<core::iter::Skip<core::array::IntoIter<T, N>>>,
