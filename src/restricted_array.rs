@@ -151,6 +151,7 @@ impl<const N: usize, T> DoubleEndedIterator for RestrictedArrayIntoIter<N, T> {
 impl<const N: usize, T> IntoIterator for RestrictedArray<T, N> {
     type IntoIter = RestrictedArrayIntoIter<N, T>;
     type Item = <RestrictedArrayIntoIter<N, T> as Iterator>::Item;
+    #[inline]
     fn into_iter(self) -> Self::IntoIter {
         let start = self.start;
         let len = self.len();
