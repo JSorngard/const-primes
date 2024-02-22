@@ -125,6 +125,11 @@ impl<const N: usize, T> Iterator for RestrictedArrayIntoIter<N, T> {
     }
 
     #[inline]
+    fn nth(&mut self, index: usize) -> Option<Self::Item> {
+        self.0.nth(index)
+    }
+
+    #[inline]
     fn last(self) -> Option<T> {
         self.0.last()
     }
