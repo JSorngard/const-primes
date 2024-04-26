@@ -330,7 +330,7 @@ pub enum SegmentedGenerationError<const N: usize> {
 }
 
 impl<const N: usize> SegmentedGenerationError<N> {
-    /// Returns the partial result as a restricted array, if there is one.
+    /// Returns the partial result as an [`ArraySection`], if there is one.
     pub const fn partial_ok(self) -> Option<ArraySection<u64, N>> {
         match self {
             Self::PartialOk(restricted_array) => Some(restricted_array),
