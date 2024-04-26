@@ -56,6 +56,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// and then uses the result to sieve the output range if needed.
 ///
 /// # Examples
+///
 /// Basic usage
 /// ```
 /// # use const_primes::sieve_lt;
@@ -81,6 +82,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// ```
 ///
 /// # Panics
+///
 /// Panics if `upper_limit` is not in the range `[N, N^2]`. In const contexts these are compile errors:
 /// ```compile_fail
 /// # use const_primes::sieve_lt;
@@ -121,6 +123,7 @@ pub const fn sieve_lt<const N: usize>(upper_limit: u64) -> [bool; N] {
 /// Uses a sieve of Eratosthenes.
 ///
 /// # Example
+///
 /// ```
 /// # use const_primes::sieve;
 /// const PRIMALITY: [bool; 10] = sieve();
@@ -166,6 +169,7 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
 ///
 /// # Example
+///
 /// Basic usage:
 /// ```
 /// # use const_primes::sieve_geq;
