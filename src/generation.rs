@@ -165,6 +165,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerationResult<N> {
+    const { assert!(N > 0, "`N` must be at least 1") }
+
     let n64 = N as u64;
     match (n64).checked_mul(n64) {
         Some(prod) => {
@@ -251,6 +253,8 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenerationResult<N> {
+    const { assert!(N > 0, "`N` must be at least 1") }
+
     let n64 = N as u64;
     if n64.checked_mul(n64).is_none() {
         return Err(SegmentedGenerationError::TooLargeN);

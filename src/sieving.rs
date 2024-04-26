@@ -8,6 +8,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
 ) -> [bool; N] {
+    const { assert!(N > 0, "`N` must be at least 1") }
+
     let mut segment_sieve = [true; N];
 
     let lower_limit = upper_limit - N as u64;
@@ -94,6 +96,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_lt<const N: usize>(upper_limit: u64) -> [bool; N] {
+    const { assert!(N > 0, "`N` must be at least 1") }
+
     let n64 = N as u64;
 
     // Since panics are compile time errors in const contexts
@@ -132,6 +136,8 @@ pub const fn sieve_lt<const N: usize>(upper_limit: u64) -> [bool; N] {
 /// ```
 #[must_use = "the function only returns a new value"]
 pub const fn sieve<const N: usize>() -> [bool; N] {
+    const { assert!(N > 0, "`N` must be at least 1") }
+
     let mut sieve = [true; N];
     if N > 0 {
         sieve[0] = false;
@@ -186,6 +192,8 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {
+    const { assert!(N > 0, "`N` must be at least 1") }
+
     let n64 = N as u64;
 
     // Since panics are compile time errors in const contexts
