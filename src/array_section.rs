@@ -47,11 +47,13 @@ impl<const N: usize, T> ArraySection<T, N> {
     }
 
     /// Returns the first index of the full underlying array that is part of the section.
+    /// I.e. the section is the subrange `start ..`[`end`](ArraySection::end).
     pub const fn start(&self) -> usize {
         self.start
     }
 
     /// Returns the first index of the full underlying array that is outside the section (to the right).
+    /// I.e. the section is the subrange [`start`](ArraySection::start)`.. end`.
     pub const fn end(&self) -> usize {
         self.end
     }
