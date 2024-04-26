@@ -221,6 +221,7 @@ impl<const N: usize> Primes<N> {
     /// Converts `self` into an array of size `N`.
     ///
     /// # Example
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;

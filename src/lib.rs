@@ -106,7 +106,7 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use generation::primes;
+pub use generation::{primes, primes_geq, primes_lt};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
@@ -151,7 +151,7 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
 mod test {
     use super::*;
 
-    use generation::{primes_lt, SegmentedGenerationResult};
+    use generation::SegmentedGenerationResult;
 
     #[test]
     fn check_primes_is_prime() {
