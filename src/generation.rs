@@ -18,11 +18,17 @@ pub type SegmentedGenerationResult<const N: usize> = Result<[u64; N], SegmentedG
 /// const PRIMES: [u32; 10] = primes();
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
+/// Fails to compile if `N = 0`:
+/// ```compile_fail
+/// # use const_primes::primes;
+/// let primes: [u32; 0] = primes();
+/// ```
+///
 #[must_use = "the function only returns a new value"]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-    if N == 0 {
-        return [0; N];
-    } else if N == 1 {
+    const { assert!(N > 0, "`N` must be at least 1") }
+
+    if N == 1 {
         return [2; N];
     } else if N == 2 {
         let mut primes = [0; N];

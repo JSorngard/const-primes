@@ -178,7 +178,7 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// assert_eq!(PRIME_STATUS, [false, true, false, true, false]);
 /// ```
 /// # Panics
-/// 
+///
 /// Panics if `N + lower_limit` is larger than or equal to `N^2`. In const contexts this is a compile error:
 /// ```compile_fail
 /// # use const_primes::sieve_geq;
