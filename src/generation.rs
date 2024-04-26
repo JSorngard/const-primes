@@ -12,6 +12,7 @@ pub type SegmentedGenerationResult<const N: usize> = Result<[u64; N], SegmentedG
 /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ///
 /// # Example
+///
 /// ```
 /// # use const_primes::primes;
 /// const PRIMES: [u32; 10] = primes();
@@ -109,6 +110,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// If you want to compute primes that are larger than the input, take a look at [`primes_geq`].
 ///
 /// # Example
+///
 /// Basic usage:
 /// ```
 /// # use const_primes::generation::{SegmentedGenerationResult, primes_lt, SegmentedGenerationError};
@@ -142,6 +144,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// }
 /// ```
 /// # Panics
+///
 /// Panics if `N^2` does not fit in a `u64` or if `upper_limit` is larger than `N^2`. This is a compile error
 /// in const contexts:
 /// ```compile_fail
@@ -211,6 +214,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
 /// If you want to compute primes smaller than the input, take a look at [`primes_lt`].
 ///
 /// # Example
+///
 /// Basic usage:
 /// ```
 /// # use const_primes::primes_geq;
@@ -233,6 +237,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
 /// assert_eq!(PRIMES, [5, 7, 0]);
 /// ```
 /// # Panics
+///
 /// Panics if `N^2` does not fit in a `u64`.
 /// ```compile_fail
 /// # use const_primes::primes_geq;
