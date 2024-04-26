@@ -5,8 +5,6 @@ use core::{
 
 /// An array where only a section of the data may be viewed,
 /// as the other data may e.g. not uphold some invariant.  
-/// When this type is compared against some other type, only
-/// data in the visible part is compared.
 #[derive(Debug, Clone, Copy, Eq)]
 pub struct ArraySection<T, const N: usize> {
     start: usize,
@@ -14,9 +12,8 @@ pub struct ArraySection<T, const N: usize> {
     array: [T; N],
 }
 
+/// Only compares the data in the sections, and not the full arrays.
 impl<const N: usize, T: PartialEq<T>> PartialEq<ArraySection<T, N>> for ArraySection<T, N> {
-    /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
-    /// Only compares the *visible* part of `self` against the *visible* part of `other`.
     fn eq(&self, other: &ArraySection<T, N>) -> bool {
         self.as_slice() == other.as_slice()
     }
@@ -61,7 +58,7 @@ impl<const N: usize, T> ArraySection<T, N> {
         self.array
     }
 
-    /// Returns the visible part of the array as a slice.
+    /// Returns the section of the array as a slice.
     pub const fn as_slice(&self) -> &[T] {
         let (_, tail) = self.array.split_at(self.start);
         tail.split_at(self.end - self.start).0
@@ -80,7 +77,7 @@ impl<const N: usize, T> ArraySection<T, N> {
     /// Returns whether the section is just the entire array.
     /// If this is `true` it is completely fine to call [`as_full_array`](RestrictedArray::as_full_array)
     /// or [`into_full_array`](RestrictedArray::into_full_array).
-    pub const fn section_is_complete_array(&self) -> bool {
+    pub const fn section_is_full_array(&self) -> bool {
         self.len() == N
     }
 
