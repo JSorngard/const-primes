@@ -94,7 +94,7 @@ impl<const N: usize, T> core::ops::Index<usize> for ArraySection<T, N> {
     type Output = T;
     #[inline]
     fn index(&self, index: usize) -> &Self::Output {
-        &self.as_slice()[index]
+        core::ops::Index::index(self.as_slice(), index)
     }
 }
 
