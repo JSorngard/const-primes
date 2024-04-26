@@ -317,7 +317,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenera
 /// array is larger than the actual number of primes less than the given `upper_limit`.
 /// It can also be returned by [`primes_geq`] if it needs to sieve into a
 /// region of numbers that exceed the square of the size of the requested array.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SegmentedGenerationError<const N: usize> {
     /// `N^2`` did not fit in a `u64`.
     TooLargeN,

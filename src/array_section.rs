@@ -5,7 +5,7 @@ use core::{
 
 /// An array where only a section of the data may be viewed,
 /// as the other data may e.g. not uphold some invariant.  
-#[derive(Debug, Clone, Copy, Eq)]
+#[derive(Debug, Clone, Copy, Eq, Hash)]
 pub struct ArraySection<T, const N: usize> {
     start: usize,
     end: usize,
