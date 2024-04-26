@@ -3,9 +3,10 @@ use crate::{primes, Underlying};
 // region: Primes<N>
 
 /// A wrapper around an array that consists of the first `N` primes.
-/// Can be created in const contexts, and if so it ensures that `N` is non-zero at compile time.
+/// Can be created in const contexts, and ensures that `N` is non-zero at compile time.
 ///
 /// # Examples
+///
 /// Basic usage
 /// ```
 /// # use const_primes::Primes;
@@ -60,9 +61,9 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    /// 
+    ///
     /// # Panics
-    /// 
+    ///
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
