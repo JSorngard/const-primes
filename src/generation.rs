@@ -6,6 +6,7 @@ use crate::{array_section::ArraySection, sieve, sieving::sieve_segment, Underlyi
 pub type SegmentedGenerationResult<const N: usize> = Result<[u64; N], SegmentedGenerationError<N>>;
 
 /// Returns the `N` first prime numbers.
+/// Fails to compile if `N` is 0.
 ///
 /// [`Primes`](crate::Primes) might be relevant for you if you intend to later use these prime numbers for related computations.
 ///
@@ -109,6 +110,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 }
 
 /// Returns the `N` largest primes less than `upper_limit`.
+/// Fails to compile if `N` is 0.
 ///
 /// The return array fills from the end until either it is full or there are no more primes.
 /// If the primes run out before the array is filled the first elements will have a value of zero.
@@ -215,6 +217,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
 }
 
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
+/// Fails to compile if `N` is 0.
 ///
 /// This function will fill the output array from index 0 and stop generating primes if they exceed `N^2`.
 /// In that case the remaining elements of the output array will be 0.
