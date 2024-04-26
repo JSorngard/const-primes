@@ -51,7 +51,7 @@ impl<const N: usize, T> ArraySection<T, N> {
         self.start
     }
 
-    /// Returns the first index of the full underlying array that is outside the section (to the left).
+    /// Returns the first index of the full underlying array that is outside the section (to the right).
     pub const fn end(&self) -> usize {
         self.end
     }
