@@ -46,6 +46,16 @@ impl<const N: usize, T> ArraySection<T, N> {
         }
     }
 
+    /// Returns the first index of the full underlying array that is part of the section.
+    pub const fn start(&self) -> usize {
+        self.start
+    }
+
+    /// Returns the first index of the full underlying array that is outside the section (to the left).
+    pub const fn end(&self) -> usize {
+        self.end
+    }
+
     /// Returns a reference to the full underlying array. There is no guarantee about the data
     /// outside the section.
     pub const fn as_full_array(&self) -> &[T; N] {
