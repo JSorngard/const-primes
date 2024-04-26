@@ -217,7 +217,8 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
 }
 
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
-/// Fails to compile if `N` is 0.
+/// Fails to compile if `N` is 0. If `lower_limit` is less than 2 this functions assumes that it is 2,
+/// since there are no primes smaller than 2.
 ///
 /// This function will fill the output array from index 0 and stop generating primes if they exceed `N^2`.
 /// In that case the remaining elements of the output array will be 0.
@@ -247,22 +248,30 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
 /// const PRIMES: [u64; 3] = primes_geq(5);
 /// assert_eq!(PRIMES, [5, 7, 0]);
 /// ```
-/// # Panics
+/// # Errors
 ///
-/// Panics if `N^2` does not fit in a `u64`.
-/// ```compile_fail
+/// Returns an error if `N^2` does not fit in a `u64`, or if `lower_limit` is larger or equal to `N^2`.
+/// ```
 /// # use const_primes::primes_geq;
 /// const P: [u64; u32::MAX as usize + 1] = primes_geq(0);
+/// ```
+/// ```
+/// # use const_primes::primes_geq;
+/// const P: [u64; 5] = primes_geq(26);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenerationResult<N> {
     const { assert!(N > 0, "`N` must be at least 1") }
 
     let n64 = N as u64;
-    if n64.checked_mul(n64).is_none() {
+    let Some(n64_sqr) = n64.checked_mul(n64) else {
         return Err(SegmentedGenerationError::TooLargeN);
-    }
-    if lower_limit >= n64 * n64 {
+    };
+
+    // There are no primes smaller than 2, so we will always start looking at 2.
+    lower_limit = if lower_limit >= 2 { lower_limit } else { 2 };
+
+    if lower_limit >= n64_sqr {
         return Err(SegmentedGenerationError::TooLargeLimit);
     }
 
@@ -276,7 +285,6 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenera
         // Move the found primes into the output vector.
         while i < N {
             if upper_sieve[i] {
-                // FIXME: BUG IDENTIFIED: THIS COULD BE 0
                 largest_found_prime = lower_limit + i as u64;
                 if largest_found_prime >= n64 * n64 {
                     // We do not know if this is actually a prime
@@ -357,13 +365,7 @@ mod test {
         }
         {
             const P: SegmentedGenerationResult<1> = primes_geq(0);
-            assert_eq!(
-                P,
-                Err(SegmentedGenerationError::PartialOk(ArraySection::new(
-                    0..0,
-                    [0]
-                )))
-            );
+            assert_eq!(P, Err(SegmentedGenerationError::TooLargeLimit),);
         }
         for prime in primes_geq::<2_000>(3_998_000)
             .unwrap_err()
