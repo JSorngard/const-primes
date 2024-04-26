@@ -159,7 +159,7 @@ impl<const N: usize, T> IntoIterator for ArraySection<T, N> {
 
 impl<'a, const N: usize, T> IntoIterator for &'a ArraySection<T, N> {
     type IntoIter = ArraySectionIter<'a, T>;
-    type Item = &'a <ArraySectionIntoIter<T, N> as Iterator>::Item;
+    type Item = <ArraySectionIter<'a, T> as Iterator>::Item;
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
         ArraySectionIter::new(self.as_slice().iter())
