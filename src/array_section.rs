@@ -1,6 +1,6 @@
 use core::{
     iter::FusedIterator,
-    ops::{Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
+    ops::{Index, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
 
 /// An array where only a section of the data may be viewed,
@@ -102,11 +102,11 @@ impl<const N: usize, T> ArraySection<T, N> {
 
 // region: Index impls
 
-impl<const N: usize, T> core::ops::Index<usize> for ArraySection<T, N> {
+impl<const N: usize, T> Index<usize> for ArraySection<T, N> {
     type Output = T;
     #[inline]
     fn index(&self, index: usize) -> &Self::Output {
-        core::ops::Index::index(self.as_slice(), index)
+        Index::index(self.as_slice(), index)
     }
 }
 
