@@ -151,10 +151,11 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///     _ => panic!(),
 /// }
 /// ```
-/// # Panics
+/// # Errors
 ///
-/// Panics if `N^2` does not fit in a `u64` or if `upper_limit` is larger than `N^2`. This is a compile error
-/// in const contexts:
+/// Returns an error if `N^2` does not fit in a `u64`,
+/// if `upper_limit` is larger than `N^2` or if `upper_limit` is smaller than or equal to 2.
+///
 /// ```compile_fail
 /// # use const_primes::generation::{SegmentedGenerationResult,primes_lt};
 /// //                                       N is too large
@@ -168,6 +169,10 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerationResult<N> {
     const { assert!(N > 0, "`N` must be at least 1") }
+
+    if upper_limit <= 2 {
+        return Err(SegmentedGenerationError::TooSmallLimit);
+    }
 
     let n64 = N as u64;
     match (n64).checked_mul(n64) {
@@ -318,6 +323,8 @@ pub enum SegmentedGenerationError<const N: usize> {
     TooLargeN,
     /// the upper limit was larger than `N^2`.
     TooLargeLimit,
+    /// the lower limit was smaller than or equal to 2.
+    TooSmallLimit,
     /// Only a part of the output array contains prime numbers as they either exceeded `N^2` or ran out.
     PartialOk(ArraySection<u64, N>),
 }
@@ -342,6 +349,7 @@ impl<const N: usize> fmt::Display for SegmentedGenerationError<N> {
         match self {
             Self::TooLargeN => write!(f, "`N^2` did not fit in a `u64`"),
             Self::TooLargeLimit => write!(f, "the upper limit was larger than `N^2`"),
+            Self::TooSmallLimit => write!(f, "the lower limit was smaller than or equal to 2"),
             Self::PartialOk(_) => write!(f, "the sieve entered into a range it's too small for, or the primes ran out. You can access the partially completed result with the function `partial_result`"),
         }
     }
