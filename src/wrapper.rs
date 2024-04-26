@@ -304,6 +304,14 @@ impl<const N: usize> Primes<N> {
     }
 }
 
+/// This statically asserts that N > 0.
+impl<const N: usize> Default for Primes<N> {
+    fn default() -> Self {
+        const { assert!(N > 0, "`N` must be at least 1") }
+        Self::new()
+    }
+}
+
 impl<const N: usize, I> core::ops::Index<I> for Primes<N>
 where
     I: core::slice::SliceIndex<[Underlying]>,
