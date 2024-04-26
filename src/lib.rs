@@ -97,11 +97,11 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
+pub mod array_section;
 pub mod generation;
 mod imath;
 mod miller_rabin;
 mod other_prime;
-pub mod restricted_array;
 mod sieving;
 mod wrapper;
 

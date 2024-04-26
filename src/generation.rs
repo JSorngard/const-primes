@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::{restricted_array::RestrictedArray, sieve, sieving::sieve_segment, Underlying};
+use crate::{array_section::ArraySection, sieve, sieving::sieve_segment, Underlying};
 
 /// Type alias for the type returned by the segmented generation functions, that otherwise has two generics that must be the same.
 pub type SegmentedGenerationResult<const N: usize> = Result<[u64; N], SegmentedGenerationError<N>>;
@@ -195,7 +195,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
         }
         upper_limit = smallest_found_prime;
         if upper_limit <= 2 && total_primes_found < N {
-            let restricted = RestrictedArray::new(N - total_primes_found..N, primes);
+            let restricted = ArraySection::new(N - total_primes_found..N, primes);
             return Err(SegmentedGenerationError::PartialOk(restricted));
         }
     }
@@ -264,7 +264,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenera
                     // We do not know if this is actually a prime
                     // since the base sieve does not contain information about
                     // the prime status of numbers larger than or equal to N.
-                    let restricted = RestrictedArray::new(0..total_found_primes, primes);
+                    let restricted = ArraySection::new(0..total_found_primes, primes);
                     return Err(SegmentedGenerationError::PartialOk(restricted));
                 }
                 primes[total_found_primes] = largest_found_prime;
@@ -293,12 +293,12 @@ pub enum SegmentedGenerationError<const N: usize> {
     /// the upper limit was larger than `N^2`.
     TooLargeLimit,
     /// Only a part of the output array contains prime numbers as they either exceeded `N^2` or ran out.
-    PartialOk(RestrictedArray<u64, N>),
+    PartialOk(ArraySection<u64, N>),
 }
 
 impl<const N: usize> SegmentedGenerationError<N> {
     /// Returns the partial result as a restricted array, if there is one.
-    pub const fn partial_ok(self) -> Option<RestrictedArray<u64, N>> {
+    pub const fn partial_ok(self) -> Option<ArraySection<u64, N>> {
         match self {
             Self::PartialOk(restricted_array) => Some(restricted_array),
             _ => None,
@@ -341,7 +341,7 @@ mod test {
             const P: SegmentedGenerationResult<1> = primes_geq(0);
             assert_eq!(
                 P,
-                Err(SegmentedGenerationError::PartialOk(RestrictedArray::new(
+                Err(SegmentedGenerationError::PartialOk(ArraySection::new(
                     0..0,
                     [0]
                 )))
