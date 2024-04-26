@@ -113,7 +113,7 @@ impl<const N: usize, T> Index<usize> for ArraySection<T, N> {
 macro_rules! impl_index_range {
     ($($t:ty),+) => {
         $(
-            impl<const N: ::core::primitive::usize, T> ::core::ops::Index<$t> for ArraySection<T, N> {
+            impl<const N: ::core::primitive::usize, T> ::core::ops::Index<$t> for $crate::array_section::ArraySection<T, N> {
                 type Output = [T];
                 #[inline]
                 fn index(&self, index: $t) -> &Self::Output {
