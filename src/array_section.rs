@@ -106,7 +106,7 @@ impl<const N: usize, T> Index<usize> for ArraySection<T, N> {
     type Output = T;
     #[inline]
     fn index(&self, index: usize) -> &Self::Output {
-        Index::index(self.as_slice(), index)
+        self.as_slice().index(index)
     }
 }
 
