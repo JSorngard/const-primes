@@ -91,6 +91,7 @@
 
 #![forbid(unsafe_code)]
 #![cfg_attr(not(test), no_std)]
+#![feature(inline_const)]
 
 /// The type that `Primes<N>` stores, and `primes::<N>()`` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.

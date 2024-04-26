@@ -36,6 +36,7 @@ impl<const N: usize> Primes<N> {
     /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
     ///
     /// # Examples
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
@@ -54,19 +55,18 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
     ///
-    /// # Panics
-    ///
-    /// Panics if `N` is zero. In const contexts this will fail to compile
+    /// Fails to compile if `N` is zero.
     /// ```compile_fail
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    /// In other contexts it may panic at runtime instead.  
+    /// 
+    /// # Panics
+    /// 
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        assert!(N >= 1, "`N` must be at least 1");
-
+        const { assert!(N > 0, "`N` must be at least 1") }
         Self { primes: primes() }
     }
 
