@@ -106,9 +106,7 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use generation::{
-    primes, primes_geq, primes_lt, SegmentedGenerationError, SegmentedGenerationResult,
-};
+pub use generation::{primes, primes_geq, primes_lt, Error, Result};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
@@ -238,7 +236,7 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: SegmentedGenerationResult<$n> = primes_lt(100);
+                        const P: Result<$n> = primes_lt(100);
                         for (i, prime) in P.unwrap().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], prime as u32);
                         }
