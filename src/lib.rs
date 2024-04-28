@@ -236,7 +236,7 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: SegmentedGenerationResult<10> = primes_lt(100);
+                        const P: SegmentedGenerationResult<$n> = primes_lt(100);
                         for (i, prime) in P.unwrap().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], prime as u32);
                         }
