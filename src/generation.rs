@@ -144,12 +144,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 /// # use const_primes::generation::{SegmentedGenerationResult, primes_lt};
 /// const PRIMES: SegmentedGenerationResult<9> = primes_lt(10);
-/// match PRIMES.err() {
-///     Some(SegmentedGenerationError::PartialOk(arr)) => {
-///         // There are only four primes less than 10:
-///         assert_eq!(arr.as_slice(), [2, 3, 5, 7]);}
-///     _ => panic!(),
-/// }
+/// assert_eq!(PRIMES.map_err(|e| e.try_as_slice()), Err(Some(&[2, 3, 5, 7])))
 /// ```
 /// # Errors
 ///
@@ -159,7 +154,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```compile_fail
 /// # use const_primes::generation::{SegmentedGenerationResult,primes_lt};
 /// //                                       N is too large
-/// const PRIMES: SegmentedGenerationResult<{u32::MAX as usize + 1}> = primes_lt(100);
+/// const PRIMES: SegmentedGenerationResult<u64::MAX as usize> = primes_lt(100);
 /// ```
 /// ```compile_fail
 /// # use const_primes::generation::{primes_lt, SegmentedGenerationResult};
@@ -234,35 +229,41 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> SegmentedGenerat
 ///
 /// Basic usage:
 /// ```
-/// # use const_primes::primes_geq;
-/// const PRIMES: [u64; 5] = primes_geq(10);
-/// assert_eq!(PRIMES, [11, 13, 17, 19, 23]);
+/// # use const_primes::{primes_geq, SegmentedGenerationResult, SegmentedGenerationError};
+/// const PRIMES: SegmentedGenerationResult<5> = primes_geq(10);
+/// assert_eq!(PRIMES?, [11, 13, 17, 19, 23]);
+/// # Ok::<(), SegmentedGenerationError<5>>(())
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
-/// # use const_primes::primes_geq;
+/// # use const_primes::{primes_geq, SegmentedGenerationResult, SegmentedGenerationError};
 /// const N: usize = 71_000;
 /// # #[allow(long_running_const_eval)]
-/// const P: [u64; N] = primes_geq(5_000_000_030);
-/// assert_eq!(P[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
-/// assert_eq!(P[N - 3..], [5_001_586_727, 5_001_586_729, 5_001_586_757]);
+/// const P: SegmentedGenerationResult<N> = primes_geq(5_000_000_030);
+/// assert_eq!(P?[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+/// assert_eq!(P?[N - 3..], [5_001_586_727, 5_001_586_729, 5_001_586_757]);
+/// # Ok::<(), SegmentedGenerationError<N>>(())
 /// ```
 /// Only primes smaller than `N^2` will be generated:
 /// ```
-/// # use const_primes::primes_geq;
-/// const PRIMES: [u64; 3] = primes_geq(5);
-/// assert_eq!(PRIMES, [5, 7, 0]);
+/// # use const_primes::{primes_geq, SegmentedGenerationResult, SegmentedGenerationError};
+/// const PRIMES: SegmentedGenerationResult<3> = primes_geq(5);
+/// assert_eq!(PRIMES.map_err(|e| e.try_as_slice()), Err(Some([5, 7].as_slice())));
+/// # Ok::<(), SegmentedGenerationError<3>>(())
 /// ```
+///
 /// # Errors
 ///
 /// Returns an error if `N^2` does not fit in a `u64`, or if `lower_limit` is larger or equal to `N^2`.
 /// ```
-/// # use const_primes::primes_geq;
-/// const P: [u64; u32::MAX as usize + 1] = primes_geq(0);
+/// # use const_primes::{primes_geq, SegmentedGenerationResult};
+/// const P: SegmentedGenerationResult<{u32::MAX as usize + 1}> = primes_geq(0);
+/// assert!(P.is_err());
 /// ```
 /// ```
-/// # use const_primes::primes_geq;
-/// const P: [u64; 5] = primes_geq(26);
+/// # use const_primes::{primes_geq, SegmentedGenerationResult};
+/// const P: SegmentedGenerationResult<5> = primes_geq(26);
+/// assert!(P.is_err());
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> SegmentedGenerationResult<N> {
@@ -330,10 +331,26 @@ pub enum SegmentedGenerationError<const N: usize> {
 }
 
 impl<const N: usize> SegmentedGenerationError<N> {
-    /// Returns the partial result as an [`ArraySection`], if there is one.
-    pub const fn partial_ok(self) -> Option<ArraySection<u64, N>> {
+    /// Returns the partial result as a reference to an [`ArraySection`], if there is one.
+    pub const fn try_as_array_section(&self) -> Option<&ArraySection<u64, N>> {
         match self {
-            Self::PartialOk(restricted_array) => Some(restricted_array),
+            Self::PartialOk(ref restricted_array) => Some(&restricted_array),
+            _ => None,
+        }
+    }
+
+    /// Consumes the error and returns the partial result as an [`ArraySection`], if there is one.
+    pub const fn try_into_array_section(self) -> Option<ArraySection<u64, N>> {
+        match self {
+            Self::PartialOk(ra) => Some(ra),
+            _ => None,
+        }
+    }
+
+    /// Returns the partial result as a slice if there is one.
+    pub const fn try_as_slice(&self) -> Option<&[u64]> {
+        match self {
+            Self::PartialOk(ref ra) => Some(ra.as_slice()),
             _ => None,
         }
     }
@@ -375,9 +392,9 @@ mod test {
             const P: SegmentedGenerationResult<1> = primes_geq(0);
             assert_eq!(P, Err(SegmentedGenerationError::TooLargeLimit),);
         }
-        for prime in primes_geq::<2_000>(3_998_000)
+        for &prime in primes_geq::<2_000>(3_998_000)
             .unwrap_err()
-            .partial_ok()
+            .try_as_slice()
             .unwrap()
         {
             if prime == 0 {

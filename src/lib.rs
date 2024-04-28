@@ -106,7 +106,9 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use generation::{primes, primes_geq, primes_lt};
+pub use generation::{
+    primes, primes_geq, primes_lt, SegmentedGenerationError, SegmentedGenerationResult,
+};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
@@ -152,8 +154,6 @@ pub const fn prime_counts<const N: usize>() -> [usize; N] {
 #[cfg(test)]
 mod test {
     use super::*;
-
-    use generation::SegmentedGenerationResult;
 
     #[test]
     fn check_primes_is_prime() {
@@ -255,21 +255,11 @@ mod test {
 
         assert_eq!(
             [2, 3, 5, 7],
-            primes_lt::<9>(10)
-                .err()
-                .unwrap()
-                .partial_ok()
-                .unwrap()
-                .as_slice()
+            primes_lt::<9>(10).err().unwrap().try_as_slice().unwrap()
         );
 
         assert_eq!(
-            primes_lt::<2>(3)
-                .err()
-                .unwrap()
-                .partial_ok()
-                .unwrap()
-                .as_slice(),
+            primes_lt::<2>(3).err().unwrap().try_as_slice().unwrap(),
             [2]
         );
     }
