@@ -47,7 +47,7 @@
 //! ```
 //! ## Arbitrary ranges
 //!
-//! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`](crate::generation::primes_geq) and [`sieve_lt`]
+//! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
 //! that can be used to work with ranges that don't start at zero.
 //! ```
 //! # use const_primes::generation::primes_geq;

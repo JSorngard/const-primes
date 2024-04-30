@@ -159,8 +159,8 @@ impl<const N: usize, T> ArraySection<T, N> {
     }
 
     /// Returns whether the section is just the entire array.
-    /// If this is `true` it is completely fine to call [`as_full_array`](RestrictedArray::as_full_array)
-    /// or [`into_full_array`](RestrictedArray::into_full_array).
+    /// If this is `true` it is completely fine to call [`as_full_array`](ArraySection::as_full_array)
+    /// or [`into_full_array`](ArraySection::into_full_array).
     #[inline]
     pub const fn section_is_full_array(&self) -> bool {
         self.len() == N
