@@ -103,8 +103,15 @@ impl<const N: usize, T> ArraySection<T, N> {
     /// Returns the section of the array as a slice.
     #[inline]
     pub const fn as_slice(&self) -> &[T] {
-        let (_, tail) = self.array.split_at(self.start);
-        tail.split_at(self.end - self.start).0
+        self.array
+            // Split &[head, section, tail] into (&[head], &[section, tail])
+            .split_at(self.start)
+            // and extract the second element of the tuple.
+            .1
+            // Split &[section, tail] into (&[section], &[tail])
+            .split_at(self.end - self.start)
+            // and extract the first element of the tuple.
+            .0
     }
 
     /// Returns the length of the array section.
