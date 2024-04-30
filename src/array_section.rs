@@ -123,7 +123,7 @@ impl<const N: usize, T> ArraySection<T, N> {
     /// Returns whether the array section is empty.
     #[inline]
     pub const fn is_empty(&self) -> bool {
-        self.len() == 0
+        self.as_slice().is_empty()
     }
 
     /// Returns whether the section is just the entire array.
