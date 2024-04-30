@@ -1,11 +1,12 @@
 use core::{
+    cmp::Ordering,
     iter::FusedIterator,
     ops::{Index, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
 
 /// An array where only a section of the data may be viewed,
 /// as the other data may e.g. not uphold some invariant.  
-#[derive(Debug, Clone, Copy, Eq, Hash)]
+#[derive(Debug, Clone, Copy, Eq, Hash, Ord)]
 pub struct ArraySection<T, const N: usize> {
     start: usize,
     end: usize,
@@ -13,9 +14,15 @@ pub struct ArraySection<T, const N: usize> {
 }
 
 /// Only compares the data in the sections, and not the full arrays.
-impl<const N: usize, T: PartialEq<T>> PartialEq<ArraySection<T, N>> for ArraySection<T, N> {
+impl<const N: usize, T: PartialEq> PartialEq<ArraySection<T, N>> for ArraySection<T, N> {
     fn eq(&self, other: &ArraySection<T, N>) -> bool {
-        self.as_slice() == other.as_slice()
+        self.as_slice().eq(other.as_slice())
+    }
+}
+
+impl<const N: usize, T: PartialOrd> PartialOrd for ArraySection<T, N> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.as_slice().partial_cmp(other.as_slice())
     }
 }
 
