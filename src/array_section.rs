@@ -141,6 +141,13 @@ impl<const N: usize, T> ArraySection<T, N> {
     }
 }
 
+impl<const N: usize, T> AsRef<[T]> for ArraySection<T, N> {
+    #[inline]
+    fn as_ref(&self) -> &[T] {
+        self.as_slice()
+    }
+}
+
 // region: Index impls
 
 impl<const N: usize, T> Index<usize> for ArraySection<T, N> {
