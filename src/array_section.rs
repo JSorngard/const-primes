@@ -5,18 +5,31 @@ use core::{
 };
 
 /// An array where only a section of the data may be viewed,
-/// as the other data may e.g. not uphold some invariant.  
-#[derive(Debug, Clone, Copy, Eq, Hash, Ord)]
+/// as the other data may e.g. not uphold some invariant.
+/// The other data is not considered in comparisons, ordering or hashing.
+#[derive(Debug, Clone, Copy, Eq)]
 pub struct ArraySection<T, const N: usize> {
     start: usize,
     end: usize,
     array: [T; N],
 }
 
+impl<const N: usize, T: core::hash::Hash> core::hash::Hash for ArraySection<T, N> {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.as_slice().hash(state);
+    }
+}
+
 /// Only compares the data in the sections, and not the full arrays.
 impl<const N: usize, T: PartialEq> PartialEq<ArraySection<T, N>> for ArraySection<T, N> {
     fn eq(&self, other: &ArraySection<T, N>) -> bool {
         self.as_slice().eq(other.as_slice())
+    }
+}
+
+impl<const N: usize, T: Ord> Ord for ArraySection<T, N> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.as_slice().cmp(other.as_slice())
     }
 }
 
