@@ -106,7 +106,7 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use generation::{primes, primes_geq, primes_lt, Error, Result};
+pub use generation::{primes, primes_geq, primes_lt, Error, PrimesArray, Result};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
@@ -237,12 +237,12 @@ mod test {
                 $(
                     {
                         const P: Result<$n> = primes_lt(100);
-                        for (i, prime) in P.unwrap().into_iter().enumerate() {
-                            assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], prime as u32);
+                        for (i, prime) in P.unwrap().as_slice().into_iter().enumerate() {
+                            assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], *prime as u32);
                         }
                         assert_eq!(
                             PRECOMPUTED_PRIMES[25-$n..25],
-                            primes_lt::<$n>(100).unwrap().into_iter().map(|i|i as u32).collect::<Vec<_>>()
+                            primes_lt::<$n>(100).unwrap().as_slice().into_iter().map(|i| *i as u32).collect::<Vec<_>>()
                         );
                     }
                 )+
@@ -251,15 +251,9 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!(
-            [2, 3, 5, 7],
-            primes_lt::<9>(10).err().unwrap().try_as_slice().unwrap()
-        );
+        assert_eq!([2, 3, 5, 7], primes_lt::<9>(10).unwrap().as_slice());
 
-        assert_eq!(
-            primes_lt::<2>(3).err().unwrap().try_as_slice().unwrap(),
-            [2]
-        );
+        assert_eq!(primes_lt::<2>(3).unwrap().as_slice(), [2]);
     }
 
     #[test]

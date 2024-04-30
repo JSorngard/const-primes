@@ -1,9 +1,12 @@
-use core::fmt;
+use core::{
+    fmt,
+    ops::{Index, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
+};
 
 use crate::{array_section::ArraySection, sieve, sieving::sieve_segment, Underlying};
 
 /// Type alias for the type returned by the segmented generation functions, that otherwise has two generics that must be the same.
-pub type Result<const N: usize> = core::result::Result<[u64; N], Error<N>>;
+pub type Result<const N: usize> = core::result::Result<PrimesArray<N>, Error<N>>;
 
 /// Returns the `N` first prime numbers.
 /// Fails to compile if `N` is 0.
@@ -209,11 +212,11 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> Result<N> {
         upper_limit = smallest_found_prime;
         if upper_limit <= 2 && total_primes_found < N {
             let restricted = ArraySection::new(primes, N - total_primes_found..N);
-            return Err(Error::PartialOk(restricted));
+            return Ok(PrimesArray::Partial(restricted));
         }
     }
 
-    Ok(primes)
+    Ok(PrimesArray::Full(primes))
 }
 
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
@@ -231,7 +234,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> Result<N> {
 /// ```
 /// # use const_primes::{primes_geq, Result, Error};
 /// const PRIMES: Result<5> = primes_geq(10);
-/// assert_eq!(PRIMES?, [11, 13, 17, 19, 23]);
+/// assert_eq!(PRIMES?.as_slice(), &[11, 13, 17, 19, 23]);
 /// # Ok::<(), Error<5>>(())
 /// ```
 /// Compute larger primes without starting from zero:
@@ -240,8 +243,8 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> Result<N> {
 /// const N: usize = 71_000;
 /// # #[allow(long_running_const_eval)]
 /// const P: Result<N> = primes_geq(5_000_000_030);
-/// assert_eq!(P?[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
-/// assert_eq!(P?[N - 3..], [5_001_586_727, 5_001_586_729, 5_001_586_757]);
+/// assert_eq!(P?[..3], &[5_000_000_039, 5_000_000_059, 5_000_000_063]);
+/// assert_eq!(P?[N - 3..], &[5_001_586_727, 5_001_586_729, 5_001_586_757]);
 /// # Ok::<(), Error<N>>(())
 /// ```
 /// Only primes smaller than `N^2` will be generated:
@@ -297,7 +300,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> Result<N> {
                     // since the base sieve does not contain information about
                     // the prime status of numbers larger than or equal to N.
                     let restricted = ArraySection::new(primes, 0..total_found_primes);
-                    return Err(Error::PartialOk(restricted));
+                    return Ok(PrimesArray::Partial(restricted));
                 }
                 primes[total_found_primes] = largest_found_prime;
                 total_found_primes += 1;
@@ -310,8 +313,119 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> Result<N> {
         }
         lower_limit = largest_found_prime + 1;
     }
-    Ok(primes)
+    Ok(PrimesArray::Full(primes))
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+/// An array where potentially only a section of it contains valid prime numbers.
+pub enum PrimesArray<const N: usize> {
+    /// The entire allocated array contains prime numbers
+    Full([u64; N]),
+    /// Only a section of the allocated array contains prime numbers.
+    Partial(ArraySection<u64, N>),
+}
+
+impl<const N: usize> PrimesArray<N> {
+    /// Returns a slice of all the generated prime numbers.
+    #[inline]
+    pub const fn as_slice(&self) -> &[u64] {
+        match self {
+            Self::Full(ref arr) => arr.as_slice(),
+            Self::Partial(ref arr_sec) => arr_sec.as_slice(),
+        }
+    }
+
+    /// Returns the underlying array if it is full of valid primes.
+    #[inline]
+    pub const fn full(self) -> Option<[u64; N]> {
+        match self {
+            Self::Full(arr) => Some(arr),
+            Self::Partial(_) => None,
+        }
+    }
+
+    /// Returns a reference to the underlying array if it is full of valid primes.
+    #[inline]
+    pub const fn as_full(&self) -> Option<&[u64; N]> {
+        match self {
+            Self::Full(ref arr) => Some(arr),
+            Self::Partial(_) => None,
+        }
+    }
+
+    /// Returns the primes as a (maybe fully populated) [`ArraySection`].
+    #[inline]
+    pub const fn into_array_section(self) -> ArraySection<u64, N> {
+        match self {
+            Self::Partial(arr_sec) => arr_sec,
+            Self::Full(arr) => {
+                let l = arr.len();
+                ArraySection::new(arr, 0..l)
+            }
+        }
+    }
+
+    /// Returns an [`ArraySection`] if not all of the elements
+    /// in the underlying array could be computed.
+    #[inline]
+    pub const fn partial(self) -> Option<ArraySection<u64, N>> {
+        match self {
+            Self::Partial(arr_sec) => Some(arr_sec),
+            Self::Full(_) => None,
+        }
+    }
+
+    /// Returns a reference to the [`ArraySection`] if not all elements of the underlying array
+    /// could be computed.
+    #[inline]
+    pub const fn as_partial(&self) -> Option<&ArraySection<u64, N>> {
+        match self {
+            Self::Partial(ref arr_sec) => Some(arr_sec),
+            Self::Full(_) => None,
+        }
+    }
+
+    /// Returns whether all the elements in the underlying array could be computed.
+    #[inline]
+    pub const fn is_full(&self) -> bool {
+        matches!(self, Self::Full(_))
+    }
+
+    /// Returns whether only a subset of the underlying array could be computed.
+    #[inline]
+    pub const fn is_partial(&self) -> bool {
+        matches!(self, Self::Partial(_))
+    }
+}
+
+impl<const N: usize> From<PrimesArray<N>> for ArraySection<u64, N> {
+    #[inline]
+    fn from(value: PrimesArray<N>) -> Self {
+        value.into_array_section()
+    }
+}
+
+impl<const N: usize> AsRef<[u64]> for PrimesArray<N> {
+    #[inline]
+    fn as_ref(&self) -> &[u64] {
+        self.as_slice()
+    }
+}
+
+macro_rules! impl_index_range {
+    ($($n:ty),*) => {
+        $(
+            impl<const N: usize> Index<$n> for PrimesArray<N> {
+                type Output = [u64];
+                fn index(&self, index: $n) -> &Self::Output {
+                    self.as_slice().index(index)
+                }
+            }
+        )*
+    };
+}
+
+impl_index_range! {Range<usize>, RangeTo<usize>, RangeFrom<usize>, RangeToInclusive<usize>, RangeFull, RangeInclusive<usize>}
 
 /// An enum describing whether the requested array could be filled completely, or only a partially.
 /// A partial array can be returned by [`primes_lt`] if the size of the requested
@@ -326,39 +440,6 @@ pub enum Error<const N: usize> {
     TooLargeLimit,
     /// the lower limit was smaller than or equal to 2.
     TooSmallLimit,
-    /// Only a part of the output array contains prime numbers as they either exceeded `N^2` or ran out.
-    PartialOk(ArraySection<u64, N>),
-}
-
-impl<const N: usize> Error<N> {
-    /// Returns the partial result as a reference to an [`ArraySection`], if there is one.
-    pub const fn try_as_array_section(&self) -> Option<&ArraySection<u64, N>> {
-        match self {
-            Self::PartialOk(ref restricted_array) => Some(&restricted_array),
-            _ => None,
-        }
-    }
-
-    /// Consumes the error and returns the partial result as an [`ArraySection`], if there is one.
-    pub const fn try_into_array_section(self) -> Option<ArraySection<u64, N>> {
-        match self {
-            Self::PartialOk(ra) => Some(ra),
-            _ => None,
-        }
-    }
-
-    /// Returns the partial result as a slice if there is one.
-    pub const fn try_as_slice(&self) -> Option<&[u64]> {
-        match self {
-            Self::PartialOk(ref ra) => Some(ra.as_slice()),
-            _ => None,
-        }
-    }
-
-    /// Returns `true` if this is the `PartialOk` variant.
-    pub const fn is_partial_ok(&self) -> bool {
-        matches!(self, Self::PartialOk(_))
-    }
 }
 
 impl<const N: usize> fmt::Display for Error<N> {
@@ -367,7 +448,6 @@ impl<const N: usize> fmt::Display for Error<N> {
             Self::TooLargeN => write!(f, "`N^2` did not fit in a `u64`"),
             Self::TooLargeLimit => write!(f, "the upper limit was larger than `N^2`"),
             Self::TooSmallLimit => write!(f, "the lower limit was smaller than or equal to 2"),
-            Self::PartialOk(_) => write!(f, "the sieve entered into a range it's too small for, or the primes ran out. You can access the partially completed result with the function `partial_result`"),
         }
     }
 }
@@ -382,21 +462,17 @@ mod test {
     fn sanity_check_primes_geq() {
         {
             const P: Result<5> = primes_geq(10);
-            assert_eq!(P, Ok([11, 13, 17, 19, 23]));
+            assert_eq!(P.unwrap().as_slice(), [11, 13, 17, 19, 23]);
         }
         {
             const P: Result<5> = primes_geq(0);
-            assert_eq!(P, Ok([2, 3, 5, 7, 11]));
+            assert_eq!(P.unwrap().as_slice(), [2, 3, 5, 7, 11]);
         }
         {
             const P: Result<1> = primes_geq(0);
             assert_eq!(P, Err(Error::TooLargeLimit),);
         }
-        for &prime in primes_geq::<2_000>(3_998_000)
-            .unwrap_err()
-            .try_as_slice()
-            .unwrap()
-        {
+        for &prime in primes_geq::<2_000>(3_998_000).unwrap().as_slice() {
             if prime == 0 {
                 break;
             }
