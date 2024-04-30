@@ -112,6 +112,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     primes
 }
 
+// TODO: Make primes_lt and primes_geq take two generics? N and MEMORY.
+
 /// Returns the `N` largest primes less than `upper_limit`.
 /// Fails to compile if `N` is 0.
 ///
