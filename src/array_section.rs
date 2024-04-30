@@ -11,17 +11,23 @@ use core::{
 /// Indexing into the `ArraySection` indices only into the section:
 /// ```
 /// # use const_primes::array_section::ArraySection;
+/// //                                                     v  v
 /// const OT: ArraySection<i32, 4> = ArraySection::new([0, 1, 2, 0], 1..3);
 /// assert_eq![OT[0], 1];
 /// assert_eq![OT[1], 2];
 /// ```
 ///
-/// The other data is not considered in comparisons, ordering or hashing.
+/// The other data is not considered in comparisons, ordering or hashing:
 /// ```
-/// use const_primes::array_section::ArraySection;
-/// const AS1: ArraySection<i32, 4> = ArraySection::new([1, 1, 2, 1], 1..3);
-/// const AS2: ArraySection<i32, 5> = ArraySection::new([0, 1, 2, 100, -5], 1..3);
+/// # use const_primes::array_section::ArraySection;
+/// //                       v  v
+/// const A1: [i32; 4] = [1, 3, 7, 1];
+/// const A2: [i32; 5] = [0, 3, 7, 100, -5];
+/// const AS1: ArraySection<i32, 4> = ArraySection::new(A1, 1..3);
+/// const AS2: ArraySection<i32, 5> = ArraySection::new(A2, 1..3);
 /// assert_eq!(AS1, AS2);
+/// assert!(A1.as_slice() > A2.as_slice());
+/// assert!(!(AS1 > AS2));
 /// ```
 #[derive(Debug, Clone, Copy, Eq)]
 pub struct ArraySection<T, const N: usize> {
