@@ -7,7 +7,22 @@ use core::{
 
 /// An array where only a section of the data may be viewed,
 /// as the other data may e.g. not uphold some invariant.
+///
+/// Indexing into the `ArraySection` indices only into the section:
+/// ```
+/// # use const_primes::array_section::ArraySection;
+/// const OT: ArraySection<i32, 4> = ArraySection::new([0, 1, 2, 0], 1..3);
+/// assert_eq![OT[0], 1];
+/// assert_eq![OT[1], 2];
+/// ```
+///
 /// The other data is not considered in comparisons, ordering or hashing.
+/// ```
+/// use const_primes::array_section::ArraySection;
+/// const AS1: ArraySection<i32, 4> = ArraySection::new([1, 1, 2, 1], 1..3);
+/// const AS2: ArraySection<i32, 5> = ArraySection::new([0, 1, 2, 100, -5], 1..3);
+/// assert_eq!(AS1, AS2);
+/// ```
 #[derive(Debug, Clone, Copy, Eq)]
 pub struct ArraySection<T, const N: usize> {
     start: usize,
@@ -23,16 +38,20 @@ impl<const N: usize, T: Hash> Hash for ArraySection<T, N> {
 }
 
 /// Only compares the data in the sections, and not the full arrays.
-impl<const N: usize, T: PartialEq> PartialEq<ArraySection<T, N>> for ArraySection<T, N> {
-    #[inline]
+impl<const N: usize, const M: usize, T: PartialEq> PartialEq<ArraySection<T, N>>
+    for ArraySection<T, M>
+{
     fn eq(&self, other: &ArraySection<T, N>) -> bool {
         self.as_slice().eq(other.as_slice())
     }
 }
 
-impl<const N: usize, T: PartialOrd> PartialOrd for ArraySection<T, N> {
+/// Only checks the data in the sections, and not the full arrays.
+impl<const N: usize, const M: usize, T: PartialOrd> PartialOrd<ArraySection<T, M>>
+    for ArraySection<T, N>
+{
     #[inline]
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &ArraySection<T, M>) -> Option<Ordering> {
         self.as_slice().partial_cmp(other.as_slice())
     }
 }
@@ -51,7 +70,7 @@ impl<const N: usize, T> ArraySection<T, N> {
     ///
     /// Panics if the range of indices is out of bounds of the array.
     #[inline]
-    pub const fn new(sub_range: Range<usize>, array: [T; N]) -> Self {
+    pub const fn new(array: [T; N], sub_range: Range<usize>) -> Self {
         assert!(
             sub_range.start < N && sub_range.end <= N,
             "the sub-range must be in bounds"

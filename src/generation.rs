@@ -208,7 +208,7 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> Result<N> {
         }
         upper_limit = smallest_found_prime;
         if upper_limit <= 2 && total_primes_found < N {
-            let restricted = ArraySection::new(N - total_primes_found..N, primes);
+            let restricted = ArraySection::new(primes, N - total_primes_found..N);
             return Err(Error::PartialOk(restricted));
         }
     }
@@ -296,7 +296,7 @@ pub const fn primes_geq<const N: usize>(mut lower_limit: u64) -> Result<N> {
                     // We do not know if this is actually a prime
                     // since the base sieve does not contain information about
                     // the prime status of numbers larger than or equal to N.
-                    let restricted = ArraySection::new(0..total_found_primes, primes);
+                    let restricted = ArraySection::new(primes, 0..total_found_primes);
                     return Err(Error::PartialOk(restricted));
                 }
                 primes[total_found_primes] = largest_found_prime;
