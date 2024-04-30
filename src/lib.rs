@@ -50,12 +50,13 @@
 //! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
 //! that can be used to work with ranges that don't start at zero.
 //! ```
-//! # use const_primes::generation::primes_geq;
+//! # use const_primes::generation::{primes_geq, Result, Error};
 //! const N: usize = 70722;
 //! # #[allow(long_running_const_eval)]
-//! const PRIMES_GEQ: [u64; N] = primes_geq(5_000_000_031);
+//! const PRIMES_GEQ: Result<N> = primes_geq(5_000_000_031);
 //!
-//! assert_eq!(PRIMES_GEQ[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+//! assert_eq!(&PRIMES_GEQ?[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+//! # Ok::<(), Error<N>>(())
 //! ```
 //! ```
 //! # use const_primes::sieve_lt;

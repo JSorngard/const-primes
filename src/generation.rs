@@ -126,28 +126,29 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 /// # use const_primes::generation::{Result, primes_lt, Error};
 /// const PRIMES: Result<10> = primes_lt(100);
-/// assert_eq!(PRIMES?, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
+/// assert_eq!(PRIMES?.as_slice(), &[53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
 /// # Ok::<(), Error<10>>(())
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
 /// # use const_primes::generation::{Result, primes_lt, Error};
-/// const N: usize = 70711;
+/// const N: usize = 70_711;
 /// # #[allow(long_running_const_eval)]
 /// // If the generation results in a completely filled array, it can be extracted like this:
 /// const BIG_PRIMES: Result<N> = primes_lt(5_000_000_030);
 ///
-/// assert_eq!(BIG_PRIMES?[..3],     [4_998_417_421, 4_998_417_427, 4_998_417_443]);
-/// assert_eq!(BIG_PRIMES?[N - 3..], [4_999_999_903, 4_999_999_937, 5_000_000_029]);
+/// assert_eq!(&BIG_PRIMES?[..3],     &[4_998_417_421, 4_998_417_427, 4_998_417_443]);
+/// assert_eq!(&BIG_PRIMES?[N - 3..], &[4_999_999_903, 4_999_999_937, 5_000_000_029]);
 /// # Ok::<(), Error<N>>(())
 /// ```
 /// If there are not enough primes to fill the requested array,
-/// the output will be the [`Error::PartialOk`] variant,
+/// the output will be the [`PrimeArray::Partial`] variant,
 /// which contains fewer primes than requested:
 /// ```
-/// # use const_primes::generation::{Result, primes_lt};
+/// # use const_primes::generation::{Result, primes_lt, Error};
 /// const PRIMES: Result<9> = primes_lt(10);
-/// assert_eq!(PRIMES.map_err(|e| e.try_as_slice()), Err(Some(&[2, 3, 5, 7])))
+/// assert_eq!(PRIMES?.as_slice(), &[2, 3, 5, 7]);
+/// # Ok::<(), Error<9>>(())
 /// ```
 /// # Errors
 ///
@@ -243,26 +244,21 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> Result<N> {
 /// const N: usize = 71_000;
 /// # #[allow(long_running_const_eval)]
 /// const P: Result<N> = primes_geq(5_000_000_030);
-/// assert_eq!(P?[..3], &[5_000_000_039, 5_000_000_059, 5_000_000_063]);
-/// assert_eq!(P?[N - 3..], &[5_001_586_727, 5_001_586_729, 5_001_586_757]);
+/// assert_eq!(&P?[..3], &[5_000_000_039, 5_000_000_059, 5_000_000_063]);
+/// assert_eq!(&P?[N - 3..], &[5_001_586_727, 5_001_586_729, 5_001_586_757]);
 /// # Ok::<(), Error<N>>(())
 /// ```
 /// Only primes smaller than `N^2` will be generated:
 /// ```
 /// # use const_primes::{primes_geq, Result, Error};
 /// const PRIMES: Result<3> = primes_geq(5);
-/// assert_eq!(PRIMES.map_err(|e| e.try_as_slice()), Err(Some([5, 7].as_slice())));
+/// assert_eq!(PRIMES?.as_slice(), &[5, 7]);
 /// # Ok::<(), Error<3>>(())
 /// ```
 ///
 /// # Errors
 ///
 /// Returns an error if `N^2` does not fit in a `u64`, or if `lower_limit` is larger or equal to `N^2`.
-/// ```
-/// # use const_primes::{primes_geq, Result};
-/// const P: Result<{u32::MAX as usize + 1}> = primes_geq(0);
-/// assert!(P.is_err());
-/// ```
 /// ```
 /// # use const_primes::{primes_geq, Result};
 /// const P: Result<5> = primes_geq(26);
