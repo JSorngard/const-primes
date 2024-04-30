@@ -16,6 +16,7 @@ pub struct ArraySection<T, const N: usize> {
 }
 
 impl<const N: usize, T: Hash> Hash for ArraySection<T, N> {
+    #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.as_slice().hash(state);
     }
@@ -23,18 +24,21 @@ impl<const N: usize, T: Hash> Hash for ArraySection<T, N> {
 
 /// Only compares the data in the sections, and not the full arrays.
 impl<const N: usize, T: PartialEq> PartialEq<ArraySection<T, N>> for ArraySection<T, N> {
+    #[inline]
     fn eq(&self, other: &ArraySection<T, N>) -> bool {
         self.as_slice().eq(other.as_slice())
     }
 }
 
 impl<const N: usize, T: PartialOrd> PartialOrd for ArraySection<T, N> {
+    #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.as_slice().partial_cmp(other.as_slice())
     }
 }
 
 impl<const N: usize, T: Ord> Ord for ArraySection<T, N> {
+    #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
         self.as_slice().cmp(other.as_slice())
     }
@@ -46,6 +50,7 @@ impl<const N: usize, T> ArraySection<T, N> {
     /// # Panics
     ///
     /// Panics if the range of indices is out of bounds of the array.
+    #[inline]
     pub const fn new(sub_range: Range<usize>, array: [T; N]) -> Self {
         assert!(
             sub_range.start < N && sub_range.end <= N,
@@ -69,40 +74,47 @@ impl<const N: usize, T> ArraySection<T, N> {
 
     /// Returns the first index of the full underlying array that is part of the section.
     /// I.e. the section is the subrange `start ..`[`end`](ArraySection::end).
+    #[inline]
     pub const fn start(&self) -> usize {
         self.start
     }
 
     /// Returns the first index of the full underlying array that is outside the section (to the right).
     /// I.e. the section is the subrange [`start`](ArraySection::start)`.. end`.
+    #[inline]
     pub const fn end(&self) -> usize {
         self.end
     }
 
     /// Returns a reference to the full underlying array. There is no guarantee about the data
     /// outside the section.
+    #[inline]
     pub const fn as_full_array(&self) -> &[T; N] {
         &self.array
     }
 
     /// Converts `self` into the full underlying array. There is no guarantee about the data
     /// outside the section.
+    #[inline]
     pub fn into_full_array(self) -> [T; N] {
         self.array
     }
 
     /// Returns the section of the array as a slice.
+    #[inline]
     pub const fn as_slice(&self) -> &[T] {
         let (_, tail) = self.array.split_at(self.start);
         tail.split_at(self.end - self.start).0
     }
 
     /// Returns the length of the array section.
+    #[inline]
     pub const fn len(&self) -> usize {
         self.as_slice().len()
     }
 
     /// Returns whether the array section is empty.
+    #[inline]
     pub const fn is_empty(&self) -> bool {
         self.len() == 0
     }
@@ -110,6 +122,7 @@ impl<const N: usize, T> ArraySection<T, N> {
     /// Returns whether the section is just the entire array.
     /// If this is `true` it is completely fine to call [`as_full_array`](RestrictedArray::as_full_array)
     /// or [`into_full_array`](RestrictedArray::into_full_array).
+    #[inline]
     pub const fn section_is_full_array(&self) -> bool {
         self.len() == N
     }
