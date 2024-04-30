@@ -200,12 +200,6 @@ where
 }
 // endregion: PartialEq impls
 
-impl<const N: usize, T> AsRef<[T]> for ArraySection<T, N> {
-    fn as_ref(&self) -> &[T] {
-        self.as_slice()
-    }
-}
-
 impl<const N: usize, T> IntoIterator for ArraySection<T, N> {
     type IntoIter = ArraySectionIntoIter<T, N>;
     type Item = <ArraySectionIntoIter<T, N> as Iterator>::Item;
