@@ -23,7 +23,8 @@ pub const fn is_prime(n: u64) -> bool {
         false
     } else {
         let mut candidate_factor = 5;
-        while candidate_factor <= n.ilog2() as u64 {
+        let trial_limit = n.ilog2() as u64;
+        while candidate_factor <= trial_limit {
             if n % candidate_factor == 0 || n % (candidate_factor + 2) == 0 {
                 return false;
             }
