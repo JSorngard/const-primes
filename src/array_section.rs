@@ -1,5 +1,6 @@
 use core::{
     cmp::Ordering,
+    hash::{Hash, Hasher},
     iter::FusedIterator,
     ops::{Index, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
 };
@@ -14,8 +15,8 @@ pub struct ArraySection<T, const N: usize> {
     array: [T; N],
 }
 
-impl<const N: usize, T: core::hash::Hash> core::hash::Hash for ArraySection<T, N> {
-    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+impl<const N: usize, T: Hash> Hash for ArraySection<T, N> {
+    fn hash<H: Hasher>(&self, state: &mut H) {
         self.as_slice().hash(state);
     }
 }
@@ -27,15 +28,15 @@ impl<const N: usize, T: PartialEq> PartialEq<ArraySection<T, N>> for ArraySectio
     }
 }
 
-impl<const N: usize, T: Ord> Ord for ArraySection<T, N> {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.as_slice().cmp(other.as_slice())
-    }
-}
-
 impl<const N: usize, T: PartialOrd> PartialOrd for ArraySection<T, N> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.as_slice().partial_cmp(other.as_slice())
+    }
+}
+
+impl<const N: usize, T: Ord> Ord for ArraySection<T, N> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.as_slice().cmp(other.as_slice())
     }
 }
 
