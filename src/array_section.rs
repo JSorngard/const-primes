@@ -114,6 +114,16 @@ impl<const N: usize, T> ArraySection<T, N> {
         self.end
     }
 
+    /// Returns a reference to the full underlying array if it is fully populated.
+    #[inline]
+    pub const fn try_as_full_array(&self) -> Option<&[T; N]> {
+        if self.section_is_full_array() {
+            Some(&self.array)
+        } else {
+            None
+        }
+    }
+
     /// Returns a reference to the full underlying array.
     #[inline]
     pub const fn as_full_array(&self) -> &[T; N] {
@@ -166,6 +176,33 @@ impl<const N: usize, T> ArraySection<T, N> {
         ArraySectionIter::new(self.as_slice().iter())
     }
 }
+
+// region: TryFrom impls
+
+#[derive(Debug, Clone, Copy)]
+pub struct TryFromArraySectionError<T, const N: usize>(ArraySection<T, N>);
+
+impl<T, const N: usize> core::fmt::Display for TryFromArraySectionError<T, N> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "the array was not fully populated")
+    }
+}
+
+#[cfg(feature = "std")]
+impl<T, const N: usize> std::error::Error for TryFromArraySectionError<T, N> {}
+
+impl<const N: usize, T> TryFrom<ArraySection<T, N>> for [T; N] {
+    type Error = TryFromArraySectionError<T, N>;
+    fn try_from(value: ArraySection<T, N>) -> Result<Self, Self::Error> {
+        if value.section_is_full_array() {
+            Ok(value.array)
+        } else {
+            Err(TryFromArraySectionError(value))
+        }
+    }
+}
+
+// endregion: TryFrom impls
 
 impl<const N: usize, T> AsRef<[T]> for ArraySection<T, N> {
     #[inline]
