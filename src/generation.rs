@@ -187,7 +187,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(mut upper_limit: u64) -
                 return Err(Error::TooLargeLimit);
             }
         }
-        None => return Err(Error::TooLargeN),
+        None => return Err(Error::MEMSquaredOverflow),
     }
 
     let mut primes: [u64; N] = [0; N];
@@ -508,9 +508,9 @@ impl_index_range! {Range<usize>, RangeTo<usize>, RangeFrom<usize>, RangeToInclus
 /// region of numbers that exceed the square of the size of the requested array.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Error<const N: usize> {
-    /// `N^2`` did not fit in a `u64`.
-    TooLargeN,
-    /// the upper limit was larger than `N^2`.
+    /// `MEM`^2 did not fit in a `u64`.
+    MEMSquaredOverflow,
+    /// the upper limit was larger than `MEM^2`.
     TooLargeLimit,
     /// the lower limit was smaller than or equal to 2.
     TooSmallLimit,
@@ -519,7 +519,7 @@ pub enum Error<const N: usize> {
 impl<const N: usize> fmt::Display for Error<N> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::TooLargeN => write!(f, "`N^2` did not fit in a `u64`"),
+            Self::MEMSquaredOverflow => write!(f, "`MEM`^2 did not fit in a `u64`"),
             Self::TooLargeLimit => write!(f, "the upper limit was larger than `N^2`"),
             Self::TooSmallLimit => write!(f, "the lower limit was smaller than or equal to 2"),
         }
