@@ -505,6 +505,8 @@ macro_rules! impl_index_range {
 
 impl_index_range! {Range<usize>, RangeTo<usize>, RangeFrom<usize>, RangeToInclusive<usize>, RangeFull, RangeInclusive<usize>}
 
+// region: Iterator impls
+
 impl<const N: usize> IntoIterator for PrimesArray<N> {
     type IntoIter = PrimesArrayIntoIter<N>;
     type Item = u64;
@@ -640,6 +642,8 @@ mod primes_array_into_iter {
 
     impl<const N: usize> FusedIterator for PrimesArrayIntoIter<N> {}
 }
+
+// endregion: Iterator impls
 
 /// An enum describing whether the requested array could be filled completely, or only a partially.
 /// A partial array can be returned by [`primes_lt`] if the size of the requested
