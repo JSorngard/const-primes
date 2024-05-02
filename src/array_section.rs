@@ -243,7 +243,7 @@ impl<'a, const N: usize, T> IntoIterator for &'a ArraySection<T, N> {
     }
 }
 
-use array_section_iter::ArraySectionIter;
+pub use array_section_iter::ArraySectionIter;
 mod array_section_iter {
     use super::FusedIterator;
 
@@ -251,7 +251,7 @@ mod array_section_iter {
     pub struct ArraySectionIter<'a, T>(core::slice::Iter<'a, T>);
 
     impl<'a, T> ArraySectionIter<'a, T> {
-        pub const fn new(iter: core::slice::Iter<'a, T>) -> Self {
+        pub(crate) const fn new(iter: core::slice::Iter<'a, T>) -> Self {
             Self(iter)
         }
     }
@@ -291,18 +291,18 @@ mod array_section_iter {
     impl<'a, T> FusedIterator for ArraySectionIter<'a, T> {}
 }
 
-use array_section_into_iter::ArraySectionIntoIter;
+pub use array_section_into_iter::ArraySectionIntoIter;
 mod array_section_into_iter {
     use super::FusedIterator;
 
     #[derive(Debug, Clone)]
-    /// Created by the [`into_iter`](RestrictedArray::into_iter) function on [`RestrictedArray`], see it for more information.
+    /// Created by the [`into_iter`](super::ArraySection::into_iter) function on [`ArraySection`](super::ArraySection), see it for more information.
     pub struct ArraySectionIntoIter<T, const N: usize>(
         core::iter::Take<core::iter::Skip<core::array::IntoIter<T, N>>>,
     );
 
     impl<const N: usize, T> ArraySectionIntoIter<T, N> {
-        pub const fn new(
+        pub(crate) const fn new(
             iter: core::iter::Take<core::iter::Skip<core::array::IntoIter<T, N>>>,
         ) -> Self {
             Self(iter)
