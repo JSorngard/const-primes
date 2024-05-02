@@ -38,6 +38,7 @@ pub struct ArraySection<T, const N: usize> {
     array: [T; N],
 }
 
+/// Only hashes the data in the section, and not the full array.
 impl<const N: usize, T: Hash> Hash for ArraySection<T, N> {
     #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {
