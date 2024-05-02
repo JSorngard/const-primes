@@ -520,7 +520,7 @@ impl<const N: usize> fmt::Display for Error<N> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::MEMSquaredOverflow => write!(f, "`MEM`^2 did not fit in a `u64`"),
-            Self::TooLargeLimit => write!(f, "the upper limit was larger than `N^2`"),
+            Self::TooLargeLimit => write!(f, "the upper limit was larger than `MEM`^2"),
             Self::TooSmallLimit => write!(f, "the lower limit was smaller than or equal to 2"),
         }
     }
