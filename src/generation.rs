@@ -446,6 +446,10 @@ impl<const N: usize> PrimesArray<N> {
     pub const fn is_empty(&self) -> bool {
         self.len() == 0
     }
+
+    pub fn iter(&self) -> PrimesArrayIter<'_> {
+        PrimesArrayIter::new(self.as_slice().iter())
+    }
 }
 
 impl<const N: usize, T> PartialEq<[T; N]> for PrimesArray<N>
@@ -500,6 +504,137 @@ macro_rules! impl_index_range {
 }
 
 impl_index_range! {Range<usize>, RangeTo<usize>, RangeFrom<usize>, RangeToInclusive<usize>, RangeFull, RangeInclusive<usize>}
+
+impl<const N: usize> IntoIterator for PrimesArray<N> {
+    type IntoIter = PrimesArrayIntoIter<N>;
+    type Item = u64;
+    fn into_iter(self) -> Self::IntoIter {
+        PrimesArrayIntoIter::new(self)
+    }
+}
+
+impl<'a, const N: usize> IntoIterator for &'a PrimesArray<N> {
+    type IntoIter = PrimesArrayIter<'a>;
+    type Item = &'a u64;
+    fn into_iter(self) -> Self::IntoIter {
+        self.iter()
+    }
+}
+
+pub use primes_array_iter::PrimesArrayIter;
+mod primes_array_iter {
+    use core::iter::FusedIterator;
+
+    #[derive(Debug, Clone)]
+    pub struct PrimesArrayIter<'a>(core::slice::Iter<'a, u64>);
+
+    impl<'a> PrimesArrayIter<'a> {
+        pub(crate) const fn new(iter: core::slice::Iter<'a, u64>) -> Self {
+            Self(iter)
+        }
+    }
+
+    impl<'a> Iterator for PrimesArrayIter<'a> {
+        type Item = &'a u64;
+
+        #[inline]
+        fn next(&mut self) -> Option<Self::Item> {
+            self.0.next()
+        }
+
+        #[inline]
+        fn size_hint(&self) -> (usize, Option<usize>) {
+            self.0.size_hint()
+        }
+
+        #[inline]
+        fn nth(&mut self, n: usize) -> Option<Self::Item> {
+            self.0.nth(n)
+        }
+
+        #[inline]
+        fn count(self) -> usize {
+            self.0.count()
+        }
+
+        #[inline]
+        fn last(self) -> Option<Self::Item> {
+            self.0.last()
+        }
+    }
+
+    impl<'a> DoubleEndedIterator for PrimesArrayIter<'a> {
+        #[inline]
+        fn next_back(&mut self) -> Option<Self::Item> {
+            self.0.next_back()
+        }
+    }
+
+    impl<'a> ExactSizeIterator for PrimesArrayIter<'a> {
+        #[inline]
+        fn len(&self) -> usize {
+            self.0.len()
+        }
+    }
+
+    impl<'a> FusedIterator for PrimesArrayIter<'a> {}
+}
+
+pub use primes_array_into_iter::PrimesArrayIntoIter;
+mod primes_array_into_iter {
+    use core::iter::FusedIterator;
+
+    use crate::{array_section::ArraySectionIntoIter, PrimesArray};
+
+    pub struct PrimesArrayIntoIter<const N: usize>(ArraySectionIntoIter<u64, N>);
+
+    impl<const N: usize> PrimesArrayIntoIter<N> {
+        #[inline]
+        pub(crate) const fn new(primes_array: PrimesArray<N>) -> Self {
+            Self(primes_array.into_array_section().into_iter())
+        }
+    }
+
+    impl<const N: usize> Iterator for PrimesArrayIntoIter<N> {
+        type Item = u64;
+
+        #[inline]
+        fn next(&mut self) -> Option<Self::Item> {
+            self.0.next()
+        }
+
+        #[inline]
+        fn last(self) -> Option<Self::Item> {
+            self.0.last()
+        }
+
+        #[inline]
+        fn count(self) -> usize {
+            self.0.count()
+        }
+
+        #[inline]
+        fn nth(&mut self, n: usize) -> Option<Self::Item> {
+            self.0.nth(n)
+        }
+    }
+
+    impl<const N: usize> DoubleEndedIterator for PrimesArrayIntoIter<N> {
+        #[inline]
+        fn next_back(&mut self) -> Option<Self::Item> {
+            self.0.next_back()
+        }
+    }
+
+    impl<const N: usize> ExactSizeIterator for PrimesArrayIntoIter<N> {
+        #[inline]
+        fn len(&self) -> usize {
+            self.0.len()
+        }
+    }
+
+    impl<const N: usize> FusedIterator for PrimesArrayIntoIter<N> {}
+}
 
 /// An enum describing whether the requested array could be filled completely, or only a partially.
 /// A partial array can be returned by [`primes_lt`] if the size of the requested
