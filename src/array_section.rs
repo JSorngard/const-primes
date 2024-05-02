@@ -65,6 +65,7 @@ impl<const N: usize, const M: usize, T: PartialOrd> PartialOrd<ArraySection<T, M
     }
 }
 
+/// Only compares the data in the sections and not the full arrays.
 impl<const N: usize, T: Ord> Ord for ArraySection<T, N> {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
