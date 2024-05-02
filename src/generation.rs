@@ -304,7 +304,9 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(lower_limit: u64) -> R
         while i < MEM {
             if upper_sieve[i] {
                 largest_found_prime = sieve_limit + i as u64;
-                // We can not know whether this is a prime since the base sieve contains no information
+
+                // We can not know whether this is actually a prime since
+                // the base sieve contains no information
                 // about numbers larger than or equal to `MEM`.
                 if largest_found_prime >= mem64 * mem64 {
                     return Ok(PrimesArray::Partial(ArraySection::new(
@@ -312,6 +314,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(lower_limit: u64) -> R
                         0..total_found_primes,
                     )));
                 }
+
                 if largest_found_prime >= lower_limit {
                     primes[total_found_primes] = largest_found_prime;
                     total_found_primes += 1;
