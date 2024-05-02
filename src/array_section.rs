@@ -50,6 +50,7 @@ impl<const N: usize, T: Hash> Hash for ArraySection<T, N> {
 impl<const N: usize, const M: usize, T: PartialEq> PartialEq<ArraySection<T, N>>
     for ArraySection<T, M>
 {
+    #[inline]
     fn eq(&self, other: &ArraySection<T, N>) -> bool {
         self.as_slice().eq(other.as_slice())
     }
@@ -184,6 +185,7 @@ impl<const N: usize, T> ArraySection<T, N> {
 pub struct TryFromArraySectionError<T, const N: usize>(ArraySection<T, N>);
 
 impl<T, const N: usize> core::fmt::Display for TryFromArraySectionError<T, N> {
+    #[inline]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "the array was not fully populated")
     }
@@ -194,6 +196,7 @@ impl<T, const N: usize> std::error::Error for TryFromArraySectionError<T, N> {}
 
 impl<const N: usize, T> TryFrom<ArraySection<T, N>> for [T; N] {
     type Error = TryFromArraySectionError<T, N>;
+    #[inline]
     fn try_from(value: ArraySection<T, N>) -> Result<Self, Self::Error> {
         if value.section_is_full_array() {
             Ok(value.array)
