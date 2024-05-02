@@ -25,9 +25,11 @@ use core::{
 /// const A2: [i32; 5] = [0, 3, 7, 100, -5];
 /// const AS1: ArraySection<i32, 4> = ArraySection::new(A1, 1..3);
 /// const AS2: ArraySection<i32, 5> = ArraySection::new(A2, 1..3);
+///
+/// // Even though the arrays are different
+/// assert_ne!(A1.as_slice(), A2.as_slice());
+/// // The sections are the same
 /// assert_eq!(AS1, AS2);
-/// assert!(A1.as_slice() > A2.as_slice());
-/// assert!(!(AS1 > AS2));
 /// ```
 #[derive(Debug, Clone, Copy, Eq)]
 pub struct ArraySection<T, const N: usize> {
