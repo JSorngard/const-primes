@@ -590,7 +590,7 @@ mod primes_array_into_iter {
 
     impl<const N: usize> PrimesArrayIntoIter<N> {
         #[inline]
-        pub(crate) const fn new(primes_array: PrimesArray<N>) -> Self {
+        pub(crate) fn new(primes_array: PrimesArray<N>) -> Self {
             Self(primes_array.into_array_section().into_iter())
         }
     }
