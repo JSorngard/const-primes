@@ -531,6 +531,7 @@ mod primes_array_iter {
     pub struct PrimesArrayIter<'a>(core::slice::Iter<'a, u64>);
 
     impl<'a> PrimesArrayIter<'a> {
+        #[inline]
         pub(crate) const fn new(iter: core::slice::Iter<'a, u64>) -> Self {
             Self(iter)
         }
