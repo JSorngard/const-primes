@@ -271,7 +271,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(mut upper_limit: u64) -
 /// assert!(PRIMES.is_err());
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn primes_geq<const N: usize, const MEM: usize>(mut lower_limit: u64) -> Result<N> {
+pub const fn primes_geq<const N: usize, const MEM: usize>(lower_limit: u64) -> Result<N> {
     const {
         assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
@@ -283,7 +283,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(mut lower_limit: u64) 
     }
 
     // There are no primes smaller than 2, so we will always start looking at 2.
-    lower_limit = if lower_limit >= 2 { lower_limit } else { 2 };
+    let lower_limit = if lower_limit >= 2 { lower_limit } else { 2 };
 
     let mem64 = MEM as u64;
     let mem_sqr = mem64 * mem64;
@@ -293,35 +293,60 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(mut lower_limit: u64) 
     }
 
     let mut primes = [0; N];
-    let base_sieve: [bool; MEM] = sieve();
     let mut total_found_primes = 0;
+    let mut largest_found_prime = 0;
+    let base_sieve: [bool; MEM] = sieve();
+    let mut sieve_limit = lower_limit;
     'generate: while total_found_primes < N {
-        let mut largest_found_prime = primes[total_found_primes];
-        let upper_sieve = sieve_segment(&base_sieve, lower_limit + mem64);
+        let upper_sieve = sieve_segment(&base_sieve, sieve_limit + mem64);
 
         let mut i = 0;
-        // Move all large enough primes into the output array.
-        // TODO: only write large enough primes
-        while i < N {
+        while i < MEM {
             if upper_sieve[i] {
-                largest_found_prime = lower_limit + i as u64;
+                largest_found_prime = sieve_limit + i as u64;
+                // We can not know whether this is a prime since the base sieve contains no information
+                // about numbers larger than or equal to `MEM`.
                 if largest_found_prime >= mem64 * mem64 {
-                    // We do not know if this is actually a prime
-                    // since the base sieve does not contain information about
-                    // the prime status of numbers larger than or equal to N.
-                    let restricted = ArraySection::new(primes, 0..total_found_primes);
-                    return Ok(PrimesArray::Partial(restricted));
+                    return Ok(PrimesArray::Partial(ArraySection::new(
+                        primes,
+                        0..total_found_primes,
+                    )));
                 }
-                primes[total_found_primes] = largest_found_prime;
-                total_found_primes += 1;
-                if total_found_primes >= N {
-                    // We've found enough primes
-                    break 'generate;
+                if largest_found_prime >= lower_limit {
+                    primes[total_found_primes] = largest_found_prime;
+                    total_found_primes += 1;
+                    if total_found_primes >= N {
+                        // We've found enough primes.
+                        break 'generate;
+                    }
                 }
             }
             i += 1;
         }
-        lower_limit = largest_found_prime + 1;
+        sieve_limit = largest_found_prime + 1;
+
+        // let mut i = 0;
+        // // Move all large enough primes into the output array.
+        // while i < N {
+        //     if upper_sieve[i] {
+        //         largest_found_prime = lower_limit + i as u64;
+        //         if largest_found_prime >= mem64 * mem64 {
+        //             // We do not know if this is actually a prime
+        //             // since the base sieve does not contain information about
+        //             // the prime status of numbers larger than or equal to N.
+        //             let restricted = ArraySection::new(primes, 0..total_found_primes);
+        //             return Ok(PrimesArray::Partial(restricted));
+        //         }
+        //         primes[total_found_primes] = largest_found_prime;
+        //         total_found_primes += 1;
+        //         if total_found_primes >= N {
+        //             // We've found enough primes
+        //             break 'generate;
+        //         }
+        //     }
+        //     i += 1;
+        // }
+        // lower_limit = largest_found_prime + 1;
     }
     Ok(PrimesArray::Full(primes))
 }
