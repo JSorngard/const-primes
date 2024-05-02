@@ -117,12 +117,6 @@ impl<const N: usize, T> ArraySection<T, N> {
         &self.array
     }
 
-    /// Returns a mutable reference to the full underlying array.
-    #[inline]
-    pub fn as_full_array_mut(&mut self) -> &mut [T; N] {
-        &mut self.array
-    }
-
     /// Converts `self` into the full underlying array.
     #[inline]
     pub fn into_full_array(self) -> [T; N] {
