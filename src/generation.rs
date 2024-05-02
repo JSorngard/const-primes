@@ -604,6 +604,11 @@ mod primes_array_into_iter {
         }
 
         #[inline]
+        fn size_hint(&self) -> (usize, Option<usize>) {
+            self.0.size_hint()
+        }
+
+        #[inline]
         fn last(self) -> Option<Self::Item> {
             self.0.last()
         }
