@@ -476,6 +476,12 @@ impl<const N: usize, T: PartialEq<u64>> PartialEq<PrimesArray<N>> for [T] {
     }
 }
 
+impl<const N: usize, T: PartialEq<u64>> PartialEq<PrimesArray<N>> for [T; N] {
+    fn eq(&self, other: &PrimesArray<N>) -> bool {
+        self.eq(other.as_slice())
+    }
+}
+
 impl<const N: usize> From<PrimesArray<N>> for ArraySection<u64, N> {
     #[inline]
     fn from(value: PrimesArray<N>) -> Self {
