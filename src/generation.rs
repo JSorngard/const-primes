@@ -404,7 +404,7 @@ impl<const N: usize> PrimesArray<N> {
     }
 
     /// Returns an [`ArraySection`] if not all of the elements
-    /// in the underlying array could be computed.
+    /// in the underlying array could be populated.
     #[inline]
     pub const fn partial(self) -> Option<ArraySection<u64, N>> {
         match self {
@@ -414,7 +414,7 @@ impl<const N: usize> PrimesArray<N> {
     }
 
     /// Returns a reference to the [`ArraySection`] if not all elements of the underlying array
-    /// could be computed.
+    /// could be populated.
     #[inline]
     pub const fn as_partial(&self) -> Option<&ArraySection<u64, N>> {
         match self {
