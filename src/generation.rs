@@ -115,68 +115,75 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 // TODO: Make primes_lt and primes_geq take two generics? N and MEMORY.
 
 /// Returns the `N` largest primes less than `upper_limit`.
-/// Fails to compile if `N` is 0.
 ///
-/// The return array fills from the end until either it is full or there are no more primes.
-/// If the primes run out before the array is filled the first elements will have a value of zero.
+/// This function uses a segmented sieve of size `MEM` for computation,
+/// but only saves the `N` requested primes in the binary.
 ///
-/// If you want to compute primes that are larger than the input, take a look at [`primes_geq`].
+/// Set `MEM` such that `MEM*MEM >= upper_limit`.
+///
+/// Fails to compile if `N` or `MEM` is 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
+///
+/// The return array fills from the end until either it is full
+/// (in which case the function returns the [`PrimesArray::Full`] variant)
+/// or there are no more primes (in which case the function returns the [`PrimesArray::Partial`] variant).
+///
+/// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
 /// # Example
 ///
 /// Basic usage:
 /// ```
 /// # use const_primes::generation::{Result, primes_lt, Error};
-/// const PRIMES: Result<10> = primes_lt(100);
-/// assert_eq!(PRIMES?.as_slice(), &[53, 59, 61, 67, 71, 73, 79, 83, 89, 97]);
-/// # Ok::<(), Error<10>>(())
+/// const PRIMES: Result<4> = primes_lt::<4, 10>(100);
+/// assert_eq!(PRIMES?, [79, 83, 89, 97]);
+/// # Ok::<(), Error<4>>(())
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
 /// # use const_primes::generation::{Result, primes_lt, Error};
-/// const N: usize = 70_711;
 /// # #[allow(long_running_const_eval)]
-/// // If the generation results in a completely filled array, it can be extracted like this:
-/// const BIG_PRIMES: Result<N> = primes_lt(5_000_000_030);
+/// const BIG_PRIMES: Result<3> = primes_lt::<3, 70_711>(5_000_000_030);
 ///
-/// assert_eq!(&BIG_PRIMES?[..3],     &[4_998_417_421, 4_998_417_427, 4_998_417_443]);
-/// assert_eq!(&BIG_PRIMES?[N - 3..], &[4_999_999_903, 4_999_999_937, 5_000_000_029]);
-/// # Ok::<(), Error<N>>(())
+/// assert_eq!(BIG_PRIMES?, [4_999_999_903, 4_999_999_937, 5_000_000_029]);
+/// # Ok::<(), Error<3>>(())
 /// ```
 /// If there are not enough primes to fill the requested array,
-/// the output will be the [`PrimeArray::Partial`] variant,
+/// the output will be the [`PrimesArray::Partial`] variant,
 /// which contains fewer primes than requested:
 /// ```
 /// # use const_primes::generation::{Result, primes_lt, Error};
-/// const PRIMES: Result<9> = primes_lt(10);
+/// const PRIMES: Result<9> = primes_lt::<9, 9>(10);
 /// assert_eq!(PRIMES?.as_slice(), &[2, 3, 5, 7]);
 /// # Ok::<(), Error<9>>(())
 /// ```
 /// # Errors
 ///
-/// Returns an error if `N^2` does not fit in a `u64`,
-/// if `upper_limit` is larger than `N^2` or if `upper_limit` is smaller than or equal to 2.
-///
-/// ```compile_fail
-/// # use const_primes::generation::{Result,primes_lt};
-/// //                                       N is too large
-/// const PRIMES: Result<u64::MAX as usize> = primes_lt(100);
+/// Returns an error if `upper_limit` is larger than `MEM`^2 or if `upper_limit` is smaller than or equal to 2.
 /// ```
-/// ```compile_fail
 /// # use const_primes::generation::{primes_lt, Result};
-/// //                                      N              upper_limit > N^2
-/// const PRIMES: Result<5> = primes_lt(26);
+/// const TOO_LARGE_LIMIT: Result<3> = primes_lt::<3, 5>(26);
+/// const TOO_SMALL_LIMIT: Result<1> = primes_lt::<1, 1>(1);
+/// assert!(TOO_LARGE_LIMIT.is_err());
+/// assert!(TOO_SMALL_LIMIT.is_err());
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> Result<N> {
-    const { assert!(N > 0, "`N` must be at least 1") }
+pub const fn primes_lt<const N: usize, const MEM: usize>(mut upper_limit: u64) -> Result<N> {
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+        let mem64 = MEM as u64;
+        assert!(
+            mem64.checked_mul(mem64).is_some(),
+            "`MEM`^2 must fit in a u64"
+        );
+    }
 
     if upper_limit <= 2 {
         return Err(Error::TooSmallLimit);
     }
 
-    let n64 = N as u64;
-    match (n64).checked_mul(n64) {
+    let mem64 = MEM as u64;
+    match (mem64).checked_mul(mem64) {
         Some(prod) => {
             if upper_limit > prod {
                 return Err(Error::TooLargeLimit);
@@ -188,19 +195,19 @@ pub const fn primes_lt<const N: usize>(mut upper_limit: u64) -> Result<N> {
     let mut primes: [u64; N] = [0; N];
 
     // This will be used to sieve all upper ranges.
-    let base_sieve: [bool; N] = sieve();
+    let base_sieve: [bool; MEM] = sieve();
 
     let mut total_primes_found: usize = 0;
     'generate: while total_primes_found < N {
         // This is the smallest prime we have found so far.
         let mut smallest_found_prime = primes[N - 1 - total_primes_found];
         // Sieve for primes in the segment.
-        let upper_sieve: [bool; N] = sieve_segment(&base_sieve, upper_limit);
+        let upper_sieve: [bool; MEM] = sieve_segment(&base_sieve, upper_limit);
 
         let mut i: usize = 0;
-        while i < N {
+        while i < MEM {
             // Iterate backwards through the upper sieve.
-            if upper_sieve[N - 1 - i] {
+            if upper_sieve[MEM - 1 - i] {
                 smallest_found_prime = upper_limit - 1 - i as u64;
                 // Write every found prime to the primes array.
                 primes[N - 1 - total_primes_found] = smallest_found_prime;
@@ -393,6 +400,27 @@ impl<const N: usize> PrimesArray<N> {
     #[inline]
     pub const fn is_partial(&self) -> bool {
         matches!(self, Self::Partial(_))
+    }
+
+    /// Returns the length of the populated part of the array.
+    #[inline]
+    pub const fn len(&self) -> usize {
+        self.as_slice().len()
+    }
+
+    /// Returns wether the populated part of the array is empty.
+    #[inline]
+    pub const fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+}
+
+impl<const N: usize, T> PartialEq<[T; N]> for PrimesArray<N>
+where
+    u64: PartialEq<T>,
+{
+    fn eq(&self, other: &[T; N]) -> bool {
+        self.as_slice().eq(other.as_slice())
     }
 }
 

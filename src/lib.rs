@@ -237,13 +237,13 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: Result<$n> = primes_lt(100);
+                        const P: Result<$n> = primes_lt::<$n, $n>(100);
                         for (i, prime) in P.unwrap().as_slice().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], *prime as u32);
                         }
                         assert_eq!(
                             PRECOMPUTED_PRIMES[25-$n..25],
-                            primes_lt::<$n>(100).unwrap().as_slice().into_iter().map(|i| *i as u32).collect::<Vec<_>>()
+                            primes_lt::<$n, $n>(100).unwrap().as_slice().into_iter().map(|i| *i as u32).collect::<Vec<_>>()
                         );
                     }
                 )+
@@ -252,9 +252,9 @@ mod test {
 
         test_n_below_100!(10, 15, 20);
 
-        assert_eq!([2, 3, 5, 7], primes_lt::<9>(10).unwrap().as_slice());
+        assert_eq!([2, 3, 5, 7], primes_lt::<4, 9>(10).unwrap().as_slice());
 
-        assert_eq!(primes_lt::<2>(3).unwrap().as_slice(), [2]);
+        assert_eq!(primes_lt::<1, 2>(3).unwrap().as_slice(), [2]);
     }
 
     #[test]
