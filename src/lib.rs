@@ -51,12 +51,13 @@
 //! that can be used to work with ranges that don't start at zero.
 //! ```
 //! # use const_primes::generation::{primes_geq, Result, Error};
-//! const N: usize = 70722;
 //! # #[allow(long_running_const_eval)]
-//! const PRIMES_GEQ: Result<N> = primes_geq(5_000_000_031);
+//! // Use an array of size 70722 to sieve for primes, but only store
+//! // the three primes after 5 million and 31 in the binary.
+//! const PRIMES_GEQ: Result<3> = primes_geq::<3, 70_722>(5_000_000_031);
 //!
-//! assert_eq!(&PRIMES_GEQ?[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
-//! # Ok::<(), Error<N>>(())
+//! assert_eq!(PRIMES_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+//! # Ok::<(), Error<3>>(())
 //! ```
 //! ```
 //! # use const_primes::sieve_lt;
