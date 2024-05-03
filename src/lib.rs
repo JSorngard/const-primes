@@ -56,7 +56,7 @@
 //! # use const_primes::generation::{primes_geq, Result, Error};
 //! use const_primes::isqrt;
 //! # #[allow(long_running_const_eval)]
-//! // The sieve needs to be of size sqrt(limit) + 1,
+//! // The sieve needs to be of size ceil(sqrt(limit)),
 //! // but we don't need to store the entire sieve, we can just store the primes we want.
 //! // For the three primes after 5 billion and 31:
 //! const PRIMES_GEQ: Result<3> = primes_geq::<3, {isqrt(5_000_000_031) as usize + 1}>(5_000_000_031);
