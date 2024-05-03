@@ -53,8 +53,8 @@
 //! (which must be at least `isqrt(largest_encountered_number) + 1`). This means that one can
 //! sieve up to large numbers, but doesn't need to store the entire sieve in the binary.
 //! ```
-//! # use const_primes::generation::{primes_geq, Result, Error};
-//! use const_primes::isqrt;
+//! # use const_primes::Error;
+//! use const_primes::{primes_geq, isqrt, Result};
 //! # #[allow(long_running_const_eval)]
 //! // The sieve needs to be of size ceil(sqrt(limit)),
 //! // but we don't need to store the entire sieve, we can just store the primes we want.
@@ -116,6 +116,7 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
+pub use array_section::ArraySection;
 pub use generation::{primes, primes_geq, primes_lt, Error, PrimesArray, Result};
 pub use imath::isqrt;
 pub use miller_rabin::is_prime;
