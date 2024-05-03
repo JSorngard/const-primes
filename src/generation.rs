@@ -664,7 +664,7 @@ impl fmt::Display for Error {
 }
 
 #[cfg(feature = "std")]
-impl<const N: usize> std::error::Error for Error<N> {}
+impl std::error::Error for Error {}
 
 #[cfg(test)]
 mod test {
