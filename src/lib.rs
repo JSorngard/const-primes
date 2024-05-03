@@ -50,15 +50,13 @@
 //! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
 //! that can be used to work with ranges that don't start at zero. They take two generics: the number of primes
 //! to store in the binary, and the size of the sieve used during evaluation
-//! (which must be at least `isqrt(largest_encountered_number) + 1`). This means that one can
-//! sieve up to large numbers, but doesn't need to store the entire sieve in the binary.
+//! (which must be at least the ceiling of the square root of the largest encountered number.
+//! This means that one can sieve up to large numbers,
+//! but doesn't need to store the entire sieve in the binary.
 //! ```
 //! # use const_primes::Error;
 //! use const_primes::{primes_geq, isqrt, Result};
 //! # #[allow(long_running_const_eval)]
-//! // The sieve needs to be of size ceil(sqrt(limit)),
-//! // but we don't need to store the entire sieve, we can just store the primes we want.
-//! // For the three primes after 5 billion and 31:
 //! const PRIMES_GEQ: Result<3> = primes_geq::<3, {isqrt(5_000_000_031) as usize + 1}>(5_000_000_031);
 //!
 //! assert_eq!(PRIMES_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
