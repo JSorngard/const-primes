@@ -56,8 +56,10 @@
 //! ```
 //! # use const_primes::Error;
 //! use const_primes::{primes_geq, isqrt, Result};
-//! # #[allow(long_running_const_eval)]
-//! const P_GEQ: Result<3> = primes_geq::<3, {isqrt(5_000_000_031) as usize + 1}>(5_000_000_031);
+//! const NUM_PRIMES: usize = 3;
+//! const LIMIT: u64 = 5_000_000_031;
+//! const SIEVE_SIZE: usize = isqrt(LIMIT) as usize + 1;
+//! const P_GEQ: Result<NUM_PRIMES> = primes_geq::<NUM_PRIMES, SIEVE_SIZE>(LIMIT);
 //!
 //! assert_eq!(P_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
 //! # Ok::<(), Error>(())
