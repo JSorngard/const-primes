@@ -48,16 +48,21 @@
 //! ## Arbitrary ranges
 //!
 //! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
-//! that can be used to work with ranges that don't start at zero.
+//! that can be used to work with ranges that don't start at zero. They take two generics: the number of primes
+//! to store in the binary, and the size of the sieve used during const evaluation
+//! (which must be at least `isqrt(largest_encountered_number)`). This means that one can
+//! sieve up to large numbers, but doesn't need to store the entire sieve in the binary.
 //! ```
 //! # use const_primes::generation::{primes_geq, Result, Error};
+//! use const_primes::isqrt;
 //! # #[allow(long_running_const_eval)]
-//! // Use an array of size 70722 to sieve for primes, but only store
-//! // the three primes after 5 million and 31 in the binary.
-//! const PRIMES_GEQ: Result<3> = primes_geq::<3, 70_722>(5_000_000_031);
+//! // If we want the three smallest primes after 5 billion and 31 we need a large sieve
+//! // to find them without returning an error.
+//! // However, we don't need to store the entire sieve, we can just store the three primes.
+//! const PRIMES_GEQ: Result<3> = primes_geq::<3, {isqrt(5_000_000_031) as usize + 1}>(5_000_000_031);
 //!
 //! assert_eq!(PRIMES_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
-//! # Ok::<(), Error<3>>(())
+//! # Ok::<(), Error>(())
 //! ```
 //! ```
 //! # use const_primes::sieve_lt;
@@ -90,10 +95,13 @@
 //! assert_eq!(NOSUCH, None);
 //! ```
 //! and more!
+//!
+//! # Features
+//!
+//! `std`: links the standard library and uses it to implement the [`Error`](std::error::Error) trait for the error types.
 
 #![forbid(unsafe_code)]
-#![cfg_attr(not(test), no_std)]
-#![feature(inline_const)]
+#![cfg_attr(all(not(test), not(feature = "std")), no_std)]
 
 /// The type that `Primes<N>` stores, and `primes::<N>()`` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
@@ -109,7 +117,7 @@ mod sieving;
 mod wrapper;
 
 pub use generation::{primes, primes_geq, primes_lt, Error, PrimesArray, Result};
-use imath::isqrt;
+pub use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
 pub use sieving::{sieve, sieve_geq, sieve_lt};

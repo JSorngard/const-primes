@@ -46,16 +46,6 @@ impl<const N: usize, T: Hash> Hash for ArraySection<T, N> {
     }
 }
 
-/// Only compares the data in the sections, and not the full arrays.
-impl<const N: usize, const M: usize, T: PartialEq> PartialEq<ArraySection<T, N>>
-    for ArraySection<T, M>
-{
-    #[inline]
-    fn eq(&self, other: &ArraySection<T, N>) -> bool {
-        self.as_slice().eq(other.as_slice())
-    }
-}
-
 /// Only checks the data in the sections, and not the full arrays.
 impl<const N: usize, const M: usize, T: PartialOrd> PartialOrd<ArraySection<T, M>>
     for ArraySection<T, N>
@@ -192,10 +182,12 @@ impl<T, const N: usize> core::fmt::Display for TryFromArraySectionError<T, N> {
 }
 
 #[cfg(feature = "std")]
-impl<T, const N: usize> std::error::Error for TryFromArraySectionError<T, N> {}
+impl<T: core::fmt::Debug, const N: usize> std::error::Error for TryFromArraySectionError<T, N> {}
 
+/// Converts the `ArraySection` into an array if the section is actually the entire array.
 impl<const N: usize, T> TryFrom<ArraySection<T, N>> for [T; N] {
     type Error = TryFromArraySectionError<T, N>;
+
     #[inline]
     fn try_from(value: ArraySection<T, N>) -> Result<Self, Self::Error> {
         if value.section_is_full_array() {
@@ -207,6 +199,16 @@ impl<const N: usize, T> TryFrom<ArraySection<T, N>> for [T; N] {
 }
 
 // endregion: TryFrom impls
+
+impl<const N: usize, T> From<[T; N]> for ArraySection<T, N> {
+    fn from(value: [T; N]) -> Self {
+        Self {
+            start: 0,
+            end: N,
+            array: value,
+        }
+    }
+}
 
 impl<const N: usize, T> AsRef<[T]> for ArraySection<T, N> {
     #[inline]
@@ -244,6 +246,18 @@ impl_index_range! {Range<usize>, RangeFrom<usize>, RangeFull, RangeTo<usize>, Ra
 // endregion: Index impls
 
 // region: PartialEq impls
+
+/// Only compares the sections, and not the full arrays.
+impl<const N: usize, const M: usize, T, U> PartialEq<ArraySection<T, N>> for ArraySection<U, M>
+where
+    [U]: PartialEq<[T]>,
+{
+    #[inline]
+    fn eq(&self, other: &ArraySection<T, N>) -> bool {
+        self.as_slice().eq(other.as_slice())
+    }
+}
+
 impl<const N: usize, T, U> PartialEq<[U]> for ArraySection<T, N>
 where
     U: PartialEq<T>,
@@ -265,6 +279,25 @@ where
         self == other.as_slice()
     }
 }
+
+impl<const N: usize, const M: usize, T, U> PartialEq<[T; N]> for ArraySection<U, M>
+where
+    [U]: PartialEq<[T]>,
+{
+    fn eq(&self, other: &[T; N]) -> bool {
+        self.as_slice().eq(other.as_slice())
+    }
+}
+
+impl<const N: usize, const M: usize, T, U> PartialEq<ArraySection<U, M>> for [T; N]
+where
+    [T]: PartialEq<[U]>,
+{
+    fn eq(&self, other: &ArraySection<U, M>) -> bool {
+        self.as_slice().eq(other.as_slice())
+    }
+}
+
 // endregion: PartialEq impls
 
 impl<const N: usize, T> IntoIterator for ArraySection<T, N> {
