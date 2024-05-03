@@ -229,6 +229,62 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(mut upper_limit: u64) -
     Ok(ArraySection::new(primes, 0..N))
 }
 
+/// Call [`primes_geq`] and [`primes_lt`], but automatically compute the memory requirement.
+///
+/// # Example
+///
+/// ```
+/// # use const_primes::{Result, primes_where, Error};
+/// const PRIMES_GEQ: Result<3> = primes_where!(3 >= 5_000_000_031_u64);
+/// const PRIMES_LT: Result<3> = primes_where!(3 < 5_000_000_031_u64);
+/// assert_eq!(PRIMES_GEQ?, [5000000039, 5000000059, 5000000063]);
+/// assert_eq!(PRIMES_LT?, [4999999903, 4999999937, 5000000029]);
+/// # Ok::<(), Error>(())
+/// ```
+#[macro_export]
+macro_rules! primes_where {
+    ($n:literal >= $lim:literal) => {
+        $crate::primes_geq::<
+            $n,
+            {
+                (if $lim <= 1 {
+                    $lim
+                } else {
+                    let mut x0 =
+                        ::core::primitive::u64::pow(2, ::core::primitive::u64::ilog2($lim) / 2 + 1);
+                    let mut x1 = (x0 + $lim / x0) / 2;
+                    while x1 < x0 {
+                        x0 = x1;
+                        x1 = (x0 + $lim / x0) / 2;
+                    }
+                    x0
+                }) as ::core::primitive::usize
+                    + 1
+            },
+        >($lim)
+    };
+    ($n:literal < $lim:literal) => {
+        $crate::primes_lt::<
+            $n,
+            {
+                (if $lim <= 1 {
+                    $lim
+                } else {
+                    let mut x0 =
+                        ::core::primitive::u64::pow(2, ::core::primitive::u64::ilog2($lim) / 2 + 1);
+                    let mut x1 = (x0 + $lim / x0) / 2;
+                    while x1 < x0 {
+                        x0 = x1;
+                        x1 = (x0 + $lim / x0) / 2;
+                    }
+                    x0
+                }) as ::core::primitive::usize
+                    + 1
+            },
+        >($lim)
+    };
+}
+
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
 /// Fails to compile if `N` is 0. If `lower_limit` is less than 2 this functions assumes that it is 2,
 /// since there are no primes smaller than 2.

@@ -55,13 +55,22 @@
 //! but doesn't need to store the entire sieve in the binary.
 //! ```
 //! # use const_primes::Error;
-//! use const_primes::{primes_geq, isqrt, Result};
-//! const NUM_PRIMES: usize = 3;
-//! const LIMIT: u64 = 5_000_000_031;
-//! const SIEVE_SIZE: usize = isqrt(LIMIT) as usize + 1;
-//! const P_GEQ: Result<NUM_PRIMES> = primes_geq::<NUM_PRIMES, SIEVE_SIZE>(LIMIT);
+//! use const_primes::{primes_geq, Result};
+//! // ceil(isqrt(5_000_000_031)) = 70_711
+//! const P_GEQ: Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
 //!
 //! assert_eq!(P_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+//! # Ok::<(), Error>(())
+//! ```
+//! If you do not wish to compute the required sieve size yourself,
+//! you can use the provided macro [`primes_where!`]:
+//! ```
+//! # use const_primes::{primes_where, Result, Error};
+//! const PRIMES_OVER_100: Result<3> = primes_where!(3 >= 100);
+//! const PRIMES_UNDER_100: Result<3> = primes_where!(3 < 100);
+//!
+//! assert_eq!(PRIMES_OVER_100?, [101, 103, 107]);
+//! assert_eq!(PRIMES_UNDER_100?, [83, 89, 97]);
 //! # Ok::<(), Error>(())
 //! ```
 //! ```
@@ -118,7 +127,7 @@ mod wrapper;
 
 pub use array_section::ArraySection;
 pub use generation::{primes, primes_geq, primes_lt, Error, PrimesArray, Result};
-pub use imath::isqrt;
+use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
 pub use sieving::{sieve, sieve_geq, sieve_lt};
