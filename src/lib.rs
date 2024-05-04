@@ -63,11 +63,11 @@
 //! # Ok::<(), Error>(())
 //! ```
 //! If you do not wish to compute the required sieve size yourself,
-//! you can use the provided macro [`primes_where!`]:
+//! you can use the provided macro [`const_primes!`]:
 //! ```
-//! # use const_primes::{primes_where, Result, Error};
-//! const PRIMES_OVER_100: Result<3> = primes_where!(3 >= 100);
-//! const PRIMES_UNDER_100: Result<3> = primes_where!(3 < 100);
+//! # use const_primes::{const_primes, Result, Error};
+//! const PRIMES_OVER_100: Result<3> = const_primes!(3; >= 100);
+//! const PRIMES_UNDER_100: Result<3> = const_primes!(3; < 100);
 //!
 //! assert_eq!(PRIMES_OVER_100?, [101, 103, 107]);
 //! assert_eq!(PRIMES_UNDER_100?, [83, 89, 97]);

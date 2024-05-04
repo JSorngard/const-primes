@@ -229,57 +229,71 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(mut upper_limit: u64) -
     Ok(ArraySection::new(primes, 0..N))
 }
 
-/// Call [`primes_geq`] and [`primes_lt`], but automatically compute the memory requirement.
+/// Same as the private const fn isqrt in the crate.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! ඞ_const_primes_isqrt {
+    ($n:ident) => {
+        if $n <= 1 {
+            $n
+        } else {
+            let mut x0 = ::core::primitive::u64::pow(2, ::core::primitive::u64::ilog2($n) / 2 + 1);
+            let mut x1 = (x0 + $n / x0) / 2;
+            while x1 < x0 {
+                x0 = x1;
+                x1 = (x0 + $n / x0) / 2;
+            }
+            x0
+        }
+    };
+}
+
+/// Call [`primes`], [`primes_geq`] and [`primes_lt`], and automatically compute the memory requirement.
 ///
 /// # Example
 ///
 /// ```
-/// # use const_primes::{Result, primes_where, Error};
-/// const PRIMES_GEQ: Result<3> = primes_where!(3 >= 5_000_000_031_u64);
-/// const PRIMES_LT: Result<3> = primes_where!(3 < 5_000_000_031_u64);
+/// # use const_primes::{Result, const_primes, Error};
+/// const PRIMES: [u32; 3] = const_primes!();
+/// const LIMIT: u64 = 5_000_000_031;
+/// const PRIMES_GEQ: Result<3> = const_primes!(3; >= LIMIT);
+/// const PRIMES_LT: Result<3> = const_primes!(3; < LIMIT);
+/// let primes = const_primes!(3);
+///
+/// assert_eq!(primes, PRIMES);
+/// assert_eq!(PRIMES, [2, 3, 5]);
 /// assert_eq!(PRIMES_GEQ?, [5000000039, 5000000059, 5000000063]);
 /// assert_eq!(PRIMES_LT?, [4999999903, 4999999937, 5000000029]);
 /// # Ok::<(), Error>(())
 /// ```
 #[macro_export]
-macro_rules! primes_where {
-    ($n:literal >= $lim:literal) => {
-        $crate::primes_geq::<
-            $n,
-            {
-                (if $lim <= 1 {
-                    $lim
-                } else {
-                    let mut x0 =
-                        ::core::primitive::u64::pow(2, ::core::primitive::u64::ilog2($lim) / 2 + 1);
-                    let mut x1 = (x0 + $lim / x0) / 2;
-                    while x1 < x0 {
-                        x0 = x1;
-                        x1 = (x0 + $lim / x0) / 2;
-                    }
-                    x0
-                }) as ::core::primitive::usize
-                    + 1
-            },
-        >($lim)
+macro_rules! const_primes {
+    () => {
+        $crate::primes()
     };
-    ($n:literal < $lim:literal) => {
+    ($n:expr) => {
+        $crate::primes::<
+            {
+                let mem = { $n };
+                mem
+            },
+        >()
+    };
+    ($n:expr; < $lim:expr) => {
         $crate::primes_lt::<
             $n,
             {
-                (if $lim <= 1 {
-                    $lim
-                } else {
-                    let mut x0 =
-                        ::core::primitive::u64::pow(2, ::core::primitive::u64::ilog2($lim) / 2 + 1);
-                    let mut x1 = (x0 + $lim / x0) / 2;
-                    while x1 < x0 {
-                        x0 = x1;
-                        x1 = (x0 + $lim / x0) / 2;
-                    }
-                    x0
-                }) as ::core::primitive::usize
-                    + 1
+                let mem = { $lim };
+                $crate::ඞ_const_primes_isqrt!(mem) as ::core::primitive::usize + 1
+            },
+        >($lim)
+    };
+    ($n:expr; >= $lim:expr) => {
+        $crate::primes_geq::<
+            $n,
+            {
+                let mem = { $lim };
+                $crate::ඞ_const_primes_isqrt!(mem) as ::core::primitive::usize + 1
             },
         >($lim)
     };
