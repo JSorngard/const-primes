@@ -1,3 +1,5 @@
+//! Contains the definition of [`ArraySection`] as well as related types.
+
 use core::{
     cmp::Ordering,
     hash::{Hash, Hasher},
@@ -182,7 +184,8 @@ impl<T: Copy, const N: usize> ArraySection<T, N> {
 
 // region: TryFrom impls
 
-/// Returned by `TryFrom<ArraySection<T, N>> for [T; N]` if the [`ArraySection`] was not the full array.
+/// Returned when a `TryFrom` conversion of an [`ArraySection`] into an array fails.
+/// 
 /// Contains the original `ArraySection`, which can be retrieved via the [`array_section`](TryFromArraySectionError::array_section) function.
 #[derive(Debug, Clone, Copy)]
 pub struct TryFromArraySectionError<T, const N: usize>(ArraySection<T, N>);
@@ -330,6 +333,7 @@ pub use array_section_iter::ArraySectionIter;
 mod array_section_iter {
     use super::FusedIterator;
 
+    /// Created by the [`iter`](super::ArraySection::iter) function on [`ArraySection`](super::ArraySection), see it for more information.
     #[derive(Debug, Clone)]
     pub struct ArraySectionIter<'a, T>(core::slice::Iter<'a, T>);
 
