@@ -172,8 +172,16 @@ impl<const N: usize, T> ArraySection<T, N> {
 
 // region: TryFrom impls
 
+/// Returned by `TryFrom<ArraySection<T, N>> for [T; N]` if the [`ArraySection`] was not fully valid.
+/// Contains the original [`ArraySection`], which can be retrieved via the [`array_section`](TryFromArraySectionError::array_section) function.
 #[derive(Debug, Clone, Copy)]
 pub struct TryFromArraySectionError<T, const N: usize>(ArraySection<T, N>);
+
+impl<T, const N: usize> TryFromArraySectionError<T, N> {
+    fn array_section(self) -> ArraySection<T, N> {
+        self.0
+    }
+}
 
 impl<T, const N: usize> core::fmt::Display for TryFromArraySectionError<T, N> {
     #[inline]
@@ -184,6 +192,12 @@ impl<T, const N: usize> core::fmt::Display for TryFromArraySectionError<T, N> {
 
 #[cfg(feature = "std")]
 impl<T: core::fmt::Debug, const N: usize> std::error::Error for TryFromArraySectionError<T, N> {}
+
+impl<T, const N: usize> From<TryFromArraySectionError<T, N>> for ArraySection<T, N> {
+    fn from(value: TryFromArraySectionError<T, N>) -> Self {
+        value.0
+    }
+}
 
 /// Converts the `ArraySection` into an array if the section is actually the entire array.
 impl<const N: usize, T> TryFrom<ArraySection<T, N>> for [T; N] {
