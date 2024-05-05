@@ -126,7 +126,7 @@ mod sieving;
 mod wrapper;
 
 pub use array_section::ArraySection;
-pub use generation::{primes, primes_geq, primes_lt, Error, PrimesArray, Result};
+pub use generation::{primes, primes_geq, primes_lt, Error, Result};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
