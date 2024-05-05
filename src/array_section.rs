@@ -2,7 +2,8 @@ use core::{
     cmp::Ordering,
     hash::{Hash, Hasher},
     iter::FusedIterator,
-    ops::Range,
+    ops::{Index, Range},
+    slice::SliceIndex,
 };
 
 /// An array where only a section of the data may be viewed,
@@ -217,10 +218,7 @@ impl<const N: usize, T> AsRef<[T]> for ArraySection<T, N> {
     }
 }
 
-impl<const N: usize, T, I> core::ops::Index<I> for ArraySection<T, N>
-where
-    I: core::slice::SliceIndex<[T]>,
-{
+impl<const N: usize, T, I: SliceIndex<[T]>> Index<I> for ArraySection<T, N> {
     type Output = I::Output;
     #[inline]
     fn index(&self, index: I) -> &Self::Output {
