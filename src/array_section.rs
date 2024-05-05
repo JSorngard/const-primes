@@ -178,6 +178,7 @@ impl<const N: usize, T> ArraySection<T, N> {
 pub struct TryFromArraySectionError<T, const N: usize>(ArraySection<T, N>);
 
 impl<T, const N: usize> TryFromArraySectionError<T, N> {
+    /// Returns the original [`ArraySection`].
     pub fn array_section(self) -> ArraySection<T, N> {
         self.0
     }
