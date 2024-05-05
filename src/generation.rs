@@ -130,7 +130,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Basic usage:
 /// ```
-/// # use const_primes::generation::{primes_lt, Error};
+/// # use const_primes::{primes_lt, Error};
 /// // Sieving up to 100 means the sieve needs to be of size sqrt(100) = 10.
 /// // However, we only save the 4 largest primes in the constant.
 /// const PRIMES: const_primes::Result<4> = primes_lt::<4, 10>(100);
@@ -139,7 +139,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
-/// # use const_primes::generation::{primes_lt, Error};
+/// # use const_primes::{primes_lt, Error};
 /// # #[allow(long_running_const_eval)]
 /// const BIG_PRIMES: const_primes::Result<3> = primes_lt::<3, 70_711>(5_000_000_030);
 ///
@@ -152,7 +152,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Due to limitations on const evaluation this will still
 /// take up the full `N` numbers worth of memory.
 /// ```
-/// # use const_primes::generation::{primes_lt, Error};
+/// # use const_primes::{primes_lt, Error};
 /// const PRIMES: const_primes::Result<9> = primes_lt::<9, 9>(10);
 /// assert_eq!(PRIMES?, [2, 3, 5, 7]);
 /// # Ok::<(), Error>(())
@@ -161,7 +161,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Returns an error if `upper_limit` is larger than `MEM`^2 or if `upper_limit` is smaller than or equal to 2.
 /// ```
-/// # use const_primes::generation::primes_lt;
+/// # use const_primes::primes_lt;
 /// const TOO_LARGE_LIMIT: const_primes::Result<3> = primes_lt::<3, 5>(26);
 /// const TOO_SMALL_LIMIT: const_primes::Result<1> = primes_lt::<1, 1>(1);
 /// assert!(TOO_LARGE_LIMIT.is_err());

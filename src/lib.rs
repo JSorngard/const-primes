@@ -118,7 +118,7 @@
 type Underlying = u32;
 
 pub mod array_section;
-pub mod generation;
+mod generation;
 mod imath;
 mod miller_rabin;
 mod other_prime;
