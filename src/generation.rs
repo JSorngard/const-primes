@@ -346,7 +346,9 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(lower_limit: u64) -> R
     }
     let (mem64, mem_sqr) = const {
         let mem64 = MEM as u64;
-        let Some(mem_sqr) = mem64.checked_mul(mem64) else {panic!("`MEM`^2 must fit in a `u64`")};
+        let Some(mem_sqr) = mem64.checked_mul(mem64) else {
+            panic!("`MEM`^2 must fit in a `u64`")
+        };
         (mem64, mem_sqr)
     };
 
