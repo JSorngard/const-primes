@@ -202,6 +202,7 @@ impl<const N: usize, T> TryFrom<ArraySection<T, N>> for [T; N] {
 // endregion: TryFrom impls
 
 impl<const N: usize, T> From<[T; N]> for ArraySection<T, N> {
+    #[inline]
     fn from(value: [T; N]) -> Self {
         Self {
             start: 0,
@@ -228,7 +229,6 @@ impl<const N: usize, T, I: SliceIndex<[T]>> Index<I> for ArraySection<T, N> {
 
 // region: PartialEq impls
 
-/// Only compares the sections, and not the full arrays.
 impl<const N: usize, const M: usize, T, U> PartialEq<ArraySection<T, N>> for ArraySection<U, M>
 where
     [U]: PartialEq<[T]>,
@@ -243,8 +243,7 @@ impl<const N: usize, T, U> PartialEq<[U]> for ArraySection<T, N>
 where
     U: PartialEq<T>,
 {
-    /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
-    /// Only compares the *visible* part of `self` against `other`.
+    #[inline]
     fn eq(&self, other: &[U]) -> bool {
         other == self.as_slice()
     }
@@ -254,8 +253,7 @@ impl<const N: usize, T, U> PartialEq<ArraySection<T, N>> for [U]
 where
     U: PartialEq<T>,
 {
-    /// This method tests for `self` and `other` values to be equal, and is used by `==`.  
-    /// Only compares the *visible* part of `other` against `self`.
+    #[inline]
     fn eq(&self, other: &ArraySection<T, N>) -> bool {
         self == other.as_slice()
     }
@@ -265,6 +263,7 @@ impl<const N: usize, const M: usize, T, U> PartialEq<[T; N]> for ArraySection<U,
 where
     [U]: PartialEq<[T]>,
 {
+    #[inline]
     fn eq(&self, other: &[T; N]) -> bool {
         self.as_slice().eq(other.as_slice())
     }
@@ -274,6 +273,7 @@ impl<const N: usize, const M: usize, T, U> PartialEq<ArraySection<U, M>> for [T;
 where
     [T]: PartialEq<[U]>,
 {
+    #[inline]
     fn eq(&self, other: &ArraySection<U, M>) -> bool {
         self.as_slice().eq(other.as_slice())
     }
