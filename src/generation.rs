@@ -1,6 +1,8 @@
 use core::fmt;
 
-use crate::{array_section::ArraySection, sieve, sieving::sieve_segment, Underlying};
+use array_section::ArraySection;
+
+use crate::{sieve, sieving::sieve_segment, Underlying};
 
 /// Type alias for the type returned by the segmented sieving and generation functions.
 pub type Result<const N: usize> = core::result::Result<ArraySection<u64, N>, Error>;
