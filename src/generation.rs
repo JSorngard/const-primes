@@ -326,7 +326,7 @@ macro_rules! const_primes {
 /// ```
 /// # use const_primes::{primes_geq, Result, Error};
 /// const PRIMES: Result<3> = primes_geq::<3, 3>(5);
-/// assert_eq!(PRIMES?.as_slice(), &[5, 7]);
+/// assert_eq!(PRIMES?, [5, 7]);
 /// # Ok::<(), Error>(())
 /// ```
 ///
