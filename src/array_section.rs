@@ -124,6 +124,9 @@ impl<const N: usize, T> ArraySection<T, N> {
     }
 
     /// Converts `self` into the full underlying array.
+    ///
+    /// If you wish to use this in const context the destructor of `T` must be trivial,
+    /// use [`into_full_array_const`](ArraySection::into_full_array_const)
     #[inline]
     pub fn into_full_array(self) -> [T; N] {
         self.array
@@ -167,6 +170,13 @@ impl<const N: usize, T> ArraySection<T, N> {
     #[inline]
     pub fn iter(&self) -> ArraySectionIter<'_, T> {
         ArraySectionIter::new(self.as_slice().iter())
+    }
+}
+
+impl<T: Copy, const N: usize> ArraySection<T, N> {
+    /// Converts `self` into the full underlying array.
+    pub const fn into_full_array_const(self) -> [T; N] {
+        self.array
     }
 }
 
