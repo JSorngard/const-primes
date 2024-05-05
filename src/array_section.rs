@@ -2,7 +2,7 @@ use core::{
     cmp::Ordering,
     hash::{Hash, Hasher},
     iter::FusedIterator,
-    ops::{Index, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive},
+    ops::Range,
 };
 
 /// An array where only a section of the data may be viewed,
@@ -217,33 +217,16 @@ impl<const N: usize, T> AsRef<[T]> for ArraySection<T, N> {
     }
 }
 
-// region: Index impls
-
-impl<const N: usize, T> Index<usize> for ArraySection<T, N> {
-    type Output = T;
+impl<const N: usize, T, I> core::ops::Index<I> for ArraySection<T, N>
+where
+    I: core::slice::SliceIndex<[T]>,
+{
+    type Output = I::Output;
     #[inline]
-    fn index(&self, index: usize) -> &Self::Output {
-        self.as_slice().index(index)
+    fn index(&self, index: I) -> &Self::Output {
+        &self.as_slice().index(index)
     }
 }
-
-macro_rules! impl_index_range {
-    ($($t:ty),+) => {
-        $(
-            impl<const N: ::core::primitive::usize, T> ::core::ops::Index<$t> for $crate::array_section::ArraySection<T, N> {
-                type Output = [T];
-                #[inline]
-                fn index(&self, index: $t) -> &Self::Output {
-                    ::core::ops::Index::index(self.as_slice(), index)
-                }
-            }
-        )+
-    };
-}
-
-impl_index_range! {Range<usize>, RangeFrom<usize>, RangeFull, RangeTo<usize>, RangeInclusive<usize>, RangeToInclusive<usize>}
-
-// endregion: Index impls
 
 // region: PartialEq impls
 
