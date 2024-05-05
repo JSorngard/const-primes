@@ -56,7 +56,7 @@
 //! ```
 //! # use const_primes::Error;
 //! use const_primes::primes_geq;
-//! // ceil(sqrt(5_000_000_031)) = 70_711
+//! // ceil(sqrt(5_000_000_063)) = 70_711
 //! const P_GEQ: const_primes::Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
 //!
 //! assert_eq!(P_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
