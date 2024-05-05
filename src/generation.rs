@@ -130,18 +130,18 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Basic usage:
 /// ```
-/// # use const_primes::generation::{Result, primes_lt, Error};
+/// # use const_primes::generation::{primes_lt, Error};
 /// // Sieving up to 100 means the sieve needs to be of size sqrt(100) = 10.
 /// // However, we only save the 4 largest primes in the constant.
-/// const PRIMES: Result<4> = primes_lt::<4, 10>(100);
+/// const PRIMES: const_primes::Result<4> = primes_lt::<4, 10>(100);
 /// assert_eq!(PRIMES?, [79, 83, 89, 97]);
 /// # Ok::<(), Error>(())
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
-/// # use const_primes::generation::{Result, primes_lt, Error};
+/// # use const_primes::generation::{primes_lt, Error};
 /// # #[allow(long_running_const_eval)]
-/// const BIG_PRIMES: Result<3> = primes_lt::<3, 70_711>(5_000_000_030);
+/// const BIG_PRIMES: const_primes::Result<3> = primes_lt::<3, 70_711>(5_000_000_030);
 ///
 /// assert_eq!(BIG_PRIMES?, [4_999_999_903, 4_999_999_937, 5_000_000_029]);
 /// # Ok::<(), Error>(())
@@ -152,8 +152,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Due to limitations on const evaluation this will still
 /// take up the full `N` numbers worth of memory.
 /// ```
-/// # use const_primes::generation::{Result, primes_lt, Error};
-/// const PRIMES: Result<9> = primes_lt::<9, 9>(10);
+/// # use const_primes::generation::{primes_lt, Error};
+/// const PRIMES: const_primes::Result<9> = primes_lt::<9, 9>(10);
 /// assert_eq!(PRIMES?, [2, 3, 5, 7]);
 /// # Ok::<(), Error>(())
 /// ```
@@ -161,9 +161,9 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Returns an error if `upper_limit` is larger than `MEM`^2 or if `upper_limit` is smaller than or equal to 2.
 /// ```
-/// # use const_primes::generation::{primes_lt, Result};
-/// const TOO_LARGE_LIMIT: Result<3> = primes_lt::<3, 5>(26);
-/// const TOO_SMALL_LIMIT: Result<1> = primes_lt::<1, 1>(1);
+/// # use const_primes::generation::primes_lt;
+/// const TOO_LARGE_LIMIT: const_primes::Result<3> = primes_lt::<3, 5>(26);
+/// const TOO_SMALL_LIMIT: const_primes::Result<1> = primes_lt::<1, 1>(1);
 /// assert!(TOO_LARGE_LIMIT.is_err());
 /// assert!(TOO_SMALL_LIMIT.is_err());
 /// ```
@@ -250,11 +250,11 @@ macro_rules! ඞ_const_primes_isqrt {
 /// # Example
 ///
 /// ```
-/// # use const_primes::{Result, const_primes, Error};
+/// # use const_primes::{const_primes, Error};
 /// const PRIMES: [u32; 3] = const_primes!();
 /// const LIMIT: u64 = 5_000_000_031;
-/// const PRIMES_GEQ: Result<3> = const_primes!(3; >= LIMIT);
-/// const PRIMES_LT: Result<3> = const_primes!(3; < LIMIT);
+/// const PRIMES_GEQ: const_primes::Result<3> = const_primes!(3; >= LIMIT);
+/// const PRIMES_LT: const_primes::Result<3> = const_primes!(3; < LIMIT);
 /// let primes = const_primes!(3);
 ///
 /// assert_eq!(primes, PRIMES);
@@ -309,23 +309,23 @@ macro_rules! const_primes {
 ///
 /// Basic usage:
 /// ```
-/// # use const_primes::{primes_geq, Result, Error};
-/// const PRIMES: Result<5> = primes_geq::<5, 5>(10);
+/// # use const_primes::{primes_geq, Error};
+/// const PRIMES: const_primes::Result<5> = primes_geq::<5, 5>(10);
 /// assert_eq!(PRIMES?, [11, 13, 17, 19, 23]);
 /// # Ok::<(), Error>(())
 /// ```
 /// Compute larger primes without starting from zero:
 /// ```
-/// # use const_primes::{primes_geq, Result, Error};
+/// # use const_primes::{primes_geq, Error};
 /// # #[allow(long_running_const_eval)]
-/// const P: Result<3> = primes_geq::<3, 71_000>(5_000_000_030);
+/// const P: const_primes::Result<3> = primes_geq::<3, 71_000>(5_000_000_030);
 /// assert_eq!(P?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
 /// # Ok::<(), Error>(())
 /// ```
 /// Only primes smaller than `MEM^2` will be generated:
 /// ```
-/// # use const_primes::{primes_geq, Result, Error};
-/// const PRIMES: Result<3> = primes_geq::<3, 3>(5);
+/// # use const_primes::{primes_geq, Error};
+/// const PRIMES: const_primes::Result<3> = primes_geq::<3, 3>(5);
 /// assert_eq!(PRIMES?, [5, 7]);
 /// # Ok::<(), Error>(())
 /// ```

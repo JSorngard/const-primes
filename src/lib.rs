@@ -55,9 +55,9 @@
 //! but doesn't need to store the entire sieve in the binary.
 //! ```
 //! # use const_primes::Error;
-//! use const_primes::{primes_geq, Result};
+//! use const_primes::primes_geq;
 //! // ceil(isqrt(5_000_000_031)) = 70_711
-//! const P_GEQ: Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
+//! const P_GEQ: const_primes::Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
 //!
 //! assert_eq!(P_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
 //! # Ok::<(), Error>(())
@@ -65,9 +65,9 @@
 //! If you do not wish to compute the required sieve size yourself,
 //! you can use the provided macro [`const_primes!`]:
 //! ```
-//! # use const_primes::{const_primes, Result, Error};
-//! const PRIMES_OVER_100: Result<3> = const_primes!(3; >= 100);
-//! const PRIMES_UNDER_100: Result<3> = const_primes!(3; < 100);
+//! # use const_primes::{const_primes, Error};
+//! const PRIMES_OVER_100: const_primes::Result<3> = const_primes!(3; >= 100);
+//! const PRIMES_UNDER_100: const_primes::Result<3> = const_primes!(3; < 100);
 //!
 //! assert_eq!(PRIMES_OVER_100?, [101, 103, 107]);
 //! assert_eq!(PRIMES_UNDER_100?, [83, 89, 97]);
