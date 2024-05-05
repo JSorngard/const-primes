@@ -13,9 +13,9 @@ use core::{
 /// ```
 /// # use const_primes::array_section::ArraySection;
 /// //                                                     v  v
-/// const OT: ArraySection<i32, 4> = ArraySection::new([0, 1, 2, 0], 1..3);
-/// assert_eq![OT[0], 1];
-/// assert_eq![OT[1], 2];
+/// const AS: ArraySection<i32, 4> = ArraySection::new([0, 1, 2, 0], 1..3);
+/// assert_eq![AS[0], 1];
+/// assert_eq![AS[1], 2];
 /// ```
 ///
 /// The other data is not considered in comparisons, ordering or hashing:
