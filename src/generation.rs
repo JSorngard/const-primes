@@ -172,25 +172,22 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(mut upper_limit: u64) -
     const {
         assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    }
+    let mem64 = const {
         let mem64 = MEM as u64;
         assert!(
             mem64.checked_mul(mem64).is_some(),
             "`MEM`^2 must fit in a u64"
         );
-    }
+        mem64
+    };
 
     if upper_limit <= 2 {
         return Err(Error::TooSmallLimit(upper_limit));
     }
 
-    let mem64 = MEM as u64;
-    match (mem64).checked_mul(mem64) {
-        Some(prod) => {
-            if upper_limit > prod {
-                return Err(Error::TooLargeLimit(upper_limit, MEM));
-            }
-        }
-        None => return Err(Error::MEMSquaredOverflow(MEM)),
+    if upper_limit > mem64 * mem64 {
+        return Err(Error::TooLargeLimit(upper_limit, MEM));
     }
 
     let mut primes: [u64; N] = [0; N];
@@ -346,18 +343,15 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(lower_limit: u64) -> R
     const {
         assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-        let mem64 = MEM as u64;
-        assert!(
-            mem64.checked_mul(mem64).is_some(),
-            "`MEM`^2 must fit in a u64"
-        );
     }
+    let (mem64, mem_sqr) = const {
+        let mem64 = MEM as u64;
+        let Some(mem_sqr) = mem64.checked_mul(mem64) else {panic!("`MEM`^2 must fit in a `u64`")};
+        (mem64, mem_sqr)
+    };
 
     // There are no primes smaller than 2, so we will always start looking at 2.
     let new_lower_limit = if lower_limit >= 2 { lower_limit } else { 2 };
-
-    let mem64 = MEM as u64;
-    let mem_sqr = mem64 * mem64;
 
     if new_lower_limit >= mem_sqr {
         return Err(Error::TooLargeLimit(lower_limit, MEM));
