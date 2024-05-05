@@ -173,7 +173,7 @@ impl<const N: usize, T> ArraySection<T, N> {
 // region: TryFrom impls
 
 /// Returned by `TryFrom<ArraySection<T, N>> for [T; N]` if the [`ArraySection`] was not the full array.
-/// Contains the original [`ArraySection`], which can be retrieved via the [`array_section`](TryFromArraySectionError::array_section) function.
+/// Contains the original `ArraySection`, which can be retrieved via the [`array_section`](TryFromArraySectionError::array_section) function.
 #[derive(Debug, Clone, Copy)]
 pub struct TryFromArraySectionError<T, const N: usize>(ArraySection<T, N>);
 
