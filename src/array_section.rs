@@ -72,13 +72,13 @@ impl<const N: usize, T> ArraySection<T, N> {
     ///
     /// Panics if the range of indices is out of bounds of the array.
     #[inline]
-    pub const fn new(array: [T; N], sub_range: Range<usize>) -> Self {
+    pub const fn new(array: [T; N], section: Range<usize>) -> Self {
         assert!(
-            sub_range.start < N && sub_range.end <= N,
+            section.start < N && section.end <= N,
             "the sub-range must be in bounds"
         );
 
-        if sub_range.start > sub_range.end {
+        if section.start > section.end {
             Self {
                 start: 0,
                 end: 0,
@@ -86,8 +86,8 @@ impl<const N: usize, T> ArraySection<T, N> {
             }
         } else {
             Self {
-                start: sub_range.start,
-                end: sub_range.end,
+                start: section.start,
+                end: section.end,
                 array,
             }
         }
