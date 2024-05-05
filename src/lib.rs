@@ -51,8 +51,7 @@
 //! that can be used to work with ranges that don't start at zero. They take two generics: the number of primes
 //! to store in the binary, and the size of the sieve used during evaluation
 //! (which must be at least the ceiling of the square root of the largest encountered number).
-//! This means that one can sieve up to large numbers,
-//! but doesn't need to store the entire sieve in the binary.
+//! This means that one can sieve to large numbers, but doesn't need to store the entire sieve in the binary.
 //! ```
 //! # use const_primes::Error;
 //! use const_primes::primes_geq;
