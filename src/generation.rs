@@ -256,10 +256,11 @@ macro_rules! ඞ_const_primes_isqrt {
 /// const PRIMES_LT: const_primes::Result<3> = const_primes!(3; < LIMIT);
 /// // Can also be used at runtime:
 /// let primes = const_primes!(3);
-/// let hmm = const_primes!(3; >= 100);
+/// let primes_geq = const_primes!(3; >= LIMIT)?;
 ///
 /// assert_eq!(primes, PRIMES);
 /// assert_eq!(PRIMES, [2, 3, 5]);
+/// assert_eq!(PRIMES_GEQ?, primes_geq);
 /// assert_eq!(PRIMES_GEQ?, [5000000039, 5000000059, 5000000063]);
 /// assert_eq!(PRIMES_LT?, [4999999903, 4999999937, 5000000029]);
 /// # Ok::<(), Error>(())
