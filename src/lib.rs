@@ -107,6 +107,7 @@
 //! # Features
 //!
 //! `std`: links the standard library and uses it to implement the [`Error`](std::error::Error) trait for the error types.
+//! `alloc`: enables conversion of the type returned by [`primes_geq`] and [`primes_lt`] into [`Vec`]s and [`Box`]ed slices.
 
 #![forbid(unsafe_code)]
 #![cfg_attr(all(not(test), not(feature = "std")), no_std)]
