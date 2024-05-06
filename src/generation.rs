@@ -254,7 +254,9 @@ macro_rules! ඞ_const_primes_isqrt {
 /// const LIMIT: u64 = 5_000_000_031;
 /// const PRIMES_GEQ: const_primes::Result<3> = const_primes!(3; >= LIMIT);
 /// const PRIMES_LT: const_primes::Result<3> = const_primes!(3; < LIMIT);
+/// // Can also be used at runtime:
 /// let primes = const_primes!(3);
+/// let hmm = const_primes!(3; >= 100);
 ///
 /// assert_eq!(primes, PRIMES);
 /// assert_eq!(PRIMES, [2, 3, 5]);
