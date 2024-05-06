@@ -50,11 +50,13 @@ assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, fa
 
 ## Arbitrary ranges
 The crate provides prime generation and sieving functions with suffixes, e.g. `primes_geq` and `sieve_lt`
-that can be used to work with ranges that don't start at zero.
+that can be used to work with ranges that don't start at zero. They take two generics: the number of elements
+to store in the binary and the size of the sieve used during evaluation. The sieve size must be the cieling
+of the square root of the largest encountered value:
 ```rust
-const N: usize = 70722;
-const PRIMES_GEQ: [u64; N] = primes_geq(5_000_000_031);
-assert_eq!(PRIMES_GEQ[..3], [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+//                              ceil(sqrt(5_000_000_063)) = 70_711
+const PRIMES_GEQ: const_primes::Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
+assert_eq!(PRIMES_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
 ```
 ```rust
 const N: usize = 70711;
@@ -62,9 +64,7 @@ const PRIME_STATUS_LT: [bool; N] = sieve_lt(5_000_000_031);
 //                                    5_000_000_028  5_000_000_029  5_000_000_030
 assert_eq!(PRIME_STATUS_LT[N - 3..], [false,         true,          false]);
 ```
-Unfortunately the output array must be large enough to contain the prime sieve, which scales with
-the square root of largest relavant number, which is why the examples use a size of over 70000 even though
-they're only interested in three numbers.
+The sieving functions have yet to be modified for two generics, and must save the entire sieve in the binary.
 ## Other functionality
 Use `is_prime` to test whether a given number is prime:
 ```rust
