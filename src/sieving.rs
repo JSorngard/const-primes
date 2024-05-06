@@ -209,7 +209,7 @@ pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {
     };
     if let Some(n_sqr) = n64.checked_mul(n64) {
         assert!(
-            upper_limit < n_sqr,
+            upper_limit <= n_sqr,
             "`lower_limit + N` must be less than or equal to `N^2`"
         );
     } else {
