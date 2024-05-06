@@ -248,6 +248,12 @@ impl<const N: usize> Primes<N> {
         self.primes.as_slice()
     }
 
+    /// Returns an iterator over the primes.
+    #[inline]
+    pub fn iter(&self) -> core::slice::Iter<'_, Underlying> {
+        self.primes.iter()
+    }
+
     // endregion: Conversions
 
     /// Returns a reference to the element at the given index if it is within bounds.
@@ -619,6 +625,14 @@ mod test {
 
         for n in *P.last() + 1..*P.last() * 2 {
             assert!(P.count_primes_leq(n as u32).is_none());
+        }
+    }
+
+    #[test]
+    fn check_iter() {
+        const P: Primes<10> = Primes::new();
+        for (p1, p2) in P.iter().zip([2, 3, 5, 7, 11, 13, 17, 19, 23, 29].iter()) {
+            assert_eq!(p1, p2);
         }
     }
 }
