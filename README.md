@@ -83,6 +83,11 @@ assert_eq!(NOSUCH, None);
 ```
 and more!
 
+## Features
+
+`std`: derives the `Error` trait for the error types.
+`alloc`: enables conversion of the type returned by [`primes_geq`] and [`primes_lt`] into [`Vec`]s and [`Box`]ed slices.
+
 ## License
 
 Licensed under either of
