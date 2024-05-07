@@ -189,10 +189,10 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// ```
 /// # Panics
 ///
-/// Panics if `N + lower_limit` is larger than or equal to `N^2`. In const contexts this is a compile error:
+/// Panics if `N + lower_limit` is larger than to `N^2`. In const contexts this is a compile error:
 /// ```compile_fail
 /// # use const_primes::sieve_geq;
-/// const P: [bool; 5] = sieve_geq(20);
+/// const P: [bool; 5] = sieve_geq(21);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {

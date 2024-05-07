@@ -53,24 +53,21 @@
 //! (which must be at least the ceiling of the square root of the largest encountered number).
 //! This means that one can sieve to large numbers, but doesn't need to store the entire sieve in the binary.
 //! ```
-//! # use const_primes::Error;
-//! use const_primes::primes_geq;
+//! use const_primes::{primes_geq, Error};
 //! // ceil(sqrt(5_000_000_063)) = 70_711
-//! const P_GEQ: const_primes::Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
+//! const P_GEQ: Result<[u64; 3], Error> = primes_geq::<3, 70_711>(5_000_000_031);
 //!
-//! assert_eq!(P_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
-//! # Ok::<(), Error>(())
+//! assert_eq!(P_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 //! ```
 //! If you do not wish to compute the required sieve size yourself,
 //! you can use the provided macro [`const_primes!`]:
 //! ```
 //! # use const_primes::{const_primes, Error};
-//! const PRIMES_OVER_100: const_primes::Result<3> = const_primes!(3; >= 100);
-//! const PRIMES_UNDER_100: const_primes::Result<3> = const_primes!(3; < 100);
+//! const PRIMES_OVER_100: Result<[u64; 3], Error> = const_primes!(3; >= 100);
+//! const PRIMES_UNDER_100: Result<[u64; 3], Error> = const_primes!(3; < 100);
 //!
-//! assert_eq!(PRIMES_OVER_100?, [101, 103, 107]);
-//! assert_eq!(PRIMES_UNDER_100?, [83, 89, 97]);
-//! # Ok::<(), Error>(())
+//! assert_eq!(PRIMES_OVER_100, Ok([101, 103, 107]));
+//! assert_eq!(PRIMES_UNDER_100, Ok([83, 89, 97]));
 //! ```
 //! ```
 //! # use const_primes::sieve_lt;
@@ -124,7 +121,7 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use generation::{primes, primes_geq, primes_lt, Error, Result};
+pub use generation::{primes, primes_geq, primes_lt, Error};
 use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
@@ -254,7 +251,7 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: Result<$n> = primes_lt::<$n, $n>(100);
+                        const P: Result<[u64; $n], Error> = primes_lt::<$n, $n>(100);
                         for (i, prime) in P.unwrap().as_slice().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], *prime as u32);
                         }
