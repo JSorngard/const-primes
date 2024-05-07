@@ -55,7 +55,8 @@
 //! ```
 //! use const_primes::{primes_lt, Error, isqrt};
 //! const LIMIT: u64 = 5_000_000_031;
-//! const PRIMES_LT: Result<[u64; 3], Error> = primes_lt::<3, {isqrt(LIMIT) as usize + 1}>(LIMIT);
+//! const N: usize = 3;
+//! const PRIMES_LT: Result<[u64; N], Error> = primes_lt::<N, {isqrt(LIMIT) as usize + 1}>(LIMIT);
 //!
 //! assert_eq!(PRIMES_LT, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 //! ```
