@@ -387,7 +387,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
 /// is invalid or does not work to produce the requested primes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GenerationError {
-    /// The limit was larger than `MEM^2`.
+    /// The limit was larger than or equal to `MEM^2`.
     TooLargeLimit,
     /// The limit was smaller than or equal to 2.
     TooSmallLimit,
