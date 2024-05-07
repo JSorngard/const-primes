@@ -55,8 +55,8 @@ to store in the binary and the size of the sieve used during evaluation. The sie
 of the square root of the largest encountered value:
 ```rust
 //                              ceil(sqrt(5_000_000_063)) = 70_711
-const PRIMES_GEQ: const_primes::Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
-assert_eq!(PRIMES_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+const PRIMES_GEQ: Result<[u64; 3], const_primes::Error> = primes_geq::<3, 70_711>(5_000_000_031);
+assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 ```
 ```rust
 const N: usize = 70711;
