@@ -68,6 +68,9 @@ assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 The sieve size can be computed by the crate by using the macros `primes_segment!` and `sieve_segment!`.
 ```rust
 const PRIMES_GEQ: Result<[u64; 2], GenerationError> = primes_segment!(2; >= 615);
+const PRIME_STATUS_LT: Result<[bool; 3], SieveError> = sieve_segment!(3; < 100_005);
+//                              100_102  100_103  100_104
+assert_eq!(PRIME_STATUS_LT, Ok([false,   true,    false]));
 assert_eq!(PRIMES_GEQ, Ok([617, 619]));
 ```
 
