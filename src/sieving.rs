@@ -175,6 +175,8 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
     sieve
 }
 
+/// The error returned by [`sieve_lt`] and [`sieve_geq`] if the input
+/// is invalid.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SieveError {
     TooLargeTotal,
