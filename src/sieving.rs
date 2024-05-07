@@ -53,10 +53,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 ///
 /// If you just want the prime status of the first `N` integers, see [`sieve`].
 ///
-/// Uses a sieve of Eratosthenes to sieve the first `N` integers
-/// and then uses the result to sieve the output range if needed.
-///
-///  Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
+/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
 ///
 /// # Examples
 ///
@@ -145,8 +142,6 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
 /// Fails to compile if `N` is 0.
-///
-/// Uses a sieve of Eratosthenes.
 ///
 /// # Example
 ///
