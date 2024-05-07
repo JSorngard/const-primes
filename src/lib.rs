@@ -64,7 +64,7 @@
 //! assert_eq!(PRIMES_LT, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 //! ```
 //! If you do not wish to compute the required sieve size yourself,
-//! you can use the provided macro [`primes_segment!`]:
+//! you can use the provided macros [`primes_segment!`] or [`sieve_segment!`]:
 //! ```
 //! # use const_primes::{primes_segment, GenerationError};
 //! const PRIMES_OVER_100: Result<[u64; 3], GenerationError> = primes_segment!(3; >= 100);
