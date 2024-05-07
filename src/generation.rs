@@ -391,7 +391,7 @@ pub enum GenerationError {
     TooLargeLimit,
     /// The limit was smaller than or equal to 2.
     TooSmallLimit,
-    /// Encountered a number larger than `MEM`^2.
+    /// Encountered a number larger than or equal to `MEM`^2.
     SieveOverrun(u64),
     /// Ran out of primes.
     OutOfPrimes,
