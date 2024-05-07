@@ -49,85 +49,114 @@ pub(crate) const fn sieve_segment<const N: usize>(
     segment_sieve
 }
 
-/// Returns an array of size `N` that indicates which of the integers in `[upper_limit - N, upper_limit)` are prime,
-/// or in other words: the value at a given index represents whether `index + upper_limit - N` is prime.
+/// Returns an array of size `N` that indicates which of the `N` integers in smaller than `upper_limit` are prime.
 ///
-/// If you just want the prime status of the first `N` integers, see [`sieve`].
+/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
+/// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
+/// that is: `MEM`^2 must be at least as large as `upper_limit`.
 ///
-/// Uses a sieve of Eratosthenes to sieve the first `N` integers
-/// and then uses the result to sieve the output range if needed.
+/// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
+/// the integers above some number, see [`sieve_geq`].
 ///
-///  Fails to compile if `N` is 0.
+/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
 ///
 /// # Examples
 ///
 /// Basic usage
 /// ```
 /// # use const_primes::sieve_lt;
-/// const PRIME_STATUSES: [bool; 10] = sieve_lt(30);
+/// // The five largest numbers smaller than 30 are 25, 26, 27, 28 and 29.
+/// const N: usize = 5;
+/// const LIMIT: u64 = 30;
+/// // We thus need a memory size of at least 6, since 5*5 < 29, and therefore isn't enough.
+/// const MEM: usize = 6;
+/// const PRIME_STATUSES: [bool; N] = match sieve_lt::<N, MEM>(LIMIT) {Ok(s) => s, Err(_) => panic!()};
 ///
 /// assert_eq!(
 ///     PRIME_STATUSES,
-/// //   20     21     22     23    24     25     26     27     28     29
-///     [false, false, false, true, false, false, false, false, false, true],
+/// //   25     26     27     28     29
+///     [false, false, false, false, true],
 /// );
 /// ```
-/// Sieve limited ranges of very large values
+/// Sieve limited ranges of large values. Functions provided by the crate can help you
+/// compute the needed sieve size:
 /// ```
-/// # use const_primes::sieve_lt;
-/// const BIG_NUMBER: u64 = 5_000_000_031;
-/// const CEIL_SQRT_BIG_NUMBER: usize = 70711;
-/// const BIG_PRIME_STATUSES: [bool; CEIL_SQRT_BIG_NUMBER] = sieve_lt(BIG_NUMBER);
+/// # use const_primes::{sieve_lt, SieveError};
+/// use const_primes::isqrt;
+/// const N: usize = 3;
+/// const LIMIT: u64 = 5_000_000_031;
+/// const MEM: usize = isqrt(LIMIT) as usize + 1;
+/// const BIG_PRIME_STATUSES: Result<[bool; N], SieveError> = sieve_lt::<N, MEM>(LIMIT);
 /// assert_eq!(
-///     BIG_PRIME_STATUSES[CEIL_SQRT_BIG_NUMBER - 3..],
-/// //  5_000_000_028  5_000_000_029  5_000_000_030
-///     [false,        true,          false],
+///     BIG_PRIME_STATUSES,
+/// //      5_000_000_028  5_000_000_029  5_000_000_030
+///     Ok([false,         true,          false]),
 /// );
 /// ```
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if `upper_limit` is not in the range `[N, N^2]`. In const contexts these are compile errors:
-/// ```compile_fail
-/// # use const_primes::sieve_lt;
-/// const PRIME_STATUSES: [bool; 5] = sieve_lt(26);
+/// Returns an error if `upper_limit` is larger than `MEM`^2:
 /// ```
-/// ```compile_fail
-/// # use const_primes::sieve_lt;
-/// const PRIME_STATUSES: [bool; 5] = sieve_lt(4);
+/// # use const_primes::{sieve_lt, SieveError};
+/// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(26);
+/// assert_eq!(PS, Err(SieveError::TooLargeLimit));
+/// ```
+/// or smaller than `N`:
+/// ```
+/// # use const_primes::{sieve_lt, SieveError};
+/// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(4);
+/// assert_eq!(PS, Err(SieveError::TooSmallLimit));
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn sieve_lt<const N: usize>(upper_limit: u64) -> [bool; N] {
-    const { assert!(N > 0, "`N` must be at least 1") }
+pub const fn sieve_lt<const N: usize, const MEM: usize>(
+    upper_limit: u64,
+) -> Result<[bool; N], SieveError> {
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    }
+
+    let mem_sqr = const {
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(prod) => prod,
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
+    };
+
+    if upper_limit > mem_sqr {
+        return Err(SieveError::TooLargeLimit);
+    }
 
     let n64 = N as u64;
 
-    // Since panics are compile time errors in const contexts
-    // we check all the preconditions here and panic early.
-    match n64.checked_mul(n64) {
-        Some(prod) => assert!(
-            upper_limit <= prod,
-            "`upper_limit` must be smaller than or equal to `N^2`"
-        ),
-        None => panic!("`N^2` must fit in a `u64`"),
+    if upper_limit < n64 {
+        return Err(SieveError::TooSmallLimit);
     }
-    assert!(upper_limit >= n64, "`upper_limit` must be at least `N`");
-
-    // Use a normal sieve of Eratosthenes for the first N numbers.
-    let base_sieve: [bool; N] = sieve();
 
     if upper_limit == n64 {
         // If we are not interested in sieving a larger range we can just return early.
-        return base_sieve;
+        return Ok(sieve());
     }
 
-    sieve_segment(&base_sieve, upper_limit)
+    // Use a normal sieve of Eratosthenes for the first N numbers.
+    let base_sieve: [bool; MEM] = sieve();
+
+    // Use the result to sieve the higher range.
+    let upper_sieve = sieve_segment(&base_sieve, upper_limit);
+
+    let mut ans = [false; N];
+    let mut i = 0;
+    while i < N {
+        ans[N - 1 - i] = upper_sieve[MEM - 1 - i];
+        i += 1;
+    }
+    Ok(ans)
 }
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
 /// Fails to compile if `N` is 0.
-///
-/// Uses a sieve of Eratosthenes.
 ///
 /// # Example
 ///
@@ -175,56 +204,164 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
     sieve
 }
 
+/// The error returned by [`sieve_lt`] and [`sieve_geq`] if the input
+/// is invalid.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SieveError {
+    TooSmallLimit,
+    TooLargeLimit,
+    TooLargeTotal,
+    TotalDoesntFitU64,
+}
+
+impl core::fmt::Display for SieveError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::TooSmallLimit => write!(f, "`limit` must be at least `N`"),
+            Self::TooLargeLimit => write!(f, "`limit` must be less than or equal to `MEM`^2"),
+            Self::TooLargeTotal => write!(f, "`MEM + limit` must be less than or equal to `MEM`^2"),
+            Self::TotalDoesntFitU64 => write!(f, "`MEM + limit` must fit in a `u64`"),
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for SieveError {}
+
 /// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
-/// Fails to compile if `N` is 0.
 ///
-/// # Example
+/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
+/// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
+/// that is `MEM`^2 must be larger than `lower_limit + N`.
 ///
-/// Basic usage:
+/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
+///
+/// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
+/// prime status of the integers below some number, see [`sieve_lt`].
+///
+/// # Examples
+///
+/// The size of the sieve, `MEM`, must be large enough for the largest sieved number to be smaller than `MEM`^2.
 /// ```
 /// # use const_primes::sieve_geq;
-/// const PRIME_STATUS: [bool; 5] = sieve_geq(10);
-/// //                        10     11    12     13    14
-/// assert_eq!(PRIME_STATUS, [false, true, false, true, false]);
+/// // The three numbers larger than or equal to 9 are 9, 10 and 11.
+/// const N: usize = 3;
+/// const LIMIT: u64 = 9;
+/// // We thus need a memory size of at least 4, since 3*3 < 11, and therefore isn't enough.
+/// const MEM: usize = 4;
+/// const PRIME_STATUS: [bool; N] = match sieve_geq::<N, MEM>(LIMIT) {Ok(s) => s, Err(_) => panic!()};
+/// //                        9,     10,    11
+/// assert_eq!(PRIME_STATUS, [false, false, true]);
 /// ```
-/// # Panics
+/// Sieve limited ranges of large values. Functions provided by the crate can help you
+/// compute the needed sieve size:
+/// ```
+/// # use const_primes::{sieve_geq, SieveError};
+/// use const_primes::isqrt;
+/// const N: usize = 3;
+/// const LIMIT: u64 = 5_000_000_038;
+/// const MEM: usize = isqrt(LIMIT) as usize + 1 + N;
+/// const BIG_PRIME_STATUS: Result<[bool; N], SieveError> = sieve_geq::<N, MEM>(LIMIT);
+/// //                               5_000_000_038  5_000_000_039  5_000_000_040
+/// assert_eq!(BIG_PRIME_STATUS, Ok([false,         true,          false]));
+/// ```
 ///
-/// Panics if `N + lower_limit` is larger than to `N^2`. In const contexts this is a compile error:
-/// ```compile_fail
-/// # use const_primes::sieve_geq;
-/// const P: [bool; 5] = sieve_geq(21);
+/// # Errors
+///
+/// Returns an error if `MEM + lower_limit` is larger than `MEM^2` or doesn't fit in a `u64`.
+/// ```
+/// # use const_primes::{sieve_geq, SieveError};
+/// const P1: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(21);
+/// const P2: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(u64::MAX);
+/// assert_eq!(P1, Err(SieveError::TooLargeTotal));
+/// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn sieve_geq<const N: usize>(lower_limit: u64) -> [bool; N] {
-    const { assert!(N > 0, "`N` must be at least 1") }
-
-    let n64 = N as u64;
-
-    // Since panics are compile time errors in const contexts
-    // we check all the preconditions here and panic early.
-    let upper_limit = if let Some(sum) = n64.checked_add(lower_limit) {
-        sum
-    } else {
-        panic!("`N + lower_limit` must fit in a `u64`")
+pub const fn sieve_geq<const N: usize, const MEM: usize>(
+    lower_limit: u64,
+) -> Result<[bool; N], SieveError> {
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    }
+    let (mem64, mem_sqr) = const {
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(prod) => (mem64, prod),
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
     };
-    if let Some(n_sqr) = n64.checked_mul(n64) {
-        assert!(
-            upper_limit <= n_sqr,
-            "`lower_limit + N` must be less than or equal to `N^2`"
-        );
-    } else {
-        panic!("`N^2` must fit in a `u64`")
+
+    let Some(upper_limit) = mem64.checked_add(lower_limit) else {
+        return Err(SieveError::TotalDoesntFitU64);
+    };
+
+    if upper_limit > mem_sqr {
+        return Err(SieveError::TooLargeTotal);
     }
 
-    let base_sieve: [bool; N] = sieve();
-
-    // If `lower_limit` is zero the upper range is the same as what we already sieved,
-    // so we return early.
+    // If `lower_limit` is zero then this is the same as just calling `sieve`, and we can return early.
     if lower_limit == 0 {
-        return base_sieve;
+        // We do not merge it with the computation of `base_sieve` below, since here we only
+        // compute `N` values instead of `MEM`.
+        return Ok(sieve());
     }
 
-    sieve_segment(&base_sieve, upper_limit)
+    let base_sieve: [bool; MEM] = sieve();
+
+    let upper_sieve = sieve_segment(&base_sieve, upper_limit);
+
+    let mut ans = [false; N];
+    let mut i = 0;
+    while i < N {
+        ans[i] = upper_sieve[i];
+        i += 1;
+    }
+    Ok(ans)
+}
+
+/// Call [`sieve_lt`] and [`sieve_geq`], and automatically compute the memory requirement of the sieve.
+///
+/// Compute the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`sieve_lt`]
+/// and as `isqrt(lower_limit) + 1 + N` for [`sieve_geq`].
+///
+/// # Examples
+///
+/// ```
+/// # use const_primes::{sieve_segment, SieveError};
+/// const PRIME_STATUS_LT: Result<[bool; 5], SieveError> = sieve_segment!(5; < 100_005);
+/// const PRIME_STATUS_GEQ: Result<[bool; 7], SieveError> = sieve_segment!(7; >= 615);
+/// assert_eq!(
+///     PRIME_STATUS_LT,
+/// //      100_000  100_101  100_102  100_103  100_104
+///     Ok([false,   false,   false,   true,    false])
+/// );
+/// assert_eq!(
+///     PRIME_STATUS_GEQ,
+/// //      615    616    617   618    619   620    621
+///     Ok([false, false, true, false, true, false, false])
+/// );
+/// ```
+#[macro_export]
+macro_rules! sieve_segment {
+    ($n:expr; < $lim:expr) => {
+        $crate::sieve_lt::<
+            { $n },
+            {
+                let mem = { $lim };
+                $crate::isqrt(mem) as ::core::primitive::usize + 1
+            },
+        >({ $lim })
+    };
+    ($n:expr; >= $lim:expr) => {
+        $crate::sieve_geq::<
+            { $n },
+            {
+                let mem = { $lim };
+                $crate::isqrt(mem) as ::core::primitive::usize + 1 + { $n }
+            },
+        >({ $lim })
+    };
 }
 
 #[cfg(test)]

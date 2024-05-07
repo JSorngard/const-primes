@@ -55,16 +55,15 @@ to store in the binary and the size of the sieve used during evaluation. The sie
 of the square root of the largest encountered value:
 ```rust
 //                              ceil(sqrt(5_000_000_063)) = 70_711
-const PRIMES_GEQ: Result<[u64; 3], const_primes::Error> = primes_geq::<3, 70_711>(5_000_000_031);
+const PRIMES_GEQ: Result<[u64; 3], GenerationError> = primes_geq::<3, 70_711>(5_000_000_031);
 assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 ```
 ```rust
-const N: usize = 70711;
-const PRIME_STATUS_LT: [bool; N] = sieve_lt(5_000_000_031);
-//                                    5_000_000_028  5_000_000_029  5_000_000_030
-assert_eq!(PRIME_STATUS_LT[N - 3..], [false,         true,          false]);
+const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_lt::<3, 70_711>(5_000_000_031);
+//                              5_000_000_028  5_000_000_029  5_000_000_030
+assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 ```
-The sieving functions have yet to be modified for two generics, and must save the entire sieve in the binary.
+The sieve size can be computed by the crate by using the macro `primes_segment!` and `sieve_segment!`.
 ## Other functionality
 Use `is_prime` to test whether a given number is prime:
 ```rust

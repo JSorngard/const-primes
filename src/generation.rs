@@ -1,4 +1,6 @@
-use crate::{error::Error, sieve, sieving::sieve_segment, Underlying};
+use core::fmt;
+
+use crate::{sieve, sieving::sieve_segment, Underlying};
 
 /// Returns the `N` first prime numbers.
 /// Fails to compile if `N` is 0.
@@ -107,7 +109,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Returns the `N` largest primes less than `upper_limit`.
 ///
 /// This function uses a segmented sieve of size `MEM` for computation,
-/// but only saves the `N` requested primes in the binary.
+/// but only returns the `N` requested primes in the output array.
 ///
 /// Set `MEM` such that `MEM*MEM >= upper_limit`.
 ///
@@ -121,46 +123,49 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Basic usage:
 /// ```
-/// # use const_primes::{primes_lt, Error};
+/// # use const_primes::{primes_lt, GenerationError};
 /// // Sieving up to 100 means the sieve needs to be of size ceil(sqrt(100)) = 10.
 /// // However, we only save the 4 largest primes in the constant.
 /// const PRIMES: [u64;4] = match primes_lt::<4, 10>(100) {Ok(ps) => ps, Err(_) => panic!()};
 /// assert_eq!(PRIMES, [79, 83, 89, 97]);
 /// ```
-/// Compute larger primes:
+/// Compute limited ranges of large primes. Functions provided by the crate can help you
+/// compute the needed sieve size:
 /// ```
-/// # use const_primes::{primes_lt, Error};
+/// # use const_primes::{primes_lt, GenerationError};
 /// use const_primes::isqrt;
+/// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_030;
-/// # #[allow(long_running_const_eval)]
-/// const BIG_PRIMES: Result<[u64; 3], Error> = primes_lt::<3, {isqrt(LIMIT) as usize + 1}>(LIMIT);
+/// const MEM: usize = isqrt(LIMIT) as usize + 1;
+/// const BIG_PRIMES: Result<[u64; N], GenerationError> = primes_lt::<N, MEM>(LIMIT);
 ///
 /// assert_eq!(BIG_PRIMES, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 /// ```
+///
 /// # Errors
 ///
 /// If the number of primes requested, `N`, is larger than
-/// the number of primes that exists below the `upper_limit` we
-/// will get an error:
+/// the number of primes that exists below the `upper_limit` this function
+/// returns an error:
 /// ```
-/// # use const_primes::{primes_lt, Error};
+/// # use const_primes::{primes_lt, GenerationError};
 /// const N: usize = 9;
-/// const PRIMES: Result<[u64; N], Error> = primes_lt::<N, N>(10);
-/// assert_eq!(PRIMES, Err(Error::OutOfPrimes));
+/// const PRIMES: Result<[u64; N], GenerationError> = primes_lt::<N, N>(10);
+/// assert_eq!(PRIMES, Err(GenerationError::OutOfPrimes));
 /// ```
 ///
-/// We will also get an error if `upper_limit` is larger than `MEM`^2 or if `upper_limit` is smaller than or equal to 2.
+/// It also returns an error if `upper_limit` is larger than `MEM`^2 or if `upper_limit` is smaller than or equal to 2:
 /// ```
-/// # use const_primes::{primes_lt, Error};
-/// const TOO_LARGE_LIMIT: Result<[u64; 3], Error> = primes_lt::<3, 5>(26);
-/// const TOO_SMALL_LIMIT: Result<[u64 ;1], Error> = primes_lt::<1, 1>(1);
-/// assert!(matches!(TOO_LARGE_LIMIT, Err(Error::TooLargeLimit(_, _))));
-/// assert!(matches!(TOO_SMALL_LIMIT, Err(Error::TooSmallLimit(_))));
+/// # use const_primes::{primes_lt, GenerationError};
+/// const TOO_LARGE_LIMIT: Result<[u64; 3], GenerationError> = primes_lt::<3, 5>(26);
+/// const TOO_SMALL_LIMIT: Result<[u64; 1], GenerationError> = primes_lt::<1, 1>(1);
+/// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::TooLargeLimit));
+/// assert_eq!(TOO_SMALL_LIMIT, Err(GenerationError::TooSmallLimit));
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
-) -> Result<[u64; N], Error> {
+) -> Result<[u64; N], GenerationError> {
     const {
         assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
@@ -174,11 +179,11 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     };
 
     if upper_limit <= 2 {
-        return Err(Error::TooSmallLimit(upper_limit));
+        return Err(GenerationError::TooSmallLimit);
     }
 
     if upper_limit > mem_sqr {
-        return Err(Error::TooLargeLimit(upper_limit, mem_sqr));
+        return Err(GenerationError::TooLargeLimit);
     }
 
     let mut primes: [u64; N] = [0; N];
@@ -210,7 +215,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
         }
         upper_limit = smallest_found_prime;
         if upper_limit <= 2 && total_primes_found < N {
-            return Err(Error::OutOfPrimes);
+            return Err(GenerationError::OutOfPrimes);
         }
     }
 
@@ -226,10 +231,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 /// # Example
 ///
 /// ```
-/// # use const_primes::{primes_segment, Error};
+/// # use const_primes::{primes_segment, GenerationError};
 /// const LIMIT: u64 = 5_000_000_031;
-/// const PRIMES_GEQ: Result<[u64; 3], Error> = primes_segment!(3; >= LIMIT);
-/// const PRIMES_LT: Result<[u64; 3], Error> = primes_segment!(3; < LIMIT);
+/// const PRIMES_GEQ: Result<[u64; 3], GenerationError> = primes_segment!(3; >= LIMIT);
+/// const PRIMES_LT: Result<[u64; 3], GenerationError> = primes_segment!(3; < LIMIT);
 /// // Can also be used at runtime:
 /// let primes_geq = primes_segment!(3; >= LIMIT);
 ///
@@ -241,28 +246,28 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 macro_rules! primes_segment {
     ($n:expr; < $lim:expr) => {
         $crate::primes_lt::<
-            $n,
+            { $n },
             {
                 let mem = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1
             },
-        >($lim)
+        >({ $lim })
     };
     ($n:expr; >= $lim:expr) => {
         $crate::primes_geq::<
-            $n,
+            { $n },
             {
                 let mem = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1 + { $n }
             },
-        >($lim)
+        >({ $lim })
     };
 }
 
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
 ///
 /// This function uses a segmented sieve of size `MEM` for computation,
-/// but only saves the `N` requested primes in the binary.
+/// but only returns the `N` requested primes in the output array.
 ///
 /// Set `MEM` such that `MEM`^2 is larger than the largest prime you will encounter.
 ///
@@ -277,42 +282,45 @@ macro_rules! primes_segment {
 ///
 /// Basic usage:
 /// ```
-/// use const_primes::{primes_geq, Error};
+/// use const_primes::primes_geq;
 /// // Compute 5 primes larger than 40. The largest will be 59, so `MEM` needs to be at least 8.
 /// const PRIMES: [u64; 5] = match primes_geq::<5, 8>(40) {Ok(ps) => ps, Err(_) => panic!()};
 /// assert_eq!(PRIMES, [41, 43, 47, 53, 59]);
 /// ```
-/// Estimate the size of `MEM` using the square root of the limit (and some extra, proportional to `N`):
+/// Compute limited ranges of large primes. Functions provided by the crate can help you
+/// compute the needed sieve size:
 /// ```
-/// # use const_primes::{primes_geq, Error};
+/// # use const_primes::{primes_geq, GenerationError};
 /// use const_primes::isqrt;
 /// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_030;
-/// # #[allow(long_running_const_eval)]
-/// const PRIMES_GEQ: Result<[u64; N], Error> = primes_geq::<N, {isqrt(LIMIT) as usize + 1 + N}>(LIMIT);
+/// const MEM: usize = isqrt(LIMIT) as usize + 1 + N;
+/// const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_geq::<N, MEM>(LIMIT);
 /// assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
-/// # Ok::<(), Error>(())
+/// # Ok::<(), GenerationError>(())
 /// ```
+///
 /// # Errors
 ///
 /// Only primes smaller than `MEM^2` can be generated, so if the sieve
 /// encounters a number larger than that it results in an error:
 /// ```
-/// # use const_primes::{primes_geq, Error};
-/// const PRIMES: Result<[u64; 3], Error> = primes_geq::<3, 3>(5);
-/// assert!(matches!(PRIMES, Err(Error::SieveOverrun(_))));
+/// # use const_primes::{primes_geq, GenerationError};
+/// const PRIMES: Result<[u64; 3], GenerationError> = primes_geq::<3, 3>(5);
+/// // The sieve is unable to determine the prime status of 9, since that is the same or larger than `MEM`^2.
+/// assert_eq!(PRIMES, Err(GenerationError::SieveOverrun(9)));
 /// ```
 ///
 /// Also returns an error if `lower_limit` is larger than or equal to `MEM^2`:
 /// ```
-/// # use const_primes::{primes_geq, Error};
-/// const PRIMES: Result<[u64; 5], Error> = primes_geq::<5, 5>(26);
-/// assert!(matches!(PRIMES, Err(Error::TooLargeLimit(_, _))));
+/// # use const_primes::{primes_geq, GenerationError};
+/// const PRIMES: Result<[u64; 5], GenerationError> = primes_geq::<5, 5>(26);
+/// assert_eq!(PRIMES, Err(GenerationError::TooLargeLimit));
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
-) -> Result<[u64; N], Error> {
+) -> Result<[u64; N], GenerationError> {
     const {
         assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
@@ -325,14 +333,22 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
         (mem64, mem_sqr)
     };
 
-    // There are no primes smaller than 2, so we will always start looking at 2.
-    let new_lower_limit = if lower_limit >= 2 { lower_limit } else { 2 };
-
-    if new_lower_limit >= mem_sqr {
-        return Err(Error::TooLargeLimit(lower_limit, mem_sqr));
+    // If `lower_limit` is 2 or less, this is the same as calling `primes`,
+    // so we just do that and convert the result to `u64`.
+    if lower_limit <= 2 {
+        let ans32: [u32; N] = primes();
+        let mut ans64 = [0; N];
+        let mut i = 0;
+        while i < N {
+            ans64[i] = ans32[i] as u64;
+            i += 1;
+        }
+        return Ok(ans64);
     }
 
-    let lower_limit = new_lower_limit;
+    if lower_limit >= mem_sqr {
+        return Err(GenerationError::TooLargeLimit);
+    }
 
     let mut primes = [0; N];
     let mut total_found_primes = 0;
@@ -351,7 +367,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
                 // the base sieve contains no information
                 // about numbers larger than or equal to `MEM`^2.
                 if largest_found_prime >= mem_sqr {
-                    return Err(Error::SieveOverrun(largest_found_prime));
+                    return Err(GenerationError::SieveOverrun(largest_found_prime));
                 }
 
                 if largest_found_prime >= lower_limit {
@@ -371,6 +387,43 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     Ok(primes)
 }
 
+/// The error returned by [`primes_lt`] and [`primes_geq`] if the input
+/// is invalid or does not work to produce the requested primes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum GenerationError {
+    /// The limit was larger than or equal to `MEM^2`.
+    TooLargeLimit,
+    /// The limit was smaller than or equal to 2.
+    TooSmallLimit,
+    /// Encountered a number larger than or equal to `MEM`^2.
+    SieveOverrun(u64),
+    /// Ran out of primes.
+    OutOfPrimes,
+}
+
+impl fmt::Display for GenerationError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::TooLargeLimit => write!(
+                f,
+                "the limit was larger than `MEM`^2"
+            ),
+            Self::TooSmallLimit => write!(
+                f,
+                "the limit was smaller than or equal to 2"
+            ),
+            Self::SieveOverrun(number) => write!(
+                f,
+                "encountered the number {number} which would have needed `MEM` to be at least {} to sieve", crate::imath::isqrt(*number) + 1
+            ),
+            Self::OutOfPrimes => write!(f, "ran out of primes before the array was filled"),
+        }
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for GenerationError {}
+
 #[cfg(test)]
 mod test {
     use crate::is_prime;
@@ -380,16 +433,16 @@ mod test {
     #[test]
     fn sanity_check_primes_geq() {
         {
-            const P: Result<[u64; 5], Error> = primes_geq::<5, 5>(10);
+            const P: Result<[u64; 5], GenerationError> = primes_geq::<5, 5>(10);
             assert_eq!(P, Ok([11, 13, 17, 19, 23]));
         }
         {
-            const P: Result<[u64; 5], Error> = primes_geq::<5, 5>(0);
+            const P: Result<[u64; 5], GenerationError> = primes_geq::<5, 5>(0);
             assert_eq!(P, Ok([2, 3, 5, 7, 11]));
         }
         {
-            const P: Result<[u64; 1], Error> = primes_geq::<1, 1>(0);
-            assert_eq!(P, Err(Error::TooLargeLimit(0, 1)));
+            const P: Result<[u64; 1], GenerationError> = primes_geq::<1, 1>(0);
+            assert_eq!(P, Ok([2]));
         }
         for &prime in primes_geq::<2_000, 2_008>(3_998_000).unwrap().as_slice() {
             assert!(is_prime(prime));
@@ -398,8 +451,8 @@ mod test {
 
     #[test]
     fn check_primes_segment() {
-        const P_GEQ: Result<[u64; 10], Error> = primes_segment!(10; >= 1000);
-        const P_LT: Result<[u64; 10], Error> = primes_segment!(10; < 1000);
+        const P_GEQ: Result<[u64; 10], GenerationError> = primes_segment!(10; >= 1000);
+        const P_LT: Result<[u64; 10], GenerationError> = primes_segment!(10; < 1000);
 
         assert_eq!(
             P_GEQ,

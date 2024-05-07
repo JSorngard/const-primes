@@ -43,10 +43,10 @@ fn benchmarks(c: &mut Criterion) {
             b.iter(|| black_box(sieve::<N>()))
         });
         sieving.bench_function(format!("{N} integers < 100000000"), |b| {
-            b.iter(|| black_box(sieve_lt::<N>(100000000)))
+            b.iter(|| black_box(sieve_lt::<N, N>(100000000)))
         });
         sieving.bench_function(format!("{N} integers >= 99990000"), |b| {
-            b.iter(|| black_box(sieve_geq::<N>(99990000)))
+            b.iter(|| black_box(sieve_geq::<N, N>(99990000)))
         });
     }
 }

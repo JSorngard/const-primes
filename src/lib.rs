@@ -53,19 +53,22 @@
 //! (which must be at least the ceiling of the square root of the largest encountered number).
 //! This means that one can sieve to large numbers, but doesn't need to store the entire sieve in the binary.
 //! ```
-//! use const_primes::{primes_lt, Error, isqrt};
+//! use const_primes::{primes_lt, GenerationError, isqrt};
 //! const LIMIT: u64 = 5_000_000_031;
 //! const N: usize = 3;
-//! const PRIMES_LT: Result<[u64; N], Error> = primes_lt::<N, {isqrt(LIMIT) as usize + 1}>(LIMIT);
+//! // `const_primes::isqrt` can be used to compute the memory requirement of the sieve.
+//! // Due to limitations on const generics, this can not be done inside the function.
+//! const MEM: usize = isqrt(LIMIT) as usize + 1;
+//! const PRIMES_LT: Result<[u64; N], GenerationError> = primes_lt::<N, MEM>(LIMIT);
 //!
 //! assert_eq!(PRIMES_LT, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 //! ```
 //! If you do not wish to compute the required sieve size yourself,
 //! you can use the provided macro [`primes_segment!`]:
 //! ```
-//! # use const_primes::{primes_segment, Error};
-//! const PRIMES_OVER_100: Result<[u64; 3], Error> = primes_segment!(3; >= 100);
-//! const PRIMES_UNDER_100: Result<[u64; 3], Error> = primes_segment!(3; < 100);
+//! # use const_primes::{primes_segment, GenerationError};
+//! const PRIMES_OVER_100: Result<[u64; 3], GenerationError> = primes_segment!(3; >= 100);
+//! const PRIMES_UNDER_100: Result<[u64; 3], GenerationError> = primes_segment!(3; < 100);
 //!
 //! assert_eq!(PRIMES_OVER_100, Ok([101, 103, 107]));
 //! assert_eq!(PRIMES_UNDER_100, Ok([83, 89, 97]));
@@ -73,15 +76,14 @@
 //! it may, however, overestimate the required sieve size.
 //!
 //! ```
-//! # use const_primes::sieve_lt;
-//! const N: usize = 70711;
-//! const PRIME_STATUS_LT: [bool; N] = sieve_lt(5_000_000_031);
-//! //                                    5_000_000_028  5_000_000_029  5_000_000_030
-//! assert_eq!(PRIME_STATUS_LT[N - 3..], [false,         true,          false]);
+//! # use const_primes::{sieve_geq, SieveError, isqrt};
+//! const N: usize = 3;
+//! const LIMIT: u64 = 5_000_000_038;
+//! const MEM: usize = isqrt(LIMIT) as usize + 1 + N;
+//! const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_geq::<N, MEM>(LIMIT);
+//! //                              5_000_000_028  5_000_000_029  5_000_000_030
+//! assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 //! ```
-//! Unfortunately the output array must be large enough to contain the prime sieve, which scales with
-//! the square root of largest relavant number, which is why the examples use a size of over 70000 even though
-//! they're only interested in three numbers.
 //!
 //! ## Other functionality
 //!
@@ -116,7 +118,6 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-mod error;
 mod generation;
 mod imath;
 mod miller_rabin;
@@ -124,12 +125,11 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use error::Error;
-pub use generation::{primes, primes_geq, primes_lt};
+pub use generation::{primes, primes_geq, primes_lt, GenerationError};
 pub use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
-pub use sieving::{sieve, sieve_geq, sieve_lt};
+pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
 pub use wrapper::Primes;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
@@ -255,7 +255,7 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: Result<[u64; $n], Error> = primes_lt::<$n, $n>(100);
+                        const P: Result<[u64; $n], GenerationError> = primes_lt::<$n, $n>(100);
                         for (i, prime) in P.unwrap().as_slice().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], *prime as u32);
                         }
@@ -281,9 +281,9 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [bool; $n] = sieve_lt(100);
-                        assert_eq!(&PRIMALITIES[100-$n..], P);
-                        assert_eq!(&PRIMALITIES[100-$n..], sieve_lt::<$n>(100));
+                        const P: Result<[bool; $n], SieveError> = sieve_lt::<$n, $n>(100);
+                        assert_eq!(&PRIMALITIES[100-$n..], P.unwrap());
+                        assert_eq!(&PRIMALITIES[100-$n..], sieve_lt::<$n, $n>(100).unwrap());
                     }
                 )+
             };
@@ -303,9 +303,9 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [bool; $n] = sieve_geq(10);
-                        assert_eq!(&PRIMALITIES[10..10+$n], P);
-                        assert_eq!(&PRIMALITIES[10..10+$n], sieve_geq::<$n>(10));
+                        const P: Result<[bool; $n], SieveError> = sieve_geq::<$n, $n>(10);
+                        assert_eq!(&PRIMALITIES[10..10+$n], P.unwrap());
+                        assert_eq!(&PRIMALITIES[10..10+$n], sieve_geq::<$n, $n>(10).unwrap());
                     }
                 )+
             };
