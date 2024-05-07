@@ -116,6 +116,7 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
+mod error;
 mod generation;
 mod imath;
 mod miller_rabin;
@@ -123,7 +124,8 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use generation::{primes, primes_geq, primes_lt, Error};
+pub use error::Error;
+pub use generation::{primes, primes_geq, primes_lt};
 pub use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
