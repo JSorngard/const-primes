@@ -3,9 +3,10 @@ use crate::{primes, Underlying};
 // region: Primes<N>
 
 /// A wrapper around an array that consists of the first `N` primes.
-/// Can be created in const contexts, and if so it ensures that `N` is non-zero at compile time.
+/// Can be created in const contexts, and ensures that `N` is non-zero at compile time.
 ///
 /// # Examples
+///
 /// Basic usage
 /// ```
 /// # use const_primes::Primes;
@@ -36,6 +37,7 @@ impl<const N: usize> Primes<N> {
     /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
     ///
     /// # Examples
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
@@ -54,19 +56,18 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
     ///
-    /// # Panics
-    ///
-    /// Panics if `N` is zero. In const contexts this will fail to compile
+    /// Fails to compile if `N` is zero.
     /// ```compile_fail
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    /// In other contexts it may panic at runtime instead.  
+    ///
+    /// # Panics
+    ///
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        assert!(N >= 1, "`N` must be at least 1");
-
+        const { assert!(N > 0, "`N` must be at least 1") }
         Self { primes: primes() }
     }
 
@@ -127,45 +128,57 @@ impl<const N: usize> Primes<N> {
 
     // region: Next prime
 
-    /// Returns the largest prime less than or equal to `n`.  
-    /// If `n` is 0, 1, or larger than the largest prime in `self` this returns `None`.
+    /// Returns the largest prime less than `n`.  
+    /// If `n` is 0, 1, 2, or larger than the largest prime in `self` this returns `None`.
     ///
     /// Uses a binary search.
     /// # Example
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const LPLEQ400: Option<u32> = CACHE.largest_prime_leq(400);
-    /// assert_eq!(LPLEQ400, Some(397));
+    /// const PREV400: Option<u32> = CACHE.previous_prime(400);
+    /// assert_eq!(PREV400, Some(397));
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn largest_prime_leq(&self, n: Underlying) -> Option<Underlying> {
-        if n <= 1 {
+    pub const fn previous_prime(&self, n: Underlying) -> Option<Underlying> {
+        if n <= 2 {
             None
         } else {
             match self.binary_search(n) {
-                Ok(i) => Some(self.primes[i]),
-                Err(Some(i)) => Some(self.primes[i - 1]),
+                Ok(i) | Err(Some(i)) => {
+                    if i > 0 {
+                        Some(self.primes[i - 1])
+                    } else {
+                        None
+                    }
+                }
                 Err(None) => None,
             }
         }
     }
 
-    /// Returns the smallest prime greater than or equal to `n`.  
-    /// If `n` is larger than the largest prime in `self` this returns `None`.
+    /// Returns the smallest prime greater than `n`.  
+    /// If `n` is larger than or equal to the largest prime in `self` this returns `None`.
     ///
     /// Uses a binary search.
     /// # Example
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const SPGEQ: Option<u32> = CACHE.smallest_prime_geq(400);
-    /// assert_eq!(SPGEQ, Some(401));
+    /// const NEXT: Option<u32> = CACHE.next_prime(400);
+    /// assert_eq!(NEXT, Some(401));
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn smallest_prime_geq(&self, n: Underlying) -> Option<Underlying> {
+    pub const fn next_prime(&self, n: Underlying) -> Option<Underlying> {
         match self.binary_search(n) {
-            Ok(i) | Err(Some(i)) => Some(self.primes[i]),
+            Ok(i) => {
+                if i + 1 < self.len() {
+                    Some(self.primes[i + 1])
+                } else {
+                    None
+                }
+            }
+            Err(Some(i)) => Some(self.primes[i]),
             Err(None) => None,
         }
     }
@@ -175,10 +188,10 @@ impl<const N: usize> Primes<N> {
     /// Searches the underlying array of primes for the target integer.
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
     /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
-    /// If the target could be inserted into the array while maintaining the sorted order, the [`Some`](Option::Some)
-    /// variant contains the index of that location.
+    /// If the target could be inserted into the array while maintaining the sorted order, the [`Option::Some`]
+    /// variant is returned and contains the index of that location.
     /// If the target is larger than the largest prime in the array no information about where it might fit is available,
-    /// and a [`None`](Option::None) is returned.
+    /// and an [`Option::None`] is returned.
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
         if target > *self.last() {
@@ -208,6 +221,7 @@ impl<const N: usize> Primes<N> {
     /// Converts `self` into an array of size `N`.
     ///
     /// # Example
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
@@ -296,6 +310,14 @@ impl<const N: usize> Primes<N> {
     }
 }
 
+/// This statically asserts that N > 0.
+impl<const N: usize> Default for Primes<N> {
+    fn default() -> Self {
+        const { assert!(N > 0, "`N` must be at least 1") }
+        Self::new()
+    }
+}
+
 impl<const N: usize, I> core::ops::Index<I> for Primes<N>
 where
     I: core::slice::SliceIndex<[Underlying]>,
@@ -303,7 +325,7 @@ where
     type Output = I::Output;
     #[inline]
     fn index(&self, index: I) -> &Self::Output {
-        &self.primes[index]
+        self.primes.index(index)
     }
 }
 
@@ -487,40 +509,47 @@ mod test {
     }
 
     #[test]
-    fn check_largest_prime_leq() {
+    fn check_previous_prime() {
         const CACHE: Primes<100> = Primes::new();
-        const LPLEQ0: Option<Underlying> = CACHE.largest_prime_leq(0);
-        const LPLEQ400: Option<Underlying> = CACHE.largest_prime_leq(400);
-        const LPLEQ541: Option<Underlying> = CACHE.largest_prime_leq(541);
-        const LPLEQ542: Option<Underlying> = CACHE.largest_prime_leq(542);
-        assert_eq!(LPLEQ0, None);
-        assert_eq!(LPLEQ400, Some(397));
-        assert_eq!(LPLEQ541, Some(541));
-        assert_eq!(LPLEQ542, None);
+        const PREV0: Option<Underlying> = CACHE.previous_prime(0);
+        const PREV400: Option<Underlying> = CACHE.previous_prime(400);
+        const PREV541: Option<Underlying> = CACHE.previous_prime(541);
+        const PREV542: Option<Underlying> = CACHE.previous_prime(542);
+        const PREVS: [Underlying; 18] = [
+            2, 3, 3, 5, 5, 7, 7, 7, 7, 11, 11, 13, 13, 13, 13, 17, 17, 19,
+        ];
+        for (i, prev) in PREVS.into_iter().enumerate() {
+            println!("n = {}", i + 3);
+            assert_eq!(Some(prev), CACHE.previous_prime(i as u32 + 3));
+        }
+        assert_eq!(PREV0, None);
+        assert_eq!(PREV400, Some(397));
+        assert_eq!(PREV541, Some(523));
+        assert_eq!(PREV542, None);
     }
 
     #[test]
-    fn check_smallest_prime_geq() {
+    fn check_next_prime() {
         const CACHE: Primes<100> = Primes::new();
-        const SPGEQ0: Option<Underlying> = CACHE.smallest_prime_geq(0);
-        const SPGEQ400: Option<Underlying> = CACHE.smallest_prime_geq(400);
-        const SPGEQ541: Option<Underlying> = CACHE.smallest_prime_geq(541);
-        const SPGEQ542: Option<Underlying> = CACHE.smallest_prime_geq(542);
+        const SPGEQ0: Option<Underlying> = CACHE.next_prime(0);
+        const SPGEQ400: Option<Underlying> = CACHE.next_prime(400);
+        const SPGEQ541: Option<Underlying> = CACHE.next_prime(540);
+        const SPGEQ542: Option<Underlying> = CACHE.next_prime(541);
         assert_eq!(SPGEQ0, Some(2));
         assert_eq!(SPGEQ400, Some(401));
         assert_eq!(SPGEQ541, Some(541));
         assert_eq!(SPGEQ542, None);
 
-        const N: usize = 32;
+        const N: usize = 31;
         const NEXT_PRIME: [u32; N] = [
-            2, 2, 2, 3, 5, 5, 7, 7, 11, 11, 11, 11, 13, 13, 17, 17, 17, 17, 19, 19, 23, 23, 23, 23,
+            2, 2, 3, 5, 5, 7, 7, 11, 11, 11, 11, 13, 13, 17, 17, 17, 17, 19, 19, 23, 23, 23, 23,
             29, 29, 29, 29, 29, 29, 31, 31,
         ];
         const P: Primes<N> = Primes::new();
 
         for n in 0..N {
             println!("{n}");
-            assert_eq!(P.smallest_prime_geq(n as u32), Some(NEXT_PRIME[n]));
+            assert_eq!(P.next_prime(n as u32), Some(NEXT_PRIME[n]));
         }
     }
 
@@ -533,7 +562,7 @@ mod test {
     }
 
     #[test]
-    fn verity_as_slice() {
+    fn verify_as_slice() {
         const N: usize = 10;
         const P: Primes<N> = Primes::new();
         const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];

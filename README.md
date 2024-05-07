@@ -9,13 +9,13 @@ A crate for generating and working with prime numbers in const contexts.
 `#![no_std]` compatible.
 
 ## Examples
-Generate arrays of prime numbers with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
+Generate arrays of prime numbers with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
 ```rust
 const PRIMES: [u32; 10] = primes();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-or with the type `Primes` which ensures that a non-zero number of primes are generated:
+or with the wrapping type [`Primes`]:
 ```rust
 const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
@@ -40,29 +40,53 @@ assert_eq!(PRIMES_LEQ_100, Some(25));
 assert!(CACHE.is_prime(1000).is_none());
 assert!(CACHE.count_primes_leq(1000).is_none());
 ```
-Creating a `Primes<0>` is a compile fail in const contexts and a panic otherwise.  
+Sieve a range of numbers for their prime status with `sieve`:
+```rust
+const N: usize = 10;
+const PRIME_STATUS: [bool; N] = sieve();
+//                        0      1      2     3     4      5     6      7     8      9
+assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
+```  
 
-### Other functionality
-Use `is_prime` to test whether a given number is prime
+## Arbitrary ranges
+The crate provides prime generation and sieving functions with suffixes, e.g. `primes_geq` and `sieve_lt`
+that can be used to work with ranges that don't start at zero. They take two generics: the number of elements
+to store in the binary and the size of the sieve used during evaluation. The sieve size must be the cieling
+of the square root of the largest encountered value:
+```rust
+//                              ceil(sqrt(5_000_000_063)) = 70_711
+const PRIMES_GEQ: const_primes::Result<3> = primes_geq::<3, 70_711>(5_000_000_031);
+assert_eq!(PRIMES_GEQ?, [5_000_000_039, 5_000_000_059, 5_000_000_063]);
+```
+```rust
+const N: usize = 70711;
+const PRIME_STATUS_LT: [bool; N] = sieve_lt(5_000_000_031);
+//                                    5_000_000_028  5_000_000_029  5_000_000_030
+assert_eq!(PRIME_STATUS_LT[N - 3..], [false,         true,          false]);
+```
+The sieving functions have yet to be modified for two generics, and must save the entire sieve in the binary.
+## Other functionality
+Use `is_prime` to test whether a given number is prime:
 ```rust
 const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 assert!(CHECK);
 ```
-or `are_prime` to compute the prime status of the `N` first integers,
+Find the next or previous prime numbers with `next_prime` and `previous_prime` if they exist:
 ```rust
-const N: usize = 10;
-const PRIME_STATUS: [bool; N] = are_prime();
-//                        0      1      2     3     4      5     6      7     8      9
-assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
-```
-or `are_prime_below` to compute the prime status of the `N` largest integers below a given value,
-```rust
-const N: usize = 70711;
-const BIG_PRIME_STATUS: [bool; N] = are_prime_below(5_000_000_031);
-//                                     5_000_000_028  5_000_000_029  5_000_000_030
-assert_eq!(BIG_PRIME_STATUS[N - 3..], [false,         true,          false]);
+const NEXT: Option<u64> = next_prime(25);
+const PREV: Option<u64> = previous_prime(25);
+const NOSUCH: Option<u64> = previous_prime(2);
+
+assert_eq!(NEXT, Some(29));
+assert_eq!(PREV, Some(23));
+assert_eq!(NOSUCH, None);
 ```
 and more!
+
+## Features
+
+`std`: derives the `Error` trait for the error types.  
+`alloc`: enables conversion of the type returned by `primes_geq` and `primes_lt` into `Vec`s and `Box`ed slices.
 
 ## License
 
