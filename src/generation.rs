@@ -287,7 +287,7 @@ macro_rules! const_primes {
             $n,
             {
                 let mem = { $lim };
-                $crate::ඞ_const_primes_isqrt!(mem) as ::core::primitive::usize + 1
+                $crate::ඞ_const_primes_isqrt!(mem) as ::core::primitive::usize + 1 + { $n }
             },
         >($lim)
     };
