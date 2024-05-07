@@ -115,9 +115,6 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Fails to compile if `N` or `MEM` is 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
 ///
-/// The return array fills from the end until either it is full,
-/// or there are no more primes.
-///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
 /// # Example
@@ -281,10 +278,7 @@ macro_rules! primes_segment {
 /// Fails to compile if `N` is 0. If `lower_limit` is less than 2 this functions assumes that it is 2,
 /// since there are no primes smaller than 2.
 ///
-/// This function will fill the output array from index 0 and stop generating primes if they exceed `N^2`.
-/// In that case the remaining elements of the output array will be 0.
-///
-/// If you want to compute primes smaller than the input, take a look at [`primes_lt`].
+/// If you want to compute primes smaller than some limit, take a look at [`primes_lt`].
 ///
 /// # Examples
 ///
@@ -384,13 +378,13 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
 /// is invalid or does not work to produce the requested primes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Error {
-    /// the limit was larger than `MEM^2`.
+    /// The limit was larger than `MEM^2`.
     TooLargeLimit(u64, u64),
-    /// the limit was smaller than or equal to 2.
+    /// The limit was smaller than or equal to 2.
     TooSmallLimit(u64),
-    /// encountered a number larger than `MEM`^2.
+    /// Encountered a number larger than `MEM`^2.
     SieveOverrun(u64),
-    /// ran out of primes.
+    /// Ran out of primes.
     OutOfPrimes,
 }
 

@@ -47,17 +47,17 @@
 //! ```
 //! ## Arbitrary ranges
 //!
-//! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_geq`] and [`sieve_lt`]
+//! The crate provides prime generation and sieving functions with suffixes, e.g. [`primes_lt`] and [`sieve_geq`]
 //! that can be used to work with ranges that don't start at zero. They take two generics: the number of primes
 //! to store in the binary, and the size of the sieve used during evaluation
 //! (which must be at least the ceiling of the square root of the largest encountered number).
 //! This means that one can sieve to large numbers, but doesn't need to store the entire sieve in the binary.
 //! ```
-//! use const_primes::{primes_geq, Error};
-//! // ceil(sqrt(5_000_000_063)) = 70_711
-//! const P_GEQ: Result<[u64; 3], Error> = primes_geq::<3, 70_711>(5_000_000_031);
+//! use const_primes::{primes_lt, Error, isqrt};
+//! const LIMIT: u64 = 5_000_000_031;
+//! const PRIMES_LT: Result<[u64; 3], Error> = primes_lt::<3, {isqrt(LIMIT) as usize + 1}>(LIMIT);
 //!
-//! assert_eq!(P_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
+//! assert_eq!(PRIMES_LT, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 //! ```
 //! If you do not wish to compute the required sieve size yourself,
 //! you can use the provided macro [`primes_segment!`]:
@@ -124,7 +124,7 @@ mod sieving;
 mod wrapper;
 
 pub use generation::{primes, primes_geq, primes_lt, Error};
-use imath::isqrt;
+pub use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
 pub use sieving::{sieve, sieve_geq, sieve_lt};
