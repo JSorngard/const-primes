@@ -99,7 +99,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// ```
 /// # use const_primes::{sieve_lt, SieveError};
 /// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(26);
-/// assert_eq!(PS, Err(SieveError::TooLargeTotal));
+/// assert_eq!(PS, Err(SieveError::TooLargeLimit));
 /// ```
 /// or smaller than `N`:
 /// ```
@@ -125,7 +125,7 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
     };
 
     if upper_limit > mem_sqr {
-        return Err(SieveError::TooLargeTotal);
+        return Err(SieveError::TooLargeLimit);
     }
 
     let n64 = N as u64;
