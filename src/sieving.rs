@@ -78,7 +78,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 ///     [false, false, false, false, true],
 /// );
 /// ```
-/// Sieve limited ranges of very large values. Functions provided by the crate can help you
+/// Sieve limited ranges of large values. Functions provided by the crate can help you
 /// compute the needed sieve size:
 /// ```
 /// # use const_primes::{sieve_lt, SieveError};
@@ -252,7 +252,7 @@ impl std::error::Error for SieveError {}
 /// //                        9,     10,    11
 /// assert_eq!(PRIME_STATUS, [false, false, true]);
 /// ```
-/// Sieve limited ranges of very large values. Functions provided by the crate can help you
+/// Sieve limited ranges of large values. Functions provided by the crate can help you
 /// compute the needed sieve size:
 /// ```
 /// # use const_primes::{sieve_geq, SieveError};

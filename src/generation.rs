@@ -129,12 +129,15 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// const PRIMES: [u64;4] = match primes_lt::<4, 10>(100) {Ok(ps) => ps, Err(_) => panic!()};
 /// assert_eq!(PRIMES, [79, 83, 89, 97]);
 /// ```
-/// Compute larger primes:
+/// Compute limited ranges of large primes. Functions provided by the crate can help you
+/// compute the needed sieve size:
 /// ```
 /// # use const_primes::{primes_lt, GenerationError};
 /// use const_primes::isqrt;
+/// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_030;
-/// const BIG_PRIMES: Result<[u64; 3], GenerationError> = primes_lt::<3, {isqrt(LIMIT) as usize + 1}>(LIMIT);
+/// const MEM: usize = isqrt(LIMIT) as usize + 1;
+/// const BIG_PRIMES: Result<[u64; N], GenerationError> = primes_lt::<N, MEM>(LIMIT);
 ///
 /// assert_eq!(BIG_PRIMES, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 /// ```
@@ -279,19 +282,20 @@ macro_rules! primes_segment {
 ///
 /// Basic usage:
 /// ```
-/// use const_primes::{primes_geq, GenerationError};
+/// use const_primes::primes_geq;
 /// // Compute 5 primes larger than 40. The largest will be 59, so `MEM` needs to be at least 8.
 /// const PRIMES: [u64; 5] = match primes_geq::<5, 8>(40) {Ok(ps) => ps, Err(_) => panic!()};
 /// assert_eq!(PRIMES, [41, 43, 47, 53, 59]);
 /// ```
-/// Estimate the size of `MEM` using the square root of the limit (and some extra, proportional to `N`):
+/// Compute limited ranges of large primes. Functions provided by the crate can help you
+/// compute the needed sieve size:
 /// ```
 /// # use const_primes::{primes_geq, GenerationError};
 /// use const_primes::isqrt;
 /// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_030;
-/// # #[allow(long_running_const_eval)]
-/// const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_geq::<N, {isqrt(LIMIT) as usize + 1 + N}>(LIMIT);
+/// const MEM: usize = isqrt(LIMIT) as usize + 1 + N;
+/// const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_geq::<N, MEM>(LIMIT);
 /// assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 /// # Ok::<(), GenerationError>(())
 /// ```
