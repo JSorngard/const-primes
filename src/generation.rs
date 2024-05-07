@@ -211,7 +211,6 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
         upper_limit = smallest_found_prime;
         if upper_limit <= 2 && total_primes_found < N {
             return Err(Error::OutOfPrimes);
-            //return Err(ArraySection::new(primes, N - total_primes_found..N));
         }
     }
 
