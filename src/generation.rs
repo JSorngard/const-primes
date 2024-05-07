@@ -115,6 +115,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
+/// If you do not wish to compute the size of the sieve manually, take a look at [`primes_segment!`].
+///
 /// # Example
 ///
 /// Basic usage:
@@ -258,6 +260,8 @@ macro_rules! primes_segment {
 /// since there are no primes smaller than 2.
 ///
 /// If you want to compute primes smaller than some limit, take a look at [`primes_lt`].
+///
+/// If you do not wish to compute the size of the sieve manually, take a look at [`primes_segment!`].
 ///
 /// # Examples
 ///
