@@ -15,7 +15,7 @@ const PRIMES: [u32; 10] = primes();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-or with the wrapping type [`Primes`]:
+or with the wrapping type `Primes`:
 ```rust
 const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
