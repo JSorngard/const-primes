@@ -427,11 +427,11 @@ mod test {
     fn sanity_check_primes_geq() {
         {
             const P: Result<[u64; 5], Error> = primes_geq::<5, 5>(10);
-            assert_eq!(P.unwrap().as_slice(), [11, 13, 17, 19, 23]);
+            assert_eq!(P, Ok([11, 13, 17, 19, 23]));
         }
         {
             const P: Result<[u64; 5], Error> = primes_geq::<5, 5>(0);
-            assert_eq!(P.unwrap().as_slice(), [2, 3, 5, 7, 11]);
+            assert_eq!(P, Ok([2, 3, 5, 7, 11]));
         }
         {
             const P: Result<[u64; 1], Error> = primes_geq::<1, 1>(0);
