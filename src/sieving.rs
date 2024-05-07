@@ -238,7 +238,7 @@ impl std::error::Error for SieveError {}
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
 /// prime status of the integers below some number, see [`sieve_lt`].
 ///
-/// # Example
+/// # Examples
 ///
 /// The size of the sieve, `MEM`, must be large enough for the largest sieved number to be smaller than `MEM`^2.
 /// ```
