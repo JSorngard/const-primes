@@ -51,6 +51,10 @@ pub(crate) const fn sieve_segment<const N: usize>(
 
 /// Returns an array of size `N` that indicates which of the `N` integers in smaller than `upper_limit` are prime.
 ///
+/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the return array.
+/// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
+/// that is: `MEM`^2 must be at least as large as `upper_limit`.
+///
 /// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
 /// the integers above some number, see [`sieve_geq`].
 ///
@@ -60,19 +64,28 @@ pub(crate) const fn sieve_segment<const N: usize>(
 ///
 /// Basic usage
 /// ```
-/// # use const_primes::{sieve_lt, SieveError};
-/// const PRIME_STATUSES: Result<[bool; 5], SieveError> = sieve_lt::<5, 6>(30);
+/// # use const_primes::sieve_lt;
+/// // The five largest numbers smaller than 30 are 25, 26, 27, 28 and 29.
+/// const N: usize = 5;
+/// const LIMIT: u64 = 30;
+/// // We thus need a memory size of at least 6, since 5*5 < 29, and therefore isn't enough.
+/// const MEM: usize = 6;
+/// const PRIME_STATUSES: [bool; N] = match sieve_lt::<N, MEM>(LIMIT) {Ok(s) => s, Err(_) => panic!()};
 ///
 /// assert_eq!(
 ///     PRIME_STATUSES,
-/// //      25     26     27     28     29
-///     Ok([false, false, false, false, true]),
+/// //   25     26     27     28     29
+///     [false, false, false, false, true],
 /// );
 /// ```
-/// Sieve limited ranges of very large values
+/// Sieve limited ranges of very large values. Functions provided by the crate can help you
+/// compute the needed sieve size:
 /// ```
 /// # use const_primes::{sieve_lt, SieveError};
-/// const BIG_PRIME_STATUSES: Result<[bool; 3], SieveError> = sieve_lt::<3, 70_711>(5_000_000_031);
+/// use const_primes::isqrt;
+/// const N: usize = 3;
+/// const LIMIT: u64 = 5_000_000_031;
+/// const BIG_PRIME_STATUSES: Result<[bool; N], SieveError> = sieve_lt::<N, {isqrt(LIMIT) as usize + 1}>(LIMIT);
 /// assert_eq!(
 ///     BIG_PRIME_STATUSES,
 /// //      5_000_000_028  5_000_000_029  5_000_000_030
@@ -216,6 +229,10 @@ impl std::error::Error for SieveError {}
 
 /// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
 ///
+/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the binary.
+/// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
+/// that is `MEM`^2 must be larger than `lower_limit + N`.
+///
 /// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
 ///
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
@@ -229,21 +246,22 @@ impl std::error::Error for SieveError {}
 /// // The three numbers larger than or equal to 9 are 9, 10 and 11.
 /// const N: usize = 3;
 /// const LIMIT: u64 = 9;
-/// // We thus need a memory size of at least 4, since 3*3 < 11, which isn't enough.
+/// // We thus need a memory size of at least 4, since 3*3 < 11, and therefore isn't enough.
 /// const MEM: usize = 4;
 /// const PRIME_STATUS: [bool; N] = match sieve_geq::<N, MEM>(LIMIT) {Ok(s) => s, Err(_) => panic!()};
 /// //                        9,     10,    11
 /// assert_eq!(PRIME_STATUS, [false, false, true]);
 /// ```
-/// Enough memory can also be ensured with the help of functions provided by this crate:
+/// Sieve limited ranges of very large values. Functions provided by the crate can help you
+/// compute the needed sieve size:
 /// ```
 /// # use const_primes::{sieve_geq, SieveError};
 /// use const_primes::isqrt;
 /// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_038;
-/// const PRIME_STATUS: Result<[bool; N], SieveError> = sieve_geq::<N, {isqrt(LIMIT) as usize + 1 + N}>(LIMIT);
-/// //                           5_000_000_038  5_000_000_039  5_000_000_040
-/// assert_eq!(PRIME_STATUS, Ok([false,         true,          false]));
+/// const BIG_PRIME_STATUS: Result<[bool; N], SieveError> = sieve_geq::<N, {isqrt(LIMIT) as usize + 1 + N}>(LIMIT);
+/// //                               5_000_000_038  5_000_000_039  5_000_000_040
+/// assert_eq!(BIG_PRIME_STATUS, Ok([false,         true,          false]));
 /// ```
 ///
 /// # Errors
