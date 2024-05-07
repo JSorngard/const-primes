@@ -287,11 +287,11 @@ macro_rules! primes_segment {
 /// assert!(matches!(PRIMES, Err(Error::SieveOverrun(_))));
 /// ```
 ///
-/// Returns an error if `lower_limit` is larger than or equal to `MEM^2`.
+/// Also returns an error if `lower_limit` is larger than or equal to `MEM^2`:
 /// ```
 /// # use const_primes::{primes_geq, Error};
 /// const PRIMES: Result<[u64; 5], Error> = primes_geq::<5, 5>(26);
-/// assert!(PRIMES.is_err());
+/// assert!(matches!(PRIMES, Err(Error::TooLargeLimit(_, _))));
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
