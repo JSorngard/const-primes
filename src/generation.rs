@@ -122,28 +122,30 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Basic usage:
 /// ```
 /// # use const_primes::{primes_lt, Error};
-/// // Sieving up to 100 means the sieve needs to be of size sqrt(100) = 10.
+/// // Sieving up to 100 means the sieve needs to be of size ceil(sqrt(100)) = 10.
 /// // However, we only save the 4 largest primes in the constant.
 /// const PRIMES: [u64;4] = match primes_lt::<4, 10>(100) {Ok(ps) => ps, Err(_) => panic!()};
 /// assert_eq!(PRIMES, [79, 83, 89, 97]);
 /// ```
-/// Compute larger primes without starting from zero:
+/// Compute larger primes:
 /// ```
 /// # use const_primes::{primes_lt, Error};
+/// use const_primes::isqrt;
+/// const LIMIT: u64 = 5_000_000_030;
 /// # #[allow(long_running_const_eval)]
-/// const BIG_PRIMES: Result<[u64; 3], Error> = primes_lt::<3, 70_711>(5_000_000_030);
+/// const BIG_PRIMES: Result<[u64; 3], Error> = primes_lt::<3, {isqrt(LIMIT) as usize + 1}>(LIMIT);
 ///
-/// assert_eq!(BIG_PRIMES?, [4_999_999_903, 4_999_999_937, 5_000_000_029]);
-/// # Ok::<(), Error>(())
+/// assert_eq!(BIG_PRIMES, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 /// ```
 /// # Errors
 ///
 /// If the number of primes requested, `N`, is larger than
-/// the number of primes that exists below the `lower_limit` we
+/// the number of primes that exists below the `upper_limit` we
 /// will get an error:
 /// ```
 /// # use const_primes::{primes_lt, Error};
-/// const PRIMES: Result<[u64; 9], Error> = primes_lt::<9, 9>(10);
+/// const N: usize = 9;
+/// const PRIMES: Result<[u64; N], Error> = primes_lt::<N, N>(10);
 /// assert_eq!(PRIMES, Err(Error::OutOfPrimes));
 /// ```
 ///
@@ -152,8 +154,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// # use const_primes::{primes_lt, Error};
 /// const TOO_LARGE_LIMIT: Result<[u64; 3], Error> = primes_lt::<3, 5>(26);
 /// const TOO_SMALL_LIMIT: Result<[u64 ;1], Error> = primes_lt::<1, 1>(1);
-/// assert!(TOO_LARGE_LIMIT.is_err());
-/// assert!(TOO_SMALL_LIMIT.is_err());
+/// assert!(matches!(TOO_LARGE_LIMIT, Err(Error::TooLargeLimit(_, _))));
+/// assert!(matches!(TOO_SMALL_LIMIT, Err(Error::TooSmallLimit(_))));
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
