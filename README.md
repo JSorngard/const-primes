@@ -61,11 +61,15 @@ const PRIMES_GEQ: Result<[u64; 3], GenerationError> = primes_geq::<3, 70_711>(5_
 assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 ```
 ```rust
-const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_lt::<3, 70_711>(5_000_000_031);
+const PRIME_STATUS_LT: Result<[bool; 3], SieveError> = sieve_lt::<3, 70_711>(5_000_000_031);
 //                              5_000_000_028  5_000_000_029  5_000_000_030
 assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 ```
-The sieve size can be computed by the crate by using the macro `primes_segment!` and `sieve_segment!`.
+The sieve size can be computed by the crate by using the macros `primes_segment!` and `sieve_segment!`.
+```rust
+const PRIMES_GEQ: Result<[u64; 2], GenerationError> = primes_segment!(2; >= 615);
+assert_eq!(PRIMES_GEQ, Ok([617, 619]));
+```
 
 ## Other functionality
 
