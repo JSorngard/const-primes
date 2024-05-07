@@ -69,6 +69,8 @@
 //! assert_eq!(PRIMES_OVER_100, Ok([101, 103, 107]));
 //! assert_eq!(PRIMES_UNDER_100, Ok([83, 89, 97]));
 //! ```
+//! it may, however, overestimate the required sieve size.
+//!
 //! ```
 //! # use const_primes::sieve_lt;
 //! const N: usize = 70711;
