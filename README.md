@@ -9,6 +9,7 @@ A crate for generating and working with prime numbers in const contexts.
 `#![no_std]` compatible.
 
 ## Examples
+
 Generate arrays of prime numbers with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
 ```rust
 const PRIMES: [u32; 10] = primes();
@@ -49,6 +50,7 @@ assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, fa
 ```  
 
 ## Arbitrary ranges
+
 The crate provides prime generation and sieving functions with suffixes, e.g. `primes_geq` and `sieve_lt`
 that can be used to work with ranges that don't start at zero. They take two generics: the number of elements
 to store in the binary and the size of the sieve used during evaluation. The sieve size must be the ceiling
@@ -64,7 +66,9 @@ const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_lt::<3, 70_711>(5_0
 assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 ```
 The sieve size can be computed by the crate by using the macro `primes_segment!` and `sieve_segment!`.
+
 ## Other functionality
+
 Use `is_prime` to test whether a given number is prime:
 ```rust
 const CHECK: bool = is_prime(18_446_744_073_709_551_557);
