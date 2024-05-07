@@ -55,10 +55,12 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is: `MEM`^2 must be at least as large as `upper_limit`.
 ///
+/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
+///
 /// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
 /// the integers above some number, see [`sieve_geq`].
 ///
-/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
+/// If you do not wish to compute the size requirement of the sieve manually, take a look at [`sieve_segment!`](crate::sieve_segment).
 ///
 /// # Examples
 ///
@@ -238,6 +240,8 @@ impl std::error::Error for SieveError {}
 ///
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
 /// prime status of the integers below some number, see [`sieve_lt`].
+///
+/// If you do not wish to compute the size requirement of the sieve manually, take a look at [`sieve_segment!`](crate::sieve_segment).
 ///
 /// # Examples
 ///

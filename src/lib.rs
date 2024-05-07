@@ -56,7 +56,7 @@
 //! use const_primes::{primes_lt, GenerationError, isqrt};
 //! const LIMIT: u64 = 5_000_000_031;
 //! const N: usize = 3;
-//! // `const_primes::isqrt` can be used to compute the memory requirement of the sieve.
+//! // `const_primes::isqrt` can be used to compute the size requirement of the sieve.
 //! // Due to limitations on const generics, this can not be done inside the function.
 //! const MEM: usize = isqrt(LIMIT) as usize + 1;
 //! const PRIMES_LT: Result<[u64; N], GenerationError> = primes_lt::<N, MEM>(LIMIT);
@@ -74,16 +74,6 @@
 //! assert_eq!(PRIMES_UNDER_100, Ok([83, 89, 97]));
 //! ```
 //! it may, however, overestimate the required sieve size.
-//!
-//! ```
-//! # use const_primes::{sieve_geq, SieveError, isqrt};
-//! const N: usize = 3;
-//! const LIMIT: u64 = 5_000_000_038;
-//! const MEM: usize = isqrt(LIMIT) as usize + 1 + N;
-//! const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_geq::<N, MEM>(LIMIT);
-//! //                              5_000_000_028  5_000_000_029  5_000_000_030
-//! assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
-//! ```
 //!
 //! ## Other functionality
 //!
