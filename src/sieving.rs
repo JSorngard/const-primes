@@ -196,7 +196,7 @@ impl core::fmt::Display for SieveError {
 impl std::error::Error for SieveError {}
 
 /// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
-/// Fails to compile if `N` is 0.
+/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
 ///
 /// # Example
 ///
@@ -219,7 +219,10 @@ impl std::error::Error for SieveError {}
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    const { assert!(N > 0, "`N` must be at least 1") }
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    }
     let (mem64, mem_sqr) = const {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -238,6 +241,8 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 
     // If `lower_limit` is zero then this is the same as just calling `sieve`, and we can return early.
     if lower_limit == 0 {
+        // We do not merge it with the computation of `base_sieve` below, since here we only
+        // compute `N` values instead of `MEM`.
         return Ok(sieve());
     }
 
