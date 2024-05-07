@@ -51,7 +51,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 
 /// Returns an array of size `N` that indicates which of the `N` integers in smaller than `upper_limit` are prime.
 ///
-/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the return array.
+/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is: `MEM`^2 must be at least as large as `upper_limit`.
 ///
@@ -85,7 +85,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// use const_primes::isqrt;
 /// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_031;
-/// const BIG_PRIME_STATUSES: Result<[bool; N], SieveError> = sieve_lt::<N, {isqrt(LIMIT) as usize + 1}>(LIMIT);
+/// const MEM: usize = isqrt(LIMIT) as usize + 1;
+/// const BIG_PRIME_STATUSES: Result<[bool; N], SieveError> = sieve_lt::<N, MEM>(LIMIT);
 /// assert_eq!(
 ///     BIG_PRIME_STATUSES,
 /// //      5_000_000_028  5_000_000_029  5_000_000_030
@@ -229,7 +230,7 @@ impl std::error::Error for SieveError {}
 
 /// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
 ///
-/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the binary.
+/// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is `MEM`^2 must be larger than `lower_limit + N`.
 ///
@@ -259,7 +260,8 @@ impl std::error::Error for SieveError {}
 /// use const_primes::isqrt;
 /// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_038;
-/// const BIG_PRIME_STATUS: Result<[bool; N], SieveError> = sieve_geq::<N, {isqrt(LIMIT) as usize + 1 + N}>(LIMIT);
+/// const MEM: usize = isqrt(LIMIT) as usize + 1 + N;
+/// const BIG_PRIME_STATUS: Result<[bool; N], SieveError> = sieve_geq::<N, MEM>(LIMIT);
 /// //                               5_000_000_038  5_000_000_039  5_000_000_040
 /// assert_eq!(BIG_PRIME_STATUS, Ok([false,         true,          false]));
 /// ```
