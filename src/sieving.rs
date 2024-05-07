@@ -266,11 +266,13 @@ impl std::error::Error for SieveError {}
 ///
 /// # Errors
 ///
-/// Returns an error if `MEM + lower_limit` is larger than `MEM^2`.
+/// Returns an error if `MEM + lower_limit` is larger than `MEM^2` or doesn't fit in a `u64`.
 /// ```
 /// # use const_primes::{sieve_geq, SieveError};
-/// const P: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(21);
-/// assert_eq!(P, Err(SieveError::TooLargeTotal));
+/// const P1: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(21);
+/// const P2: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(u64::MAX);
+/// assert_eq!(P1, Err(SieveError::TooLargeTotal));
+/// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
