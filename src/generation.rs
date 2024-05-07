@@ -239,40 +239,24 @@ macro_rules! ඞ_const_primes_isqrt {
     };
 }
 
-/// Call [`primes`], [`primes_geq`] and [`primes_lt`], and automatically compute the memory requirement.
+/// Call [`primes_geq`] and [`primes_lt`], and automatically compute the memory requirement.
 ///
 /// # Example
 ///
 /// ```
-/// # use const_primes::{const_primes, Error};
-/// const PRIMES: [u32; 3] = const_primes!();
+/// # use const_primes::{primes_segment, Error};
 /// const LIMIT: u64 = 5_000_000_031;
-/// const PRIMES_GEQ: Result<[u64; 3], Error> = const_primes!(3; >= LIMIT);
-/// const PRIMES_LT: Result<[u64; 3], Error> = const_primes!(3; < LIMIT);
+/// const PRIMES_GEQ: Result<[u64; 3], Error> = primes_segment!(3; >= LIMIT);
+/// const PRIMES_LT: Result<[u64; 3], Error> = primes_segment!(3; < LIMIT);
 /// // Can also be used at runtime:
-/// let primes = const_primes!(3);
-/// let primes_geq = const_primes!(3; >= LIMIT);
+/// let primes_geq = primes_segment!(3; >= LIMIT);
 ///
-/// assert_eq!(primes, PRIMES);
-/// assert_eq!(PRIMES, [2, 3, 5]);
 /// assert_eq!(PRIMES_GEQ, primes_geq);
 /// assert_eq!(PRIMES_GEQ, Ok([5000000039, 5000000059, 5000000063]));
 /// assert_eq!(PRIMES_LT, Ok([4999999903, 4999999937, 5000000029]));
-/// # Ok::<(), Error>(())
 /// ```
 #[macro_export]
-macro_rules! const_primes {
-    () => {
-        $crate::primes()
-    };
-    ($n:expr) => {
-        $crate::primes::<
-            {
-                let mem = { $n };
-                mem
-            },
-        >()
-    };
+macro_rules! primes_segment {
     ($n:expr; < $lim:expr) => {
         $crate::primes_lt::<
             $n,

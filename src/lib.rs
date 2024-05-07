@@ -60,11 +60,11 @@
 //! assert_eq!(P_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 //! ```
 //! If you do not wish to compute the required sieve size yourself,
-//! you can use the provided macro [`const_primes!`]:
+//! you can use the provided macro [`primes_segment!`]:
 //! ```
-//! # use const_primes::{const_primes, Error};
-//! const PRIMES_OVER_100: Result<[u64; 3], Error> = const_primes!(3; >= 100);
-//! const PRIMES_UNDER_100: Result<[u64; 3], Error> = const_primes!(3; < 100);
+//! # use const_primes::{primes_segment, Error};
+//! const PRIMES_OVER_100: Result<[u64; 3], Error> = primes_segment!(3; >= 100);
+//! const PRIMES_UNDER_100: Result<[u64; 3], Error> = primes_segment!(3; < 100);
 //!
 //! assert_eq!(PRIMES_OVER_100, Ok([101, 103, 107]));
 //! assert_eq!(PRIMES_UNDER_100, Ok([83, 89, 97]));
