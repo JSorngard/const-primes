@@ -441,4 +441,16 @@ mod test {
             assert!(is_prime(prime));
         }
     }
+
+    #[test]
+    fn check_primes_segment() {
+        const P_GEQ: Result<[u64; 10], Error> = primes_segment!(10; >= 1000);
+        const P_LT: Result<[u64; 10], Error> = primes_segment!(10; < 1000);
+
+        assert_eq!(
+            P_GEQ,
+            Ok([1009, 1013, 1019, 1021, 1031, 1033, 1039, 1049, 1051, 1061])
+        );
+        assert_eq!(P_LT, Ok([937, 941, 947, 953, 967, 971, 977, 983, 991, 997]));
+    }
 }
