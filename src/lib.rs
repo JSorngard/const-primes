@@ -53,19 +53,19 @@
 //! (which must be at least the ceiling of the square root of the largest encountered number).
 //! This means that one can sieve to large numbers, but doesn't need to store the entire sieve in the binary.
 //! ```
-//! use const_primes::{primes_lt, Error, isqrt};
+//! use const_primes::{primes_lt, GenerationError, isqrt};
 //! const LIMIT: u64 = 5_000_000_031;
 //! const N: usize = 3;
-//! const PRIMES_LT: Result<[u64; N], Error> = primes_lt::<N, {isqrt(LIMIT) as usize + 1}>(LIMIT);
+//! const PRIMES_LT: Result<[u64; N], GenerationError> = primes_lt::<N, {isqrt(LIMIT) as usize + 1}>(LIMIT);
 //!
 //! assert_eq!(PRIMES_LT, Ok([4_999_999_903, 4_999_999_937, 5_000_000_029]));
 //! ```
 //! If you do not wish to compute the required sieve size yourself,
 //! you can use the provided macro [`primes_segment!`]:
 //! ```
-//! # use const_primes::{primes_segment, Error};
-//! const PRIMES_OVER_100: Result<[u64; 3], Error> = primes_segment!(3; >= 100);
-//! const PRIMES_UNDER_100: Result<[u64; 3], Error> = primes_segment!(3; < 100);
+//! # use const_primes::{primes_segment, GenerationError};
+//! const PRIMES_OVER_100: Result<[u64; 3], GenerationError> = primes_segment!(3; >= 100);
+//! const PRIMES_UNDER_100: Result<[u64; 3], GenerationError> = primes_segment!(3; < 100);
 //!
 //! assert_eq!(PRIMES_OVER_100, Ok([101, 103, 107]));
 //! assert_eq!(PRIMES_UNDER_100, Ok([83, 89, 97]));
@@ -116,7 +116,6 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-mod error;
 mod generation;
 mod imath;
 mod miller_rabin;
@@ -124,12 +123,11 @@ mod other_prime;
 mod sieving;
 mod wrapper;
 
-pub use error::Error;
-pub use generation::{primes, primes_geq, primes_lt};
+pub use generation::{primes, primes_geq, primes_lt, GenerationError};
 pub use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
-pub use sieving::{sieve, sieve_geq, sieve_lt};
+pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
 pub use wrapper::Primes;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
@@ -255,7 +253,7 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: Result<[u64; $n], Error> = primes_lt::<$n, $n>(100);
+                        const P: Result<[u64; $n], GenerationError> = primes_lt::<$n, $n>(100);
                         for (i, prime) in P.unwrap().as_slice().into_iter().enumerate() {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], *prime as u32);
                         }
@@ -303,9 +301,9 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [bool; $n] = sieve_geq(10);
-                        assert_eq!(&PRIMALITIES[10..10+$n], P);
-                        assert_eq!(&PRIMALITIES[10..10+$n], sieve_geq::<$n>(10));
+                        const P: Result<[bool; $n], SieveError> = sieve_geq::<$n, $n>(10);
+                        assert_eq!(&PRIMALITIES[10..10+$n], P.unwrap());
+                        assert_eq!(&PRIMALITIES[10..10+$n], sieve_geq::<$n, $n>(10).unwrap());
                     }
                 )+
             };
