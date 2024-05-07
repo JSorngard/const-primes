@@ -217,25 +217,6 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     Ok(primes)
 }
 
-/// Same as the private const fn isqrt in the crate.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! ඞ_const_primes_isqrt {
-    ($n:ident) => {
-        if $n <= 1 {
-            $n
-        } else {
-            let mut x0 = ::core::primitive::u64::pow(2, ::core::primitive::u64::ilog2($n) / 2 + 1);
-            let mut x1 = (x0 + $n / x0) / 2;
-            while x1 < x0 {
-                x0 = x1;
-                x1 = (x0 + $n / x0) / 2;
-            }
-            x0
-        }
-    };
-}
-
 /// Call [`primes_geq`] and [`primes_lt`], and automatically compute the memory requirement.
 ///
 /// # Example
@@ -259,7 +240,7 @@ macro_rules! primes_segment {
             $n,
             {
                 let mem = { $lim };
-                $crate::ඞ_const_primes_isqrt!(mem) as ::core::primitive::usize + 1
+                $crate::isqrt(mem) as ::core::primitive::usize + 1
             },
         >($lim)
     };
@@ -268,7 +249,7 @@ macro_rules! primes_segment {
             $n,
             {
                 let mem = { $lim };
-                $crate::ඞ_const_primes_isqrt!(mem) as ::core::primitive::usize + 1 + { $n }
+                $crate::isqrt(mem) as ::core::primitive::usize + 1 + { $n }
             },
         >($lim)
     };
