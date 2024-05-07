@@ -217,7 +217,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     Ok(primes)
 }
 
-/// Call [`primes_geq`] and [`primes_lt`], and automatically compute the memory requirement.
+/// Call [`primes_geq`] or [`primes_lt`], and automatically compute the memory requirement.
 ///
 /// # Example
 ///
