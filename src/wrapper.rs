@@ -325,7 +325,7 @@ where
     type Output = I::Output;
     #[inline]
     fn index(&self, index: I) -> &Self::Output {
-        &self.primes.index(index)
+        self.primes.index(index)
     }
 }
 
