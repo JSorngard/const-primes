@@ -115,7 +115,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
-/// If you do not wish to compute the size of the sieve manually, take a look at [`primes_segment!`].
+/// If you do not wish to compute the size requirement of the sieve manually, take a look at [`primes_segment!`].
 ///
 /// # Example
 ///
@@ -219,6 +219,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 
 /// Call [`primes_geq`] or [`primes_lt`], and automatically compute the memory requirement.
 ///
+/// Estimates the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`primes_lt`]
+/// and as `isqrt(lower_limit) + 1 + N` for [`primes_geq`].
+/// This will use more memory than needed for `primes_geq`.
+///
 /// # Example
 ///
 /// ```
@@ -256,12 +260,18 @@ macro_rules! primes_segment {
 }
 
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
+///
+/// This function uses a segmented sieve of size `MEM` for computation,
+/// but only saves the `N` requested primes in the binary.
+///
+/// Set `MEM` such that `MEM`^2 is larger than the largest prime you will encounter.
+///
 /// Fails to compile if `N` is 0. If `lower_limit` is less than 2 this functions assumes that it is 2,
 /// since there are no primes smaller than 2.
 ///
 /// If you want to compute primes smaller than some limit, take a look at [`primes_lt`].
 ///
-/// If you do not wish to compute the size of the sieve manually, take a look at [`primes_segment!`].
+/// If you do not wish to compute the size requirement of the sieve manually, take a look at [`primes_segment!`].
 ///
 /// # Examples
 ///
