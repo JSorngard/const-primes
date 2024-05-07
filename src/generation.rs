@@ -303,7 +303,8 @@ macro_rules! primes_segment {
 /// ```
 /// # use const_primes::{primes_geq, GenerationError};
 /// const PRIMES: Result<[u64; 3], GenerationError> = primes_geq::<3, 3>(5);
-/// assert!(matches!(PRIMES, Err(GenerationError::SieveOverrun(_))));
+/// // The sieve is unable to determine the prime status of 9, since that is the same or larger than `MEM`^2.
+/// assert_eq!(PRIMES, Err(GenerationError::SieveOverrun(9)));
 /// ```
 ///
 /// Also returns an error if `lower_limit` is larger than or equal to `MEM^2`:
