@@ -381,7 +381,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     Ok(primes)
 }
 
-/// The error returned by [`primes_lt`](crate::primes_lt) and [`primes_geq`](crate::primes_geq) if the input
+/// The error returned by [`primes_lt`] and [`primes_geq`] if the input
 /// is invalid or does not work to produce the requested primes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GenerationError {
