@@ -73,11 +73,10 @@
 //! it may, however, overestimate the required sieve size.
 //!
 //! ```
-//! # use const_primes::sieve_lt;
-//! const N: usize = 70711;
-//! const PRIME_STATUS_LT: [bool; N] = sieve_lt(5_000_000_031);
-//! //                                    5_000_000_028  5_000_000_029  5_000_000_030
-//! assert_eq!(PRIME_STATUS_LT[N - 3..], [false,         true,          false]);
+//! # use const_primes::{sieve_lt, SieveError};
+//! const PRIME_STATUS_LT: Result<[bool; 3], SieveError> = sieve_lt::<3, 70_711>(5_000_000_031);
+//! //                              5_000_000_028  5_000_000_029  5_000_000_030
+//! assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 //! ```
 //! Unfortunately the output array must be large enough to contain the prime sieve, which scales with
 //! the square root of largest relavant number, which is why the examples use a size of over 70000 even though
@@ -279,9 +278,9 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [bool; $n] = sieve_lt(100);
-                        assert_eq!(&PRIMALITIES[100-$n..], P);
-                        assert_eq!(&PRIMALITIES[100-$n..], sieve_lt::<$n>(100));
+                        const P: Result<[bool; $n], SieveError> = sieve_lt::<$n, $n>(100);
+                        assert_eq!(&PRIMALITIES[100-$n..], P.unwrap());
+                        assert_eq!(&PRIMALITIES[100-$n..], sieve_lt::<$n, $n>(100).unwrap());
                     }
                 )+
             };
