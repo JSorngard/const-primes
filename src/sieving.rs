@@ -320,6 +320,50 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
     Ok(ans)
 }
 
+/// Call [`sieve_lt`] and [`sieve_geq`], and automatically compute the memory requirement of the sieve.
+///
+/// Compute the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`sieve_lt`]
+/// and as `isqrt(lower_limit) + 1 + N` for [`sieve_geq`].
+///
+/// # Examples
+///
+/// ```
+/// # use const_primes::{sieve_segment, SieveError};
+/// const PRIME_STATUS_LT: Result<[bool; 5], SieveError> = sieve_segment!(5; < 100_005);
+/// const PRIME_STATUS_GEQ: Result<[bool; 7], SieveError> = sieve_segment!(7; >= 615);
+/// assert_eq!(
+///     PRIME_STATUS_LT,
+/// //      100_000  100_101  100_102  100_103  100_104
+///     Ok([false,   false,   false,   true,    false])
+/// );
+/// assert_eq!(
+///     PRIME_STATUS_GEQ,
+/// //      615    616    617   618    619   620    621
+///     Ok([false, false, true, false, true, false, false])
+/// );
+/// ```
+#[macro_export]
+macro_rules! sieve_segment {
+    ($n:expr; < $lim:expr) => {
+        $crate::sieve_lt::<
+            { $n },
+            {
+                let mem = { $lim };
+                $crate::isqrt(mem) as ::core::primitive::usize + 1
+            },
+        >({ $lim })
+    };
+    ($n:expr; >= $lim:expr) => {
+        $crate::sieve_geq::<
+            { $n },
+            {
+                let mem = { $lim };
+                $crate::isqrt(mem) as ::core::primitive::usize + 1 + { $n }
+            },
+        >({ $lim })
+    };
+}
+
 #[cfg(test)]
 mod test {
     use super::{sieve, sieve_segment};
