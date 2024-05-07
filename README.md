@@ -51,9 +51,9 @@ assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, fa
 
 ## Arbitrary ranges
 
-The crate provides prime generation and sieving functions with suffixes, e.g. `primes_geq` and `sieve_lt`, 
-that can be used to work with ranges that don't start at zero. They take two generics: the number of elements
-to store in the binary and the size of the sieve used during evaluation. The sieve size must be the ceiling
+The crate provides prime generation and sieving functions with suffixes, e.g. `primes_geq` (geq = greater than or equal to)
+and `sieve_lt` (lt = less than), that can be used to work with ranges that don't start at zero. They take two generics: 
+the number of elements to return and the size of the sieve used during evaluation. The sieve size must be at least the ceiling
 of the square root of the largest encountered value:
 ```rust
 //                              ceil(sqrt(5_000_000_063)) = 70_711
