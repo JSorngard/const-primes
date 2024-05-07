@@ -84,9 +84,6 @@
 //! //                              5_000_000_028  5_000_000_029  5_000_000_030
 //! assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 //! ```
-//! Unfortunately the output array must be large enough to contain the prime sieve, which scales with
-//! the square root of largest relavant number, which is why the examples use a size of over 70000 even though
-//! they're only interested in three numbers.
 //!
 //! ## Other functionality
 //!
