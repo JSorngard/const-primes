@@ -51,7 +51,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 
 /// Returns an array of size `N` that indicates which of the `N` integers in smaller than `upper_limit` are prime.
 ///
-/// If you just want the prime status of the first `N` integers, see [`sieve`].
+/// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
+/// the integers above some number, see [`sieve_geq`].
 ///
 /// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
 ///
@@ -214,17 +215,37 @@ impl core::fmt::Display for SieveError {
 impl std::error::Error for SieveError {}
 
 /// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
+///
 /// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
+///
+/// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
+/// prime status of the integers below some number, see [`sieve_lt`].
 ///
 /// # Example
 ///
-/// Basic usage:
+/// The size of the sieve, `MEM`, must be large enough for the largest sieved number to be smaller than `MEM`^2.
+/// ```
+/// # use const_primes::sieve_geq;
+/// // The three numbers larger than or equal to 9 are 9, 10 and 11.
+/// const N: usize = 3;
+/// const LIMIT: u64 = 9;
+/// // We thus need a memory size of at least 4, since 3*3 < 11, which isn't enough.
+/// const MEM: usize = 4;
+/// const PRIME_STATUS: [bool; N] = match sieve_geq::<N, MEM>(LIMIT) {Ok(s) => s, Err(_) => panic!()};
+/// //                        9,     10,    11
+/// assert_eq!(PRIME_STATUS, [false, false, true]);
+/// ```
+/// Enough memory can also be ensured with the help of functions provided by this crate:
 /// ```
 /// # use const_primes::{sieve_geq, SieveError};
-/// const PRIME_STATUS: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(10);
-/// //                           10     11    12     13    14
-/// assert_eq!(PRIME_STATUS, Ok([false, true, false, true, false]));
+/// use const_primes::isqrt;
+/// const N: usize = 3;
+/// const LIMIT: u64 = 5_000_000_038;
+/// const PRIME_STATUS: Result<[bool; N], SieveError> = sieve_geq::<N, {isqrt(LIMIT) as usize + 1 + N}>(LIMIT);
+/// //                           5_000_000_038  5_000_000_039  5_000_000_040
+/// assert_eq!(PRIME_STATUS, Ok([false,         true,          false]));
 /// ```
+///
 /// # Errors
 ///
 /// Returns an error if `MEM + lower_limit` is larger than `MEM^2`.
