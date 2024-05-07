@@ -63,7 +63,7 @@ const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_lt::<3, 70_711>(5_0
 //                              5_000_000_028  5_000_000_029  5_000_000_030
 assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 ```
-The sieving functions have yet to be modified for two generics, and must save the entire sieve in the binary.
+The sieve size can be computed by the crate by using the macro `primes_segment!` and `sieve_segment!`.
 ## Other functionality
 Use `is_prime` to test whether a given number is prime:
 ```rust

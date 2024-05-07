@@ -243,21 +243,21 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 macro_rules! primes_segment {
     ($n:expr; < $lim:expr) => {
         $crate::primes_lt::<
-            $n,
+            { $n },
             {
                 let mem = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1
             },
-        >($lim)
+        >({ $lim })
     };
     ($n:expr; >= $lim:expr) => {
         $crate::primes_geq::<
-            $n,
+            { $n },
             {
                 let mem = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1 + { $n }
             },
-        >($lim)
+        >({ $lim })
     };
 }
 
