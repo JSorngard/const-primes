@@ -55,7 +55,7 @@ The crate also provides prime generation and sieving functions that can be used 
 the number of elements to return and the size of the sieve used during evaluation. The sieve size must be at least the ceiling
 of the square root of the largest encountered value. 
 
-Compute 3 primes greater than or equal to 5 billion and 31:
+Compute 3 primes greater than or equal to 5000000031:
 ```rust
 const N: usize = 3;
 //                                        ceil(sqrt(5_000_000_063)) = 70_711
@@ -63,7 +63,7 @@ const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_geq::<N, 70_711>(5_
 assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 ```
 Functions in the crate can help with computing the required sieve size.   
-Sieve the three numbers less than 5 billion and 31 for their prime status:
+Sieve the three numbers less than 5000000031 for their prime status:
 ```rust
 use const_primes::isqrt;
 const N: usize = 3;
