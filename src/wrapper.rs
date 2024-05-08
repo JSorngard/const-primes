@@ -20,12 +20,14 @@ use crate::{primes, Underlying};
 /// # use const_primes::Primes;
 /// const CACHE: Primes<100> = Primes::new();
 /// const PRIME_CHECK: Option<bool> = CACHE.is_prime(541);
-/// const PRIME_COUNT: Option<usize> = CACHE.prime_pi(200);
+/// const PRIME_COUNT: Option<usize> = CACHE.count_primes_leq(200);
+///
 /// assert_eq!(PRIME_CHECK, Some(true));
 /// assert_eq!(PRIME_COUNT, Some(46));
+///
 /// // If questions are asked about numbers outside the cache it returns None
 /// assert!(CACHE.is_prime(1000).is_none());
-/// assert!(CACHE.prime_pi(1000).is_none());
+/// assert!(CACHE.count_primes_leq(1000).is_none());
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
 pub struct Primes<const N: usize> {
@@ -105,16 +107,16 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const COUNT1: Option<usize> = CACHE.prime_pi(500);
-    /// const COUNT2: Option<usize> = CACHE.prime_pi(11);
-    /// const OUT_OF_BOUNDS: Option<usize> = CACHE.prime_pi(1_000);
+    /// const COUNT1: Option<usize> = CACHE.count_primes_leq(500);
+    /// const COUNT2: Option<usize> = CACHE.count_primes_leq(11);
+    /// const OUT_OF_BOUNDS: Option<usize> = CACHE.count_primes_leq(1_000);
     ///
     /// assert_eq!(COUNT1, Some(95));
     /// assert_eq!(COUNT2, Some(5));
     /// assert_eq!(OUT_OF_BOUNDS, None);
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn prime_pi(&self, n: Underlying) -> Option<usize> {
+    pub const fn count_primes_leq(&self, n: Underlying) -> Option<usize> {
         match self.binary_search(n) {
             Ok(i) => Some(i + 1),
             Err(maybe_i) => match maybe_i {
@@ -608,7 +610,7 @@ mod test {
     }
 
     #[test]
-    fn check_prime_pi() {
+    fn check_count_primes_leq() {
         const N: usize = 79;
         const PRIME_COUNTS: [usize; N] = [
             0, 0, 1, 2, 2, 3, 3, 4, 4, 4, 4, 5, 5, 6, 6, 6, 6, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9,
@@ -619,11 +621,11 @@ mod test {
         const P: Primes<N> = Primes::new();
 
         for n in 0..N {
-            assert_eq!(P.prime_pi(n as u32), Some(PRIME_COUNTS[n]));
+            assert_eq!(P.count_primes_leq(n as u32), Some(PRIME_COUNTS[n]));
         }
 
         for n in *P.last() + 1..*P.last() * 2 {
-            assert!(P.prime_pi(n as u32).is_none());
+            assert!(P.count_primes_leq(n as u32).is_none());
         }
     }
 

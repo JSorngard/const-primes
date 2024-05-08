@@ -31,12 +31,12 @@
 //! assert_eq!(CHECK_541, Some(true));
 //!
 //! // Or for prime counting
-//! const PRIMES_LEQ_100: Option<usize> = CACHE.prime_pi(100);
+//! const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
 //! assert_eq!(PRIMES_LEQ_100, Some(25));
 //!
 //! // If questions are asked about numbers outside the cache it returns None
 //! assert!(CACHE.is_prime(1000).is_none());
-//! assert!(CACHE.prime_pi(1000).is_none());
+//! assert!(CACHE.count_primes_leq(1000).is_none());
 //! ```
 //! Sieve a range of numbers for their prime status with [`sieve`]:
 //! ```
