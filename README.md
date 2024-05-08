@@ -6,7 +6,7 @@
 
 A crate for generating and working with prime numbers in const contexts.
 
-`#![no_std]` compatible, and supports rust versions 1.68.2 and newer.
+`#![no_std]` compatible, and currently supports rust versions 1.68.2 and newer.
 
 ## Examples
 
