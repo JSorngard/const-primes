@@ -51,15 +51,17 @@ assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, fa
 
 ## Arbitrary ranges
 
-The crate provides prime generation and sieving functions with suffixes, e.g. `primes_geq` (geq = greater than or equal to)
-and `sieve_lt` (lt = less than), that can be used to work with ranges that don't start at zero. They take two generics: 
+The crate also provides prime generation and sieving functions that can be used to work with ranges that don't start at zero, e.g. `primes_geq` and `sieve_lt`. They take two generics: 
 the number of elements to return and the size of the sieve used during evaluation. The sieve size must be at least the ceiling
-of the square root of the largest encountered value:
+of the square root of the largest encountered value. 
+
+Compute 3 primes greater than or equal to 5 billion and 31:
 ```rust
 //                              ceil(sqrt(5_000_000_063)) = 70_711
 const PRIMES_GEQ: Result<[u64; 3], GenerationError> = primes_geq::<3, 70_711>(5_000_000_031);
 assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 ```
+Sieve the three numbers less than 5 billion and 31 for their prime status:
 ```rust
 const PRIME_STATUS_LT: Result<[bool; 3], SieveError> = sieve_lt::<3, 70_711>(5_000_000_031);
 //                              5_000_000_028  5_000_000_029  5_000_000_030
