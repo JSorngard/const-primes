@@ -57,17 +57,23 @@ of the square root of the largest encountered value.
 
 Compute 3 primes greater than or equal to 5 billion and 31:
 ```rust
-//                              ceil(sqrt(5_000_000_063)) = 70_711
-const PRIMES_GEQ: Result<[u64; 3], GenerationError> = primes_geq::<3, 70_711>(5_000_000_031);
+const N: usize = 3;
+//                                        ceil(sqrt(5_000_000_063)) = 70_711
+const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_geq::<N, 70_711>(5_000_000_031);
 assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 ```
+Functions in the crate can help with computing the required sieve size.   
 Sieve the three numbers less than 5 billion and 31 for their prime status:
 ```rust
-const PRIME_STATUS_LT: Result<[bool; 3], SieveError> = sieve_lt::<3, 70_711>(5_000_000_031);
+use const_primes::isqrt;
+const N: usize = 3;
+const LIMIT: u64 = 5_000_000_031;
+const MEM: usize = isqrt(LIMIT) as usize + 1;
+const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_lt::<N, MEM>(LIMIT);
 //                              5_000_000_028  5_000_000_029  5_000_000_030
 assert_eq!(PRIME_STATUS_LT, Ok([false,         true,          false]));
 ```
-The sieve size can be computed by the crate by using the macros `primes_segment!` and `sieve_segment!`.
+The sieve size can also be computed by the crate by using the macros `primes_segment!` and `sieve_segment!`.
 ```rust
 const PRIMES_GEQ: Result<[u64; 2], GenerationError> = primes_segment!(2; >= 615);
 const PRIME_STATUS_LT: Result<[bool; 3], SieveError> = sieve_segment!(3; < 100_005);
