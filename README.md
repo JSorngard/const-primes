@@ -24,7 +24,7 @@ const PRIMES: Primes<10> = Primes::new();
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
-It also lets you reuse it as a cache of primes for related computations:
+which also lets you reuse it as a cache of primes for related computations:
 ```rust
 const CACHE: Primes<100> = Primes::new();
 
