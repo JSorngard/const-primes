@@ -103,7 +103,7 @@ and more!
 
 ## Features
 
-`std`: derives the `Error` trait for the error types.  
+`std`: implements the `Error` trait for the error types.  
 
 ## License
 
