@@ -105,9 +105,12 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const COUNT: Option<usize> = CACHE.prime_pi(500);
+    /// const COUNT1: Option<usize> = CACHE.prime_pi(500);
+    /// const COUNT2: Option<usize> = CACHE.prime_pi(11);
     /// const OUT_OF_BOUNDS: Option<usize> = CACHE.prime_pi(1_000);
-    /// assert_eq!(COUNT, Some(95));
+    ///
+    /// assert_eq!(COUNT1, Some(95));
+    /// assert_eq!(COUNT2, Some(5));
     /// assert_eq!(OUT_OF_BOUNDS, None);
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
