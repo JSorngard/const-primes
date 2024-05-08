@@ -79,13 +79,17 @@ impl<const N: usize> Primes<N> {
     /// Uses a binary search.
     ///
     /// # Example
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<100> = Primes::new();
     /// const TMOLTUAE: Option<bool> = PRIMES.is_prime(42);
+    ///
     /// assert_eq!(PRIMES.is_prime(13), Some(true));
     /// assert_eq!(TMOLTUAE, Some(false));
+    /// // 1000 is larger than 541, the largest prime in the cache,
+    /// // so we don't know whether it's prime.
     /// assert_eq!(PRIMES.is_prime(1000), None);
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
