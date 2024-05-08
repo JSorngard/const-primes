@@ -3,12 +3,16 @@ use crate::isqrt;
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
 /// for the numbers below `N^2`. Fails to compile if `N` is 0.
+///
+/// # Panics
+///
+/// Panics if `N` is 0.
 #[must_use = "the function only returns a new value and does not modify its inputs"]
 pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
 ) -> [bool; N] {
-    const { assert!(N > 0, "`N` must be at least 1") }
+    assert!(N > 0, "`N` must be at least 1");
 
     let mut segment_sieve = [true; N];
 
@@ -54,8 +58,6 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is: `MEM`^2 must be at least as large as `upper_limit`.
-///
-/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
 ///
 /// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
 /// the integers above some number, see [`sieve_geq`].
@@ -110,16 +112,19 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(4);
 /// assert_eq!(PS, Err(SieveError::TooSmallLimit));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// In const contexts this is a compile error.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    const {
-        assert!(N > 0, "`N` must be at least 1");
-        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-    }
+    assert!(N > 0, "`N` must be at least 1");
+    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    let mem_sqr = const {
+    let mem_sqr = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(prod) => prod,
@@ -158,7 +163,6 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 }
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
-/// Fails to compile if `N` is 0.
 ///
 /// # Example
 ///
@@ -168,9 +172,13 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 /// //                     0      1      2     3     4      5     6      7     8      9
 /// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
 /// ```
+///
+/// # Panics
+///
+/// Panics if `N` is 0. In const contexts this is a compile error.
 #[must_use = "the function only returns a new value"]
 pub const fn sieve<const N: usize>() -> [bool; N] {
-    const { assert!(N > 0, "`N` must be at least 1") }
+    assert!(N > 0, "`N` must be at least 1");
 
     let mut sieve = [true; N];
     if N > 0 {
@@ -236,8 +244,6 @@ impl std::error::Error for SieveError {}
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is `MEM`^2 must be larger than `lower_limit + N`.
 ///
-/// Fails to compile if `N` is 0, or if `MEM` is smaller than `N`.
-///
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
 /// prime status of the integers below some number, see [`sieve_lt`].
 ///
@@ -280,15 +286,19 @@ impl std::error::Error for SieveError {}
 /// assert_eq!(P1, Err(SieveError::TooLargeTotal));
 /// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// In const contexts this is a compile error.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    const {
-        assert!(N > 0, "`N` must be at least 1");
-        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-    }
-    let (mem64, mem_sqr) = const {
+    assert!(N > 0, "`N` must be at least 1");
+    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+
+    let (mem64, mem_sqr) = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(prod) => (mem64, prod),

@@ -123,20 +123,24 @@ pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
 pub use wrapper::Primes;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
-/// Fails to compile if `N` is 0.
 ///
 /// Sieves primes with [`sieve`] and then counts them.
 ///
 /// # Example
+///
 /// Basic usage
 /// ```
 /// # use const_primes::prime_counts;
 /// const COUNTS: [usize; 10] = prime_counts();
 /// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 /// ```
+///
+/// # Panics
+///
+/// Panics if `N` is 0. In const contexts this is a compile error.
 #[must_use = "the function only returns a new value"]
 pub const fn prime_counts<const N: usize>() -> [usize; N] {
-    const { assert!(N > 0, "`N` must be at least 1") }
+    assert!(N > 0, "`N` must be at least 1");
     let mut counts = [0; N];
     if N <= 2 {
         return counts;
