@@ -74,7 +74,7 @@ impl<const N: usize> Primes<N> {
         Self { primes: primes() }
     }
 
-    /// Returns whether `n` is prime if it is smaller than or equal to the largest prime in `self`.
+    /// Returns whether `n` is prime, if it is smaller than or equal to the largest prime in `self`.
     ///
     /// Uses a binary search.
     ///
