@@ -245,6 +245,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 /// assert_eq!(PRIMES_GEQ, Ok([5000000039, 5000000059, 5000000063]));
 /// assert_eq!(PRIMES_LT, Ok([4999999903, 4999999937, 5000000029]));
 /// ```
+///
+/// # Panics
+///
+/// Panics if the number of requested primes is 0.
 #[macro_export]
 macro_rules! primes_segment {
     ($n:expr; < $lim:expr) => {
