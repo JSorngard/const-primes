@@ -3,7 +3,6 @@ use core::fmt;
 use crate::{sieve, sieving::sieve_segment, Underlying};
 
 /// Returns the `N` first prime numbers.
-/// Fails to compile if `N` is 0.
 ///
 /// [`Primes`](crate::Primes) might be relevant for you if you intend to later use these prime numbers for related computations.
 ///
@@ -116,8 +115,6 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Set `MEM` such that `MEM*MEM >= upper_limit`.
 ///
-/// Fails to compile if `N` or `MEM` is 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
-///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
 /// If you do not wish to compute the size requirement of the sieve manually, take a look at [`primes_segment!`](crate::primes_segment).
@@ -165,6 +162,10 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::TooLargeLimit));
 /// assert_eq!(TOO_SMALL_LIMIT, Err(GenerationError::TooSmallLimit));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `N` or `MEM` are 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
@@ -273,9 +274,6 @@ macro_rules! primes_segment {
 ///
 /// Set `MEM` such that `MEM`^2 is larger than the largest prime you will encounter.
 ///
-/// Fails to compile if `N` is 0. If `lower_limit` is less than 2 this functions assumes that it is 2,
-/// since there are no primes smaller than 2.
-///
 /// If you want to compute primes smaller than some limit, take a look at [`primes_lt`].
 ///
 /// If you do not wish to compute the size requirement of the sieve manually, take a look at [`primes_segment!`](crate::primes_segment).
@@ -319,6 +317,10 @@ macro_rules! primes_segment {
 /// const PRIMES: Result<[u64; 5], GenerationError> = primes_geq::<5, 5>(26);
 /// assert_eq!(PRIMES, Err(GenerationError::TooLargeLimit));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `N` or `MEM` are 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
