@@ -2,7 +2,8 @@ This file contains the changes to the crate since version 0.4.8.
 
 # 0.5.0
 
-This version focuses on adding support for generating primes and sieving numbers in arbitrary ranges, instead of always having to start from 0.
+This version focuses on adding support for generating primes and sieving numbers in arbitrary ranges, instead of always having to start from 0.  
+It also shortens and clarifies some function names.
 
 ## Breaking changes
 
@@ -11,7 +12,7 @@ This version focuses on adding support for generating primes and sieving numbers
  - Change function signature of `sieve_lt`.
  - Change the name of `largest_prime_leq` to `previous_prime`.
  - Change the name of `smallest_prime_lt` to `next_prime`.
- - Remove `moebius`.
+ - Remove `moebius`, as it is out of scope of this crate. If you want the source code for that function it can be found at <https://rosettacode.org/wiki/M%C3%B6bius_function#Rust>, or in older versions of this crate.
 
 ## Other major changes
 
