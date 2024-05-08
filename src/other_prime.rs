@@ -8,8 +8,8 @@ use crate::is_prime;
 /// Basic usage:
 /// ```
 /// # use const_primes::previous_prime;
-/// const LPLEQ: Option<u64> = previous_prime(400);
-/// assert_eq!(LPLEQ, Some(397));
+/// const LPLT: Option<u64> = previous_prime(400);
+/// assert_eq!(LPLT, Some(397));
 /// ```
 /// There's no prime smaller than two:
 /// ```
@@ -47,8 +47,8 @@ pub const fn previous_prime(mut n: u64) -> Option<u64> {
 /// Basic usage:
 /// ```
 /// # use const_primes::next_prime;
-/// const SPGEQ: Option<u64> = next_prime(400);
-/// assert_eq!(SPGEQ, Some(401));
+/// const SPGT: Option<u64> = next_prime(400);
+/// assert_eq!(SPGT, Some(401));
 /// ```
 /// Primes larger than 18446744073709551557 can not be represented by a `u64`:
 /// ```
