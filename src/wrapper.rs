@@ -2,8 +2,9 @@ use crate::{primes, Underlying};
 
 // region: Primes<N>
 
-/// A wrapper around an array that consists of the first `N` primes.
-/// Can be created in const contexts, and ensures that `N` is non-zero at compile time.
+/// A wrapper around an array that consists of the first `N` primes. Can use those primes for related computations.
+///
+/// Can be created and used in const contexts, and if so it ensures that `N` is non-zero at compile time.
 ///
 /// # Examples
 ///
@@ -259,6 +260,7 @@ impl<const N: usize> Primes<N> {
     /// Returns a reference to the element at the given index if it is within bounds.
     ///
     /// # Example
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
