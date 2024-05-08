@@ -3,6 +3,7 @@
 //! `#![no_std]` compatible.
 //!
 //! # Examples
+//!
 //! Generate arrays of prime numbers with the function [`primes`] which uses a
 //! [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
 //! ```
