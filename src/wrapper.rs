@@ -395,6 +395,13 @@ impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
     }
 }
 
+impl<const N: usize> PartialEq<[Underlying]> for Primes<N> {
+    #[inline]
+    fn eq(&self, other: &[Underlying]) -> bool {
+        &self.primes == &other
+    }
+}
+
 // endregion: PartialEq
 
 // region: PartialOrd
