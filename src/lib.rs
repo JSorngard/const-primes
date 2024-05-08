@@ -109,6 +109,7 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
+mod counting;
 mod generation;
 mod imath;
 mod miller_rabin;
@@ -116,52 +117,13 @@ mod other_prime;
 mod primes_cache;
 mod sieving;
 
+pub use counting::count_primes;
 pub use generation::{primes, primes_geq, primes_lt, GenerationError};
 pub use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
 pub use primes_cache::Primes;
 pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
-
-/// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
-///
-/// Sieves primes with [`sieve`] and then counts them.
-///
-/// # Example
-///
-/// Basic usage
-/// ```
-/// # use const_primes::count_primes;
-/// const COUNTS: [usize; 10] = count_primes();
-/// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
-/// ```
-///
-/// # Panics
-///
-/// Panics if `N` is 0. In const contexts this is a compile error.
-#[must_use = "the function only returns a new value"]
-pub const fn count_primes<const N: usize>() -> [usize; N] {
-    assert!(N > 0, "`N` must be at least 1");
-    let mut counts = [0; N];
-    if N <= 2 {
-        return counts;
-    }
-    counts[2] = 1;
-    let prime_status: [bool; N] = sieve();
-    let mut count = 1;
-    let mut i = 3;
-    while i < N {
-        if prime_status[i] {
-            count += 1;
-        }
-        counts[i] = count;
-        if i + 1 < N {
-            counts[i + 1] = count;
-        }
-        i += 2;
-    }
-    counts
-}
 
 #[cfg(test)]
 mod test {
@@ -203,7 +165,7 @@ mod test {
 
     #[test]
     fn check_prime_count() {
-        macro_rules! test_count_primes_up_to {
+        macro_rules! test_count_primes_leq_up_to {
             ($($n:expr),+) => {
                 $(
                     {
@@ -224,7 +186,7 @@ mod test {
             };
         }
 
-        test_count_primes_up_to!(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100);
+        test_count_primes_leq_up_to!(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100);
     }
 
     #[test]
