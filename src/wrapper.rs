@@ -165,7 +165,9 @@ impl<const N: usize> Primes<N> {
     /// If `n` is larger than or equal to the largest prime in `self` this returns `None`.
     ///
     /// Uses a binary search.
+    ///
     /// # Example
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
@@ -283,6 +285,7 @@ impl<const N: usize> Primes<N> {
     /// Returns a reference to the last prime in `self`. This is also the largest prime in `self`.
     ///
     /// # Example
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
@@ -301,6 +304,7 @@ impl<const N: usize> Primes<N> {
     /// Returns the number of primes in `self`.
     ///
     /// # Example
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<5> = Primes::new();
