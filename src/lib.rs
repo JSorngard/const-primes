@@ -113,15 +113,15 @@ mod generation;
 mod imath;
 mod miller_rabin;
 mod other_prime;
+mod primes_cache;
 mod sieving;
-mod wrapper;
 
 pub use generation::{primes, primes_geq, primes_lt, GenerationError};
 pub use imath::isqrt;
 pub use miller_rabin::is_prime;
 pub use other_prime::{next_prime, previous_prime};
+pub use primes_cache::Primes;
 pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
-pub use wrapper::Primes;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
