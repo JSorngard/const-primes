@@ -117,7 +117,7 @@ mod other_prime;
 mod primes_cache;
 mod sieving;
 
-pub use counting::count_primes_leq;
+pub use counting::count_primes;
 pub use generation::{primes, primes_geq, primes_lt, GenerationError};
 pub use imath::isqrt;
 pub use miller_rabin::is_prime;
@@ -170,7 +170,7 @@ mod test {
                 $(
                     {
                         const N: usize = $n;
-                        const PRIME_COUNTS: [usize; N] = count_primes_leq();
+                        const PRIME_COUNTS: [usize; N] = count_primes();
                         let mut counts = [0; N];
                         for n in 0..N {
                             let mut i = 0;
@@ -180,7 +180,7 @@ mod test {
                             }
                         }
                         assert_eq!(PRIME_COUNTS, counts);
-                        assert_eq!(counts, count_primes_leq());
+                        assert_eq!(counts, count_primes());
                     }
                 )+
             };
