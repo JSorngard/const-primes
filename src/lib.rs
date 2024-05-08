@@ -1,6 +1,6 @@
 //! A crate for generating and working with prime numbers in const contexts.
 //!
-//! `#![no_std]` compatible, and currently supports rust versions 1.68.2 or newer.
+//! `#![no_std]` compatible, and currently supports Rust versions 1.68.2 or newer.
 //!
 //! # Examples
 //!
