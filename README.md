@@ -8,6 +8,8 @@ A crate for generating and working with prime numbers in const contexts.
 
 `#![no_std]` compatible.
 
+Supports rust >= 1.68.2.
+
 ## Examples
 
 Generate arrays of prime numbers with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
