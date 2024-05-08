@@ -2,8 +2,9 @@ use crate::{primes, Underlying};
 
 // region: Primes<N>
 
-/// A wrapper around an array that consists of the first `N` primes.
-/// Can be created in const contexts, and ensures that `N` is non-zero at compile time.
+/// A wrapper around an array that consists of the first `N` primes. Can use those primes for related computations.
+///
+/// Can be created and used in const contexts, and if so it ensures that `N` is non-zero at compile time.
 ///
 /// # Examples
 ///
@@ -20,8 +21,10 @@ use crate::{primes, Underlying};
 /// const CACHE: Primes<100> = Primes::new();
 /// const PRIME_CHECK: Option<bool> = CACHE.is_prime(541);
 /// const PRIME_COUNT: Option<usize> = CACHE.count_primes_leq(200);
+///
 /// assert_eq!(PRIME_CHECK, Some(true));
 /// assert_eq!(PRIME_COUNT, Some(46));
+///
 /// // If questions are asked about numbers outside the cache it returns None
 /// assert!(CACHE.is_prime(1000).is_none());
 /// assert!(CACHE.count_primes_leq(1000).is_none());
@@ -56,18 +59,18 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
     ///
-    /// Fails to compile if `N` is zero.
+    /// # Panics
+    ///
+    /// Panics if `N` is zero. In const contexts this is a compile error.
     /// ```compile_fail
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
     ///
-    /// # Panics
-    ///
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        const { assert!(N > 0, "`N` must be at least 1") }
+        assert!(N > 0, "`N` must be at least 1");
         Self { primes: primes() }
     }
 
@@ -96,34 +99,31 @@ impl<const N: usize> Primes<N> {
 
     /// Returns the number of primes smaller than or equal to `n`, if it's smaller than or equal to the largest prime in `self`.
     ///
-    /// Uses a linear search to count the primes.
+    /// Uses a binary search to count the primes.
+    ///
     /// # Example
-    /// Basic usage
+    ///
+    /// Basic usage:
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const COUNT: Option<usize> = CACHE.count_primes_leq(500);
+    /// const COUNT1: Option<usize> = CACHE.count_primes_leq(500);
+    /// const COUNT2: Option<usize> = CACHE.count_primes_leq(11);
     /// const OUT_OF_BOUNDS: Option<usize> = CACHE.count_primes_leq(1_000);
-    /// assert_eq!(COUNT, Some(95));
+    ///
+    /// assert_eq!(COUNT1, Some(95));
+    /// assert_eq!(COUNT2, Some(5));
     /// assert_eq!(OUT_OF_BOUNDS, None);
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn count_primes_leq(&self, n: Underlying) -> Option<usize> {
-        if n > *self.last() {
-            return None;
+        match self.binary_search(n) {
+            Ok(i) => Some(i + 1),
+            Err(maybe_i) => match maybe_i {
+                Some(i) => Some(i),
+                None => None,
+            },
         }
-
-        let mut i = 0;
-        let mut count = 0;
-        while i < N {
-            if self.primes[i] <= n {
-                count += 1;
-            } else {
-                break;
-            }
-            i += 1;
-        }
-        Some(count)
     }
 
     // region: Next prime
@@ -259,6 +259,7 @@ impl<const N: usize> Primes<N> {
     /// Returns a reference to the element at the given index if it is within bounds.
     ///
     /// # Example
+    ///
     /// Basic usage
     /// ```
     /// # use const_primes::Primes;
@@ -310,11 +311,11 @@ impl<const N: usize> Primes<N> {
     }
 }
 
-/// This statically asserts that N > 0.
+/// Panics if `N` is 0.
 impl<const N: usize> Default for Primes<N> {
     fn default() -> Self {
-        const { assert!(N > 0, "`N` must be at least 1") }
-        Self::new()
+        assert!(N > 0, "`N` must be at least 1");
+        Self { primes: primes() }
     }
 }
 
