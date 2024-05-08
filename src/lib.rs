@@ -131,8 +131,8 @@ pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
 ///
 /// Basic usage
 /// ```
-/// # use const_primes::prime_counts;
-/// const COUNTS: [usize; 10] = prime_counts();
+/// # use const_primes::count_primes;
+/// const COUNTS: [usize; 10] = count_primes();
 /// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 /// ```
 ///
@@ -140,7 +140,7 @@ pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
 ///
 /// Panics if `N` is 0. In const contexts this is a compile error.
 #[must_use = "the function only returns a new value"]
-pub const fn prime_counts<const N: usize>() -> [usize; N] {
+pub const fn count_primes<const N: usize>() -> [usize; N] {
     assert!(N > 0, "`N` must be at least 1");
     let mut counts = [0; N];
     if N <= 2 {
@@ -203,12 +203,12 @@ mod test {
 
     #[test]
     fn check_prime_count() {
-        macro_rules! test_prime_counts_up_to {
+        macro_rules! test_count_primes_up_to {
             ($($n:expr),+) => {
                 $(
                     {
                         const N: usize = $n;
-                        const PRIME_COUNTS: [usize; N] = prime_counts();
+                        const PRIME_COUNTS: [usize; N] = count_primes();
                         let mut counts = [0; N];
                         for n in 0..N {
                             let mut i = 0;
@@ -218,13 +218,13 @@ mod test {
                             }
                         }
                         assert_eq!(PRIME_COUNTS, counts);
-                        assert_eq!(counts, prime_counts());
+                        assert_eq!(counts, count_primes());
                     }
                 )+
             };
         }
 
-        test_prime_counts_up_to!(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100);
+        test_count_primes_up_to!(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100);
     }
 
     #[test]
