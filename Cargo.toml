@@ -16,6 +16,11 @@ rand = "0.8"
 [features]
 std = []
 
+# docs.rs-specific configuration. Taken from <https://stackoverflow.com/a/61417700/>.
+[package.metadata.docs.rs]
+# Document all features.
+all-features = true
+
 [[bench]]
 name = "prime_benches"
 harness = false
