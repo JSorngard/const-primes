@@ -2,8 +2,20 @@
 //! functions in the crate.
 
 /// Returns the largest integer smaller than or equal to `√n`.
-///
-/// Uses the Newton-Rhapson method.
+/// 
+/// # Examples
+/// 
+/// Basic usage:
+/// ```
+/// # use const_primes::isqrt;
+/// const ISQRT25: u64 = isqrt(25);
+/// const ISQRT35: u64 = isqrt(35);
+/// const ISQRT36: u64 = isqrt(36);
+/// 
+/// assert_eq!(ISQRT25, 5);
+/// assert_eq!(ISQRT35, 5);
+/// assert_eq!(ISQRT36, 6);
+/// ```
 #[must_use]
 pub const fn isqrt(n: u64) -> u64 {
     if n <= 1 {
