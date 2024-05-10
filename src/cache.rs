@@ -445,7 +445,7 @@ mod test {
     fn partial_eq_impl() {
         const P1: Primes<3> = Primes::new();
         macro_rules! partial_eq_check {
-            ($($t:expr),+) => {
+            ($($t:ident),+) => {
                 $(
                     assert_eq!(P1, $t);
                     assert_eq!(&P1, &$t);
@@ -456,7 +456,7 @@ mod test {
         }
         let v = [2, 3, 5];
         let s = v.as_slice();
-        partial_eq_check!([2, 3, 5], s);
+        partial_eq_check!(v, s);
     }
 
     #[test]
