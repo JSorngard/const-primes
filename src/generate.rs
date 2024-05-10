@@ -112,6 +112,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Set `MEM` such that `MEM*MEM >= upper_limit`.
 ///
+/// Fails to compile if `N` or `MEM` are 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
+///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
 /// If you do not wish to compute the size requirement of the sieve manually, take a look at [`primes_segment!`](crate::primes_segment).
@@ -159,21 +161,21 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::TooSmallSieveSize));
 /// assert_eq!(TOO_SMALL_LIMIT, Err(GenerationError::TooSmallLimit));
 /// ```
-///
-/// # Panics
-///
-/// Panics if `N` or `MEM` are 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    assert!(N > 0, "`N` must be at least 1");
-    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    }
 
-    let mem64 = MEM as u64;
-
-    let Some(mem_sqr) = mem64.checked_mul(mem64) else {
-        panic!("`MEM`^2 must fit in a u64")
+    let mem_sqr = const {
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => mem_sqr,
+            None => panic!("`MEM`^2 must fit in a u64"),
+        }
     };
 
     if upper_limit <= 2 {
