@@ -43,8 +43,7 @@ assert!(CACHE.count_primes_leq(1000).is_none());
 ```
 Sieve a range of numbers for their prime status with `sieve`:
 ```rust
-const N: usize = 10;
-const PRIME_STATUS: [bool; N] = sieve();
+const PRIME_STATUS: [bool; 10] = sieve();
 //                        0      1      2     3     4      5     6      7     8      9
 assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 ```  
