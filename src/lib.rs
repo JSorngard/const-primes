@@ -46,6 +46,7 @@
 //! //                        0      1      2     3     4      5     6      7     8      9
 //! assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 //! ```
+//!
 //! ## Arbitrary ranges
 //!
 //! The crate provides prime generation and sieving functions that can be used to work with
