@@ -17,9 +17,9 @@ It also shortens and clarifies some function names.
 
 ## New features
 
- - Add `primes_geq`, `primes_lt`, and `sieve_geq` functions to work with arbitrary ranges.  
- - Add `primes_segment!` and `sieve_segment!` macros to simplify usage of the above functions. These macros compute the size of the second const generic that the above functions need. Due to restrictions on const arithmetic this can not be done inside the functions.  
- - Add `isqrt` function. This can be useful if you wish to compute the size of the second const generic yourself.  
+ - Add `primes_geq`, `primes_lt`, and `sieve_geq` functions to work with arbitrary ranges. They take two const generics, the number of values to return and the size of the sieve used during evaluation.  
+ - Add `primes_segment!` and `sieve_segment!` macros to simplify usage of the above functions. These macros compute the size of the sieve that the above functions need. Due to restrictions on const arithmetic this can not be done inside the functions.  
+ - Add `isqrt` function. This can be useful if you wish to compute the size of the sieve yourself.  
 
 ## Minor changes
 
