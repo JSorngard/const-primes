@@ -26,8 +26,8 @@ use crate::{primes, Underlying};
 /// assert_eq!(PRIME_COUNT, Some(46));
 ///
 /// // If questions are asked about numbers outside the cache it returns None
-/// assert!(CACHE.is_prime(1000).is_none());
-/// assert!(CACHE.count_primes_leq(1000).is_none());
+/// assert_eq!(CACHE.is_prime(1000), None);
+/// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
 pub struct Primes<const N: usize> {
