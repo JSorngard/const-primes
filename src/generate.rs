@@ -229,7 +229,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 ///
 /// Estimates the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`primes_lt`]
 /// and as `isqrt(lower_limit) + 1 + N` for [`primes_geq`].
-/// This will use more memory than needed for `primes_geq`.
+/// This may overestimate the memory requirement for `primes_geq`.
 ///
 /// # Example
 ///

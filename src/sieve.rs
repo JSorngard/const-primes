@@ -345,6 +345,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 ///
 /// Computes the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`sieve_lt`]
 /// and as `isqrt(lower_limit) + 1 + N` for [`sieve_geq`].
+/// This may overestimate the memory requirement for `sieve_geq`.
 ///
 /// # Examples
 ///
