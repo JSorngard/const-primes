@@ -173,12 +173,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     assert!(N > 0, "`N` must be at least 1");
     assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    let mem_sqr = {
-        let mem64 = MEM as u64;
-        match mem64.checked_mul(mem64) {
-            Some(prod) => prod,
-            None => panic!("`MEM`^2 must fit in a u64"),
-        }
+    let mem64 = MEM as u64;
+
+    let Some(mem_sqr) = mem64.checked_mul(mem64) else {
+        panic!("`MEM`^2 must fit in a u64")
     };
 
     if upper_limit <= 2 {
