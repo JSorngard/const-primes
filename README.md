@@ -111,9 +111,9 @@ and more!
 Licensed under either of
 
  * Apache License, Version 2.0
-   [LICENSE-APACHE](http://www.apache.org/licenses/LICENSE-2.0)
+   [LICENSE-APACHE](LICENSE-APACHE)
  * MIT license
-   [LICENSE-MIT](http://opensource.org/licenses/MIT)
+   [LICENSE-MIT](LICENSE-MIT)
 
 at your option.
 
