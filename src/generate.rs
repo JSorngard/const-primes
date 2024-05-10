@@ -243,10 +243,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 /// assert_eq!(PRIMES_LT, Ok([4999999903, 4999999937, 5000000029]));
 /// ```
 ///
-/// # Errors and panics
+/// # Errors
 ///
-/// Has the same error and panic behaviour as [`primes_geq`] and [`primes_lt`], with the exception
-/// that it sets `MEM` such that the functions don't panic or run out of memory.
+/// Has the same error behaviour as [`primes_geq`] and [`primes_lt`], with the exception
+/// that it sets `MEM` such that the functions don't run out of memory.
 #[macro_export]
 macro_rules! primes_segment {
     ($n:expr; < $lim:expr) => {
