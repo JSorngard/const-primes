@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.5.1
+
+ - Implement `IntoIterator` for `&Primes<N>`.
+
 # 0.5.0
 
 This version focuses on adding support for generating primes and sieving numbers in arbitrary ranges, instead of always having to start from 0.  
