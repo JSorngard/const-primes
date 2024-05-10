@@ -366,6 +366,8 @@ impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
 
 // endregion: AsRef
 
+// region: IntoIterator
+
 impl<const N: usize> IntoIterator for Primes<N> {
     type Item = <[Underlying; N] as IntoIterator>::Item;
     type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
@@ -374,6 +376,16 @@ impl<const N: usize> IntoIterator for Primes<N> {
         self.primes.into_iter()
     }
 }
+
+impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
+    type IntoIter = <&'a [Underlying; N] as IntoIterator>::IntoIter;
+    type Item = <&'a [Underlying; N] as IntoIterator>::Item;
+    fn into_iter(self) -> Self::IntoIter {
+        self.primes.iter()
+    }
+}
+
+// endregion: IntoIterator
 
 // region: PartialEq
 
