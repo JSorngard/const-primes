@@ -18,7 +18,7 @@ use crate::{sieve, sieving::sieve_segment, Underlying};
 ///
 /// # Panics
 ///
-/// Panics if `N = 0`. In const contexts this is a compile error:
+/// Panics if `N` is 0. In const contexts this is a compile error:
 /// ```compile_fail
 /// # use const_primes::primes;
 /// const PRIMES: [u32; 0] = primes();
