@@ -2,16 +2,16 @@
 //! functions in the crate.
 
 /// Returns the largest integer smaller than or equal to `√n`.
-/// 
+///
 /// # Examples
-/// 
+///
 /// Basic usage:
 /// ```
 /// # use const_primes::isqrt;
 /// const ISQRT25: u64 = isqrt(25);
 /// const ISQRT35: u64 = isqrt(35);
 /// const ISQRT36: u64 = isqrt(36);
-/// 
+///
 /// assert_eq!(ISQRT25, 5);
 /// assert_eq!(ISQRT35, 5);
 /// assert_eq!(ISQRT36, 6);
@@ -31,7 +31,7 @@ pub const fn isqrt(n: u64) -> u64 {
     }
 }
 
-/// Calculates `(base ^ exp) mod modulo` without overflow.
+/// Calculates (`base` ^ `exp`) mod `modulo` without overflow.
 #[must_use]
 pub const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
     let mut res = 1;
@@ -49,7 +49,7 @@ pub const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
     res
 }
 
-/// Calculates `(a * b) mod modulo` without overflow.
+/// Calculates (`a` * `b`) mod `modulo` without overflow.
 #[must_use]
 pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
     ((a as u128 * b as u128) % modulo as u128) as u64
