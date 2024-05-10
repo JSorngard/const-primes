@@ -1,6 +1,6 @@
 use core::fmt;
 
-use crate::{sieve, sieving::sieve_segment, Underlying};
+use crate::{sieve, sieve::sieve_segment, Underlying};
 
 /// Returns the `N` first prime numbers.
 ///
