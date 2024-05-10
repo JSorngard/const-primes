@@ -339,7 +339,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
     Ok(ans)
 }
 
-/// Call [`sieve_lt`] and [`sieve_geq`], and automatically compute the memory requirement of the sieve.
+/// Call [`sieve_geq`] or [`sieve_lt`], and automatically compute the memory requirement of the sieve.
 ///
 /// Computes the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`sieve_lt`]
 /// and as `isqrt(lower_limit) + 1 + N` for [`sieve_geq`].

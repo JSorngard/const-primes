@@ -109,20 +109,20 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-mod prime_counting;
-mod prime_generation;
 mod integer_math;
 mod other_prime;
 mod primality_checking;
 mod prime_cache;
+mod prime_counting;
+mod prime_generation;
 mod sieving;
 
-pub use prime_counting::count_primes;
-pub use prime_generation::{primes, primes_geq, primes_lt, GenerationError};
 pub use integer_math::isqrt;
 pub use other_prime::{next_prime, previous_prime};
 pub use primality_checking::is_prime;
 pub use prime_cache::Primes;
+pub use prime_counting::count_primes;
+pub use prime_generation::{primes, primes_geq, primes_lt, GenerationError};
 pub use sieving::{sieve, sieve_geq, sieve_lt, SieveError};
 
 #[cfg(test)]
