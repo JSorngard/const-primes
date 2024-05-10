@@ -7,16 +7,14 @@ use crate::isqrt;
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
 /// for the numbers below `N^2`. Fails to compile if `N` is 0.
-///
-/// # Panics
-///
-/// Panics if `N` is 0.
 #[must_use = "the function only returns a new value and does not modify its inputs"]
 pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
 ) -> [bool; N] {
-    assert!(N > 0, "`N` must be at least 1");
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+    }
 
     let mut segment_sieve = [true; N];
 
@@ -62,6 +60,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is: `MEM`^2 must be at least as large as `upper_limit`.
+///
+/// Fails to compile if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
 ///
 /// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
 /// the integers above some number, see [`sieve_geq`].
@@ -116,22 +116,20 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(4);
 /// assert_eq!(PS, Err(SieveError::TooSmallLimit));
 /// ```
-///
-/// # Panics
-///
-/// Panics if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
-/// In const contexts this is a compile error.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    assert!(N > 0, "`N` must be at least 1");
-    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-
-    let mem64 = MEM as u64;
-
-    let Some(mem_sqr) = mem64.checked_mul(mem64) else {
-        panic!("`MEM`^2 must fit in a `u64`");
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    }
+    let mem_sqr = const {
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => mem_sqr,
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
     };
 
     if upper_limit > mem_sqr {
