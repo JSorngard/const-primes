@@ -5,17 +5,18 @@ use crate::is_prime;
 /// Scans for primes downwards from the input with [`is_prime`].
 ///
 /// # Examples
+///
 /// Basic usage:
 /// ```
 /// # use const_primes::previous_prime;
-/// const LPLT: Option<u64> = previous_prime(400);
-/// assert_eq!(LPLT, Some(397));
+/// const PREV: Option<u64> = previous_prime(400);
+/// assert_eq!(PREV, Some(397));
 /// ```
 /// There's no prime smaller than two:
 /// ```
 /// # use const_primes::previous_prime;
-/// const NOSUCH: Option<u64> = previous_prime(2);
-/// assert!(NOSUCH.is_none());
+/// const NO_SUCH: Option<u64> = previous_prime(2);
+/// assert_eq!(NO_SUCH, None);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn previous_prime(mut n: u64) -> Option<u64> {
@@ -44,17 +45,18 @@ pub const fn previous_prime(mut n: u64) -> Option<u64> {
 /// Scans for primes upwards from the input with [`is_prime`].
 ///
 /// # Example
+///
 /// Basic usage:
 /// ```
 /// # use const_primes::next_prime;
-/// const SPGT: Option<u64> = next_prime(400);
-/// assert_eq!(SPGT, Some(401));
+/// const NEXT: Option<u64> = next_prime(400);
+/// assert_eq!(NEXT, Some(401));
 /// ```
 /// Primes larger than 18446744073709551557 can not be represented by a `u64`:
 /// ```
 /// # use const_primes::next_prime;
-/// const NOSUCH: Option<u64> = next_prime(18_446_744_073_709_551_557);
-/// assert!(NOSUCH.is_none());
+/// const NO_SUCH: Option<u64> = next_prime(18_446_744_073_709_551_557);
+/// assert_eq!(NO_SUCH, None);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn next_prime(mut n: u64) -> Option<u64> {
