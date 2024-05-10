@@ -221,7 +221,7 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 }
 
 /// The error returned by [`sieve_lt`] and [`sieve_geq`] if the input
-/// is invalid.
+/// is invalid or does not work to sieve the requested range.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SieveError {
     /// The limit was less than or equal to `N` (for `sieve_lt`).
