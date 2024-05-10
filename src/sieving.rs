@@ -104,7 +104,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// ```
 /// # use const_primes::{sieve_lt, SieveError};
 /// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(26);
-/// assert_eq!(PS, Err(SieveError::TooLargeLimit));
+/// assert_eq!(PS, Err(SieveError::NotEnoughMemory));
 /// ```
 /// or smaller than `N`:
 /// ```
@@ -133,7 +133,7 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
     };
 
     if upper_limit > mem_sqr {
-        return Err(SieveError::TooLargeLimit);
+        return Err(SieveError::NotEnoughMemory);
     }
 
     let n64 = N as u64;
@@ -219,8 +219,7 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SieveError {
     TooSmallLimit,
-    TooLargeLimit,
-    TooLargeTotal,
+    NotEnoughMemory,
     TotalDoesntFitU64,
 }
 
@@ -228,8 +227,9 @@ impl core::fmt::Display for SieveError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
             Self::TooSmallLimit => write!(f, "`limit` must be at least `N`"),
-            Self::TooLargeLimit => write!(f, "`limit` must be less than or equal to `MEM`^2"),
-            Self::TooLargeTotal => write!(f, "`MEM + limit` must be less than or equal to `MEM`^2"),
+            Self::NotEnoughMemory => {
+                write!(f, "`MEM`^2 was smaller than the largest encountered value")
+            }
             Self::TotalDoesntFitU64 => write!(f, "`MEM + limit` must fit in a `u64`"),
         }
     }
@@ -283,7 +283,7 @@ impl std::error::Error for SieveError {}
 /// # use const_primes::{sieve_geq, SieveError};
 /// const P1: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(21);
 /// const P2: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(u64::MAX);
-/// assert_eq!(P1, Err(SieveError::TooLargeTotal));
+/// assert_eq!(P1, Err(SieveError::NotEnoughMemory));
 /// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
 ///
@@ -311,7 +311,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
     };
 
     if upper_limit > mem_sqr {
-        return Err(SieveError::TooLargeTotal);
+        return Err(SieveError::NotEnoughMemory);
     }
 
     // If `lower_limit` is zero then this is the same as just calling `sieve`, and we can return early.
