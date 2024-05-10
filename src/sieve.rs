@@ -248,7 +248,7 @@ impl std::error::Error for SieveError {}
 /// that is `MEM`^2 must be larger than `lower_limit + N`.
 ///
 /// Fails to compile if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
-/// 
+///
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
 /// prime status of the integers below some number, see [`sieve_lt`].
 ///

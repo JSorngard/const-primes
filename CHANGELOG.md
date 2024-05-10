@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.6.0
+
+ - Changed all panics that involve only const generics into compile errors.
+
 # 0.5.1
 
  - Implement `IntoIterator` for `&Primes<N>`.

@@ -40,6 +40,8 @@ pub struct Primes<const N: usize> {
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
     ///
+    /// Fails to compile if `N` is 0.
+    ///
     /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
     ///
     /// # Examples
@@ -61,19 +63,11 @@ impl<const N: usize> Primes<N> {
     /// let primes = Primes::<5>::new();
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if `N` is zero. In const contexts this is a compile error.
-    /// ```compile_fail
-    /// # use const_primes::Primes;
-    /// const NO_PRIMES: Primes<0> = Primes::new();
-    /// ```
-    ///
-    /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        assert!(N > 0, "`N` must be at least 1");
+        const {
+            assert!(N > 0, "`N` must be at least 1");
+        }
         Self { primes: primes() }
     }
 
@@ -300,7 +294,7 @@ impl<const N: usize> Primes<N> {
     pub const fn last(&self) -> &Underlying {
         match self.primes.last() {
             Some(l) => l,
-            None => panic!("this should panic during creation"),
+            None => panic!("creating an empty `Primes` fails to compile"),
         }
     }
 
@@ -322,10 +316,12 @@ impl<const N: usize> Primes<N> {
     }
 }
 
-/// Panics if `N` is 0.
+/// Fails to compile if `N` is 0.
 impl<const N: usize> Default for Primes<N> {
     fn default() -> Self {
-        assert!(N > 0, "`N` must be at least 1");
+        const {
+            assert!(N > 0, "`N` must be at least 1");
+        }
         Self { primes: primes() }
     }
 }
