@@ -511,6 +511,18 @@ mod test {
     }
 
     #[test]
+    fn test_into_iter() {
+        const PRIMES: Primes<10> = Primes::new();
+
+        for (&prime, ans) in (&PRIMES)
+            .into_iter()
+            .zip([2, 3, 5, 7, 11, 13, 17, 19, 23, 29])
+        {
+            assert_eq!(prime, ans);
+        }
+    }
+
+    #[test]
     fn check_previous_prime() {
         const CACHE: Primes<100> = Primes::new();
         const PREV0: Option<Underlying> = CACHE.previous_prime(0);
