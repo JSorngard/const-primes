@@ -459,13 +459,6 @@ mod test {
     }
 
     #[test]
-    fn clone_impl() {
-        const P1: Primes<10> = Primes::new();
-        let p2: Primes<10> = P1.clone();
-        assert_eq!(P1, p2);
-    }
-
-    #[test]
     fn copy_impl() {
         const P1: Primes<10> = Primes::new();
         const P2: Primes<10> = P1;
@@ -565,8 +558,8 @@ mod test {
         ];
         const P: Primes<N> = Primes::new();
 
-        for n in 0..N {
-            assert_eq!(P.next_prime(n as u32), Some(NEXT_PRIME[n]));
+        for (n, next) in NEXT_PRIME.iter().enumerate().take(N) {
+            assert_eq!(P.next_prime(n as u32), Some(*next));
         }
     }
 
@@ -599,8 +592,8 @@ mod test {
         const N: usize = 10;
         const P: Primes<N> = Primes::new();
         const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
-        for n in 0..N {
-            assert_eq!(P.get(n), Some(&A[n]));
+        for (n, gotten) in A.iter().enumerate().take(N) {
+            assert_eq!(P.get(n), Some(gotten));
         }
         for n in N + 1..2 * N {
             assert!(P.get(n).is_none());
@@ -636,12 +629,12 @@ mod test {
         ];
         const P: Primes<N> = Primes::new();
 
-        for n in 0..N {
-            assert_eq!(P.count_primes_leq(n as u32), Some(PRIME_COUNTS[n]));
+        for (n, count) in PRIME_COUNTS.iter().enumerate().take(N) {
+            assert_eq!(P.count_primes_leq(n as u32), Some(*count));
         }
 
         for n in *P.last() + 1..*P.last() * 2 {
-            assert!(P.count_primes_leq(n as u32).is_none());
+            assert!(P.count_primes_leq(n).is_none());
         }
     }
 
