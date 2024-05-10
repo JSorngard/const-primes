@@ -159,7 +159,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// # use const_primes::{primes_lt, GenerationError};
 /// const TOO_LARGE_LIMIT: Result<[u64; 3], GenerationError> = primes_lt::<3, 5>(26);
 /// const TOO_SMALL_LIMIT: Result<[u64; 1], GenerationError> = primes_lt::<1, 1>(1);
-/// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::NotEnoughMemory));
+/// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::TooSmallSieveSize));
 /// assert_eq!(TOO_SMALL_LIMIT, Err(GenerationError::TooSmallLimit));
 /// ```
 ///
@@ -184,7 +184,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     }
 
     if upper_limit > mem_sqr {
-        return Err(GenerationError::NotEnoughMemory);
+        return Err(GenerationError::TooSmallSieveSize);
     }
 
     let mut primes: [u64; N] = [0; N];
@@ -319,7 +319,7 @@ macro_rules! primes_segment {
 /// ```
 /// # use const_primes::{primes_geq, GenerationError};
 /// const PRIMES: Result<[u64; 5], GenerationError> = primes_geq::<5, 5>(26);
-/// assert_eq!(PRIMES, Err(GenerationError::NotEnoughMemory));
+/// assert_eq!(PRIMES, Err(GenerationError::TooSmallSieveSize));
 /// ```
 ///
 /// # Panics
@@ -352,7 +352,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     }
 
     if lower_limit >= mem_sqr {
-        return Err(GenerationError::NotEnoughMemory);
+        return Err(GenerationError::TooSmallSieveSize);
     }
 
     let mut primes = [0; N];
@@ -397,7 +397,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GenerationError {
     /// The limit was larger than or equal to `MEM^2`.
-    NotEnoughMemory,
+    TooSmallSieveSize,
     /// The limit was smaller than or equal to 2.
     TooSmallLimit,
     /// Encountered a number larger than or equal to `MEM`^2.
@@ -409,7 +409,7 @@ pub enum GenerationError {
 impl fmt::Display for GenerationError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::NotEnoughMemory => write!(
+            Self::TooSmallSieveSize => write!(
                 f,
                 "the limit was larger than `MEM`^2"
             ),
