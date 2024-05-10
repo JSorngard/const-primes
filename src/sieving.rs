@@ -175,7 +175,11 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 ///
 /// # Panics
 ///
-/// Panics if `N` is 0. In const contexts this is a compile error.
+/// Panics if `N` is 0. In const contexts this is a compile error:
+/// ```compile_fail
+/// # use const_primes::sieve;
+/// const PRIMALITY: [bool; 0] = sieve();
+/// ```
 #[must_use = "the function only returns a new value"]
 pub const fn sieve<const N: usize>() -> [bool; N] {
     assert!(N > 0, "`N` must be at least 1");
