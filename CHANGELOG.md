@@ -13,7 +13,7 @@ It also shortens and clarifies some function names.
  - Rename `largest_prime_leq` to `previous_prime`.  
  - Rename `smallest_prime_lt` to `next_prime`.  
  - Rename `prime_counts` to `count_primes`.  
- - Remove `moebius`, as it is out of scope of this crate. If you want the source code for that function it can be found at <https://rosettacode.org/wiki/M%C3%B6bius_function#Rust>, or in older versions of this crate.
+ - Remove `moebius`, as it is out of scope of this crate. If you want the source code for that function it can be found on [Rosettacode](https://rosettacode.org/wiki/M%C3%B6bius_function#Rust), or in older versions of this crate.
 
 ## Other major changes
 
