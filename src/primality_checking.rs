@@ -1,6 +1,6 @@
 //! This module contains an implementation of a deterministic Miller-Rabin primality test
 
-use crate::imath::{mod_mul, mod_pow};
+use crate::integer_math::{mod_mul, mod_pow};
 
 /// Returns whether `n` is prime.
 ///

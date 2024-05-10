@@ -419,7 +419,7 @@ impl fmt::Display for GenerationError {
             ),
             Self::SieveOverrun(number) => write!(
                 f,
-                "encountered the number {number} which would have needed `MEM` to be at least {} to sieve", crate::imath::isqrt(*number) + 1
+                "encountered the number {number} which would have needed `MEM` to be at least {} to sieve", crate::integer_math::isqrt(*number) + 1
             ),
             Self::OutOfPrimes => write!(f, "ran out of primes before the array was filled"),
         }
