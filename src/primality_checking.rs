@@ -4,12 +4,12 @@ use crate::integer_math::{mod_mul, mod_pow};
 
 /// Returns whether `n` is prime.
 ///
-/// Does trial division with a small wheel up to `log2(n)` and then uses a Miller-Rabin
-/// primality test with a set of witnesses that
-/// is known to be sufficient for numbers that fit in a `u64`.
+/// Does trial division with a small wheel up to `log2(n)` and then uses a
+/// deterministic Miller-Rabin primality test.
 ///
 /// # Example
-/// Basic usage
+///
+/// Basic usage:
 /// ```
 /// # use const_primes::is_prime;
 /// const CHECK: bool = is_prime(18_446_744_073_709_551_557);
