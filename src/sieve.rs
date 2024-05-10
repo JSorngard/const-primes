@@ -164,6 +164,8 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
 ///
+/// Fails to compile if `N` is 0.
+///
 /// # Example
 ///
 /// ```
@@ -172,17 +174,11 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 /// //                     0      1      2     3     4      5     6      7     8      9
 /// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
 /// ```
-///
-/// # Panics
-///
-/// Panics if `N` is 0. In const contexts this is a compile error:
-/// ```compile_fail
-/// # use const_primes::sieve;
-/// const PRIMALITY: [bool; 0] = sieve();
-/// ```
 #[must_use = "the function only returns a new value"]
 pub const fn sieve<const N: usize>() -> [bool; N] {
-    assert!(N > 0, "`N` must be at least 1");
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+    }
 
     let mut sieve = [true; N];
     if N > 0 {
