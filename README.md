@@ -89,15 +89,17 @@ Use `is_prime` to test whether a given number is prime:
 const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 assert!(CHECK);
 ```
-Find the next or previous prime numbers with `next_prime` and `previous_prime` if they exist:
+Find the next or previous prime numbers with `next_prime` and `previous_prime` if they exist and can be represented in a `u64`:
 ```rust
 const NEXT: Option<u64> = next_prime(25);
 const PREV: Option<u64> = previous_prime(25);
-const NOSUCH: Option<u64> = previous_prime(2);
+const NO_SUCH: Option<u64> = previous_prime(2);
+const TOO_BIG: Option<u64> = next_prime(u64::MAX);
 
 assert_eq!(NEXT, Some(29));
 assert_eq!(PREV, Some(23));
-assert_eq!(NOSUCH, None);
+assert_eq!(NO_SUCH, None);
+assert_eq!(TOO_BIG, None);
 ```
 and more!
 
