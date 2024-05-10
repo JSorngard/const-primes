@@ -1,3 +1,5 @@
+//! This module contains implementations of functions that search for primes that neighbour a given number.
+
 use crate::is_prime;
 
 /// Returns the largest prime smaller than `n` if there is one.

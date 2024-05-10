@@ -1,3 +1,6 @@
+//! This module contains an implementation of a type that functions as a cache of prime numbers
+//! for related computations.
+
 use crate::{primes, Underlying};
 
 // region: Primes<N>

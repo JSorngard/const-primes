@@ -1,3 +1,5 @@
+//! This module contains implementations of prime sieves.
+
 use core::fmt;
 
 use crate::isqrt;

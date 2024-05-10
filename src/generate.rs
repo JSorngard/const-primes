@@ -1,3 +1,5 @@
+//! This module contains implementations of prime generation functions.
+
 use core::fmt;
 
 use crate::{sieve, sieve::sieve_segment, Underlying};
