@@ -38,7 +38,7 @@
 //! assert!(CACHE.is_prime(1000).is_none());
 //! assert!(CACHE.count_primes_leq(1000).is_none());
 //! ```
-//! Sieve a range of numbers for their prime status with [`sieve`]:
+//! Sieve a range of numbers for their prime status with [`sieve`](crate::sieve()):
 //! ```
 //! # use const_primes::sieve;
 //! const N: usize = 10;

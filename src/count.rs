@@ -2,7 +2,7 @@ use crate::sieve;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
-/// Sieves primes with [`sieve`](crate::sieve::sieve) and then counts them.
+/// Sieves primes with [`sieve`](crate::sieve()) and then counts them.
 ///
 /// # Example
 ///
