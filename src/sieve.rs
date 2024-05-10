@@ -57,7 +57,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
     segment_sieve
 }
 
-/// Returns an array of size `N` that indicates which of the `N` integers smaller than `upper_limit` are prime.
+/// Returns an array of size `N` that indicates which of the `N` largest integers smaller than `upper_limit` are prime.
 ///
 /// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
