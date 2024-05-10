@@ -249,7 +249,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 /// # Errors and panics
 ///
 /// Has the same error and panic behaviour as [`primes_geq`] and [`primes_lt`], with the exception
-/// that it sets `MEM` correctly.
+/// that it sets `MEM` such that the functions don't panic or run out of memory.
 #[macro_export]
 macro_rules! primes_segment {
     ($n:expr; < $lim:expr) => {

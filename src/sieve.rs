@@ -368,7 +368,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 /// # Errors and panics
 ///
 /// Has the same error and panic behaviour as [`sieve_geq`] and [`sieve_lt`], with the exception
-/// that it sets `MEM` correctly.
+/// that it sets `MEM` such that the functions don't panic or run out of memory.
 #[macro_export]
 macro_rules! sieve_segment {
     ($n:expr; < $lim:expr) => {
