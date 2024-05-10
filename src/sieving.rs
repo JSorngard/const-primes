@@ -218,8 +218,11 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 /// is invalid.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SieveError {
+    /// The limit was less than or equal to `N` (for `sieve_lt`).
     TooSmallLimit,
+    /// `limit` or `limit + MEM` was larger than or equal to `MEM`^2.
     NotEnoughMemory,
+    /// `limit + MEM` did not fit in a `u64`.
     TotalDoesntFitU64,
 }
 
