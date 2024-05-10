@@ -10,6 +10,8 @@ use crate::{sieve, sieve::sieve_segment, Underlying};
 ///
 /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ///
+/// Fails to compile if `N` is 0.
+///
 /// # Example
 ///
 /// ```
@@ -17,18 +19,11 @@ use crate::{sieve, sieve::sieve_segment, Underlying};
 /// const PRIMES: [u32; 10] = primes();
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
-///
-/// # Panics
-///
-/// Panics if `N` is 0. In const contexts this is a compile error:
-/// ```compile_fail
-/// # use const_primes::primes;
-/// const PRIMES: [u32; 0] = primes();
-/// ```
-///
 #[must_use = "the function only returns a new value"]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-    assert!(N > 0, "`N` must be at least 1");
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+    }
 
     if N == 1 {
         return [2; N];
