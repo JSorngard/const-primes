@@ -454,7 +454,7 @@ mod test {
                 )+
             };
         }
-        let v = vec![2, 3, 5];
+        let v = [2, 3, 5];
         partial_eq_check!([2, 3, 5], v.as_slice());
     }
 
@@ -538,7 +538,6 @@ mod test {
             2, 3, 3, 5, 5, 7, 7, 7, 7, 11, 11, 13, 13, 13, 13, 17, 17, 19,
         ];
         for (i, prev) in PREVS.into_iter().enumerate() {
-            println!("n = {}", i + 3);
             assert_eq!(Some(prev), CACHE.previous_prime(i as u32 + 3));
         }
         assert_eq!(PREV0, None);
@@ -567,7 +566,6 @@ mod test {
         const P: Primes<N> = Primes::new();
 
         for n in 0..N {
-            println!("{n}");
             assert_eq!(P.next_prime(n as u32), Some(NEXT_PRIME[n]));
         }
     }
