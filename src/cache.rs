@@ -375,6 +375,14 @@ impl<const N: usize> IntoIterator for Primes<N> {
     }
 }
 
+impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
+    type IntoIter = <&'a [Underlying; N] as IntoIterator>::IntoIter;
+    type Item = <&'a [Underlying; N] as IntoIterator>::Item;
+    fn into_iter(self) -> Self::IntoIter {
+        self.primes.iter()
+    }
+}
+
 // region: PartialEq
 
 impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
