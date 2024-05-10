@@ -247,7 +247,7 @@ impl fmt::Display for SieveError {
 #[cfg(feature = "std")]
 impl std::error::Error for SieveError {}
 
-/// Returns the prime status of the `N` smallest integers greater than or equal to `lower_limit`.
+/// Returns an array of size N that indicates which of the N integers greater than or equal to `lower_limit` are prime.
 ///
 /// Uses a sieve of size `MEM` during evaluation, but stores only the requested values in the output array.
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
