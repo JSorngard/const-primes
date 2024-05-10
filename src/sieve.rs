@@ -247,6 +247,8 @@ impl std::error::Error for SieveError {}
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is `MEM`^2 must be larger than `lower_limit + N`.
 ///
+/// Fails to compile if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// 
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
 /// prime status of the integers below some number, see [`sieve_lt`].
 ///
@@ -289,22 +291,21 @@ impl std::error::Error for SieveError {}
 /// assert_eq!(P1, Err(SieveError::TooSmallSieveSize));
 /// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
-///
-/// # Panics
-///
-/// Panics if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
-/// In const contexts this is a compile error.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    assert!(N > 0, "`N` must be at least 1");
-    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    const {
+        assert!(N > 0, "`N` must be at least 1");
+        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+    }
 
-    let mem64 = MEM as u64;
-
-    let Some(mem_sqr) = mem64.checked_mul(mem64) else {
-        panic!("`MEM`^2 must fit in a `u64`");
+    let (mem64, mem_sqr) = const {
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => (mem64, mem_sqr),
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
     };
 
     let Some(upper_limit) = mem64.checked_add(lower_limit) else {
