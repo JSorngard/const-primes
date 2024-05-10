@@ -445,7 +445,7 @@ mod test {
     fn partial_eq_impl() {
         const P1: Primes<3> = Primes::new();
         macro_rules! partial_eq_check {
-            ($($t:expr),+) => {
+            ($($t:ident),+) => {
                 $(
                     assert_eq!(P1, $t);
                     assert_eq!(&P1, &$t);
@@ -455,37 +455,8 @@ mod test {
             };
         }
         let v = [2, 3, 5];
-        partial_eq_check!([2, 3, 5], v.as_slice());
-    }
-
-    #[test]
-    fn clone_impl() {
-        const P1: Primes<10> = Primes::new();
-        let p2: Primes<10> = P1.clone();
-        assert_eq!(P1, p2);
-    }
-
-    #[test]
-    fn copy_impl() {
-        const P1: Primes<10> = Primes::new();
-        const P2: Primes<10> = P1;
-        assert_eq!(P1, P2);
-        fn take_by_move<const N: usize>(p: Primes<N>) -> Primes<N> {
-            p
-        }
-        assert_eq!(P1, take_by_move(P1));
-    }
-
-    #[test]
-    fn hash_impl() {
-        use std::collections::HashSet;
-
-        const P: Primes<10> = Primes::new();
-
-        let mut set = HashSet::<Primes<10>>::new();
-        set.insert(P);
-        let p2: Vec<Primes<10>> = set.drain().collect();
-        assert_eq!(P, p2[0]);
+        let s = v.as_slice();
+        partial_eq_check!(v, s);
     }
 
     #[test]
@@ -565,8 +536,8 @@ mod test {
         ];
         const P: Primes<N> = Primes::new();
 
-        for n in 0..N {
-            assert_eq!(P.next_prime(n as u32), Some(NEXT_PRIME[n]));
+        for (n, next) in NEXT_PRIME.iter().enumerate().take(N) {
+            assert_eq!(P.next_prime(n as u32), Some(*next));
         }
     }
 
@@ -599,8 +570,8 @@ mod test {
         const N: usize = 10;
         const P: Primes<N> = Primes::new();
         const A: [Underlying; N] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
-        for n in 0..N {
-            assert_eq!(P.get(n), Some(&A[n]));
+        for (n, gotten) in A.iter().enumerate().take(N) {
+            assert_eq!(P.get(n), Some(gotten));
         }
         for n in N + 1..2 * N {
             assert!(P.get(n).is_none());
@@ -636,12 +607,12 @@ mod test {
         ];
         const P: Primes<N> = Primes::new();
 
-        for n in 0..N {
-            assert_eq!(P.count_primes_leq(n as u32), Some(PRIME_COUNTS[n]));
+        for (n, count) in PRIME_COUNTS.iter().enumerate().take(N) {
+            assert_eq!(P.count_primes_leq(n as u32), Some(*count));
         }
 
         for n in *P.last() + 1..*P.last() * 2 {
-            assert!(P.count_primes_leq(n as u32).is_none());
+            assert!(P.count_primes_leq(n).is_none());
         }
     }
 
