@@ -253,7 +253,7 @@ macro_rules! primes_segment {
         $crate::primes_lt::<
             { $n },
             {
-                let mem = { $lim };
+                let mem: u64 = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1
             },
         >({ $lim })
@@ -262,7 +262,7 @@ macro_rules! primes_segment {
         $crate::primes_geq::<
             { $n },
             {
-                let mem = { $lim };
+                let mem: u64 = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1 + { $n }
             },
         >({ $lim })
