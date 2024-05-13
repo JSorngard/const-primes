@@ -10,7 +10,7 @@ A crate for generating and working with prime numbers in const contexts.
 
 ## Examples
 
-Generate arrays of prime numbers with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
+Generate arrays of prime numbers at compile time with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
 ```rust
 const PRIMES: [u32; 10] = primes();
 assert_eq!(PRIMES[5], 13);

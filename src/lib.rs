@@ -4,7 +4,7 @@
 //!
 //! # Examples
 //!
-//! Generate arrays of prime numbers with the function [`primes`] which uses a
+//! Generate arrays of prime numbers at compile time with the function [`primes`] which uses a
 //! [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
 //! ```
 //! use const_primes::primes;
