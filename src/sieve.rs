@@ -375,7 +375,7 @@ macro_rules! sieve_segment {
         $crate::sieve_lt::<
             { $n },
             {
-                let mem = { $lim };
+                let mem: u64 = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1
             },
         >({ $lim })
@@ -384,7 +384,7 @@ macro_rules! sieve_segment {
         $crate::sieve_geq::<
             { $n },
             {
-                let mem = { $lim };
+                let mem: u64 = { $lim };
                 $crate::isqrt(mem) as ::core::primitive::usize + 1 + { $n }
             },
         >({ $lim })
