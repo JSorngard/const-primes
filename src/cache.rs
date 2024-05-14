@@ -203,6 +203,21 @@ impl<const N: usize> Primes<N> {
     /// variant is returned and contains the index of that location.
     /// If the target is larger than the largest prime in the array no information about where it might fit is available,
     /// and an [`Option::None`] is returned.
+    ///
+    /// # Example
+    ///
+    /// Basic usage:
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<10> = Primes::new();
+    /// const WHERE_29: Result<usize, Option<usize>> = PRIMES.binary_search(29);
+    /// const WHERE_6: Result<usize, Option<usize>> = PRIMES.binary_search(6);
+    /// const WHERE_1000: Result<usize, Option<usize>> = PRIMES.binary_search(1_000);
+    ///
+    /// assert_eq!(WHERE_29, Ok(9));
+    /// assert_eq!(WHERE_6, Err(Some(3)));
+    /// assert_eq!(WHERE_1000, Err(None));
+    /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
         if target > *self.last() {
