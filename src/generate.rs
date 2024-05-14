@@ -167,7 +167,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// # Panics
 ///
-/// Panics if `N` or `MEM` are 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
+/// Panics if `N` or `MEM` are 0, if `MEM < N` or if `MEM`^2 does not fit in a `u64`.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
