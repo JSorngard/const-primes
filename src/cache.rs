@@ -1,5 +1,7 @@
-//! This module contains an implementation of a type that functions as a cache of prime numbers
+//! This module contains the implementation of the type [`Primes`], which functions as a cache of prime numbers
 //! for related computations.
+//!
+//! It also contains the implementations of related iterators.
 
 use crate::{primes, Underlying};
 
@@ -189,12 +191,32 @@ impl<const N: usize> Primes<N> {
     // endregion: Next prime
 
     /// Searches the underlying array of primes for the target integer.
+    ///
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
     /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
     /// If the target could be inserted into the array while maintaining the sorted order, the [`Option::Some`]
     /// variant is returned and contains the index of that location.
     /// If the target is larger than the largest prime in the array no information about where it might fit is available,
     /// and an [`Option::None`] is returned.
+    ///
+    /// # Example
+    ///
+    /// Basic usage:
+    /// ```
+    /// # use const_primes::Primes;
+    /// // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+    /// const PRIMES: Primes<10> = Primes::new();
+    ///
+    /// type SearchResult = Result<usize, Option<usize>>;
+    ///
+    /// const WHERE_29: SearchResult = PRIMES.binary_search(29);
+    /// const WHERE_6: SearchResult = PRIMES.binary_search(6);
+    /// const WHERE_1000: SearchResult = PRIMES.binary_search(1_000);
+    ///
+    /// assert_eq!(WHERE_29, Ok(9));
+    /// assert_eq!(WHERE_6, Err(Some(3)));
+    /// assert_eq!(WHERE_1000, Err(None));
+    /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
         if target > *self.last() {
@@ -251,10 +273,24 @@ impl<const N: usize> Primes<N> {
         self.primes.as_slice()
     }
 
-    /// Returns an iterator over the primes.
+    /// Returns a borrowing iterator over the primes.
+    ///
+    /// # Example
+    ///
+    /// Basic usage:
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<10> = Primes::new();
+    ///
+    /// let mut primes = PRIMES.iter();
+    ///
+    /// assert_eq!(primes.nth(5), Some(&13));
+    /// assert_eq!(primes.next(), Some(&17));
+    /// assert_eq!(primes.as_slice(), &[19, 23, 29]);
+    /// ```
     #[inline]
-    pub fn iter(&self) -> core::slice::Iter<'_, Underlying> {
-        self.primes.iter()
+    pub fn iter(&self) -> PrimesIter<'_, N> {
+        PrimesIter::new(IntoIterator::into_iter(&self.primes))
     }
 
     // endregion: Conversions
@@ -365,19 +401,165 @@ impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
 // region: IntoIterator
 
 impl<const N: usize> IntoIterator for Primes<N> {
-    type Item = <[Underlying; N] as IntoIterator>::Item;
-    type IntoIter = <[Underlying; N] as IntoIterator>::IntoIter;
+    type Item = Underlying;
+    type IntoIter = PrimesIntoIter<N>;
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        self.primes.into_iter()
+        PrimesIntoIter::new(self.primes.into_iter())
+    }
+}
+
+pub use primes_iter::PrimesIter;
+mod primes_iter {
+    use super::Underlying;
+    use core::iter::FusedIterator;
+
+    /// A borrowing iterator over prime numbers.
+    /// Created by the [`iter`](super::Primes::iter) function on [`Primes`](super::Primes),
+    /// see it for more information.
+    #[derive(Debug, Clone)]
+    pub struct PrimesIter<'a, const N: usize>(core::slice::Iter<'a, Underlying>);
+
+    impl<'a, const N: usize> PrimesIter<'a, N> {
+        pub(crate) const fn new(iter: core::slice::Iter<'a, Underlying>) -> Self {
+            Self(iter)
+        }
+
+        /// Returns an immutable slice of all the primes that have not been yielded yet.
+        pub fn as_slice(&self) -> &[Underlying] {
+            self.0.as_slice()
+        }
+    }
+
+    impl<'a, const N: usize> Iterator for PrimesIter<'a, N> {
+        type Item = &'a Underlying;
+
+        #[inline]
+        fn next(&mut self) -> Option<Self::Item> {
+            self.0.next()
+        }
+
+        #[inline]
+        fn size_hint(&self) -> (usize, Option<usize>) {
+            self.0.size_hint()
+        }
+
+        #[inline]
+        fn nth(&mut self, n: usize) -> Option<Self::Item> {
+            self.0.nth(n)
+        }
+
+        #[inline]
+        fn count(self) -> usize {
+            self.0.count()
+        }
+
+        #[inline]
+        fn last(self) -> Option<Self::Item> {
+            self.0.last()
+        }
+    }
+
+    impl<'a, const N: usize> ExactSizeIterator for PrimesIter<'a, N> {
+        #[inline]
+        fn len(&self) -> usize {
+            self.0.len()
+        }
+    }
+
+    impl<'a, const N: usize> FusedIterator for PrimesIter<'a, N> {}
+
+    impl<'a, const N: usize> DoubleEndedIterator for PrimesIter<'a, N> {
+        #[inline]
+        fn next_back(&mut self) -> Option<Self::Item> {
+            self.0.next_back()
+        }
+
+        #[inline]
+        fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
+            self.0.nth_back(n)
+        }
+    }
+}
+
+pub use primes_into_iter::PrimesIntoIter;
+mod primes_into_iter {
+    use core::iter::FusedIterator;
+
+    use super::Underlying;
+
+    /// An owning iterator over prime numbers.
+    /// Created by the [`IntoIterator`] implementation on [`Primes`](super::Primes).
+    #[derive(Debug, Clone)]
+    pub struct PrimesIntoIter<const N: usize>(core::array::IntoIter<Underlying, N>);
+
+    impl<const N: usize> PrimesIntoIter<N> {
+        pub(crate) const fn new(iter: core::array::IntoIter<Underlying, N>) -> Self {
+            Self(iter)
+        }
+
+        /// Returns an immutable slice of all primes that have not been yielded yet.
+        pub fn as_slice(&self) -> &[Underlying] {
+            self.0.as_slice()
+        }
+    }
+
+    impl<const N: usize> Iterator for PrimesIntoIter<N> {
+        type Item = Underlying;
+
+        #[inline]
+        fn next(&mut self) -> Option<Self::Item> {
+            self.0.next()
+        }
+
+        #[inline]
+        fn nth(&mut self, n: usize) -> Option<Self::Item> {
+            self.0.nth(n)
+        }
+
+        #[inline]
+        fn count(self) -> usize {
+            self.0.count()
+        }
+
+        #[inline]
+        fn last(self) -> Option<Self::Item> {
+            self.0.last()
+        }
+
+        #[inline]
+        fn size_hint(&self) -> (usize, Option<usize>) {
+            self.0.size_hint()
+        }
+    }
+
+    impl<const N: usize> DoubleEndedIterator for PrimesIntoIter<N> {
+        #[inline]
+        fn next_back(&mut self) -> Option<Self::Item> {
+            self.0.next_back()
+        }
+
+        #[inline]
+        fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
+            self.0.nth_back(n)
+        }
+    }
+
+    impl<const N: usize> FusedIterator for PrimesIntoIter<N> {}
+
+    impl<const N: usize> ExactSizeIterator for PrimesIntoIter<N> {
+        #[inline]
+        fn len(&self) -> usize {
+            self.0.len()
+        }
     }
 }
 
 impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
-    type IntoIter = <&'a [Underlying; N] as IntoIterator>::IntoIter;
-    type Item = <&'a [Underlying; N] as IntoIterator>::Item;
+    type IntoIter = PrimesIter<'a, N>;
+    type Item = &'a Underlying;
     fn into_iter(self) -> Self::IntoIter {
-        self.primes.iter()
+        PrimesIter::new(IntoIterator::into_iter(&self.primes))
     }
 }
 
