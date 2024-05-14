@@ -259,7 +259,20 @@ impl<const N: usize> Primes<N> {
         self.primes.as_slice()
     }
 
-    /// Returns an iterator over the primes.
+    /// Returns a borrowing iterator over the primes.
+    ///
+    /// # Example
+    ///
+    /// Basic usage:
+    /// ```
+    /// # use const_primes::Primes;
+    /// const PRIMES: Primes<10> = Primes::new();
+    /// 
+    /// let mut primes = PRIMES.iter();
+    /// 
+    /// assert_eq!(primes.nth(5), Some(&13));
+    /// assert_eq!(primes.next(), Some(&17));
+    /// ```
     #[inline]
     pub fn iter(&self) -> PrimesIter<'_, N> {
         PrimesIter::new(IntoIterator::into_iter(&self.primes))
