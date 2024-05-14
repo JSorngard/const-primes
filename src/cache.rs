@@ -418,7 +418,7 @@ mod primes_iter {
     use super::Underlying;
     use core::iter::FusedIterator;
 
-    /// An iterator over prime numbers.
+    /// A borrowing iterator over prime numbers.
     /// Created by the [`iter`](super::Primes::iter) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone)]
