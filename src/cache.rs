@@ -209,6 +209,7 @@ impl<const N: usize> Primes<N> {
     /// Basic usage:
     /// ```
     /// # use const_primes::Primes;
+    /// // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
     /// const PRIMES: Primes<10> = Primes::new();
     ///
     /// type SearchResult = Result<usize, Option<usize>>;
