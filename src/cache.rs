@@ -272,6 +272,7 @@ impl<const N: usize> Primes<N> {
     ///
     /// assert_eq!(primes.nth(5), Some(&13));
     /// assert_eq!(primes.next(), Some(&17));
+    /// assert_eq!(primes.as_slice(), &[19, 23, 29]);
     /// ```
     #[inline]
     pub fn iter(&self) -> PrimesIter<'_, N> {
