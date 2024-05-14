@@ -267,9 +267,9 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<10> = Primes::new();
-    /// 
+    ///
     /// let mut primes = PRIMES.iter();
-    /// 
+    ///
     /// assert_eq!(primes.nth(5), Some(&13));
     /// assert_eq!(primes.next(), Some(&17));
     /// ```
@@ -407,6 +407,11 @@ mod primes_iter {
         pub(crate) const fn new(iter: core::slice::Iter<'a, Underlying>) -> Self {
             Self(iter)
         }
+
+        /// Returns an immutable slice of all the primes that have not been yielded yet.
+        pub fn as_slice(&self) -> &[Underlying] {
+            self.0.as_slice()
+        }
     }
 
     impl<'a, const N: usize> Iterator for PrimesIter<'a, N> {
@@ -474,6 +479,11 @@ mod primes_into_iter {
     impl<const N: usize> PrimesIntoIter<N> {
         pub(crate) const fn new(iter: core::array::IntoIter<Underlying, N>) -> Self {
             Self(iter)
+        }
+
+        /// Returns an immutable slice of all primes that have not been yielded yet.
+        pub fn as_slice(&self) -> &[Underlying] {
+            self.0.as_slice()
         }
     }
 
