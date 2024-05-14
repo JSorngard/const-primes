@@ -210,9 +210,12 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<10> = Primes::new();
-    /// const WHERE_29: Result<usize, Option<usize>> = PRIMES.binary_search(29);
-    /// const WHERE_6: Result<usize, Option<usize>> = PRIMES.binary_search(6);
-    /// const WHERE_1000: Result<usize, Option<usize>> = PRIMES.binary_search(1_000);
+    ///
+    /// type SearchResult = Result<usize, Option<usize>>;
+    ///
+    /// const WHERE_29: SearchResult = PRIMES.binary_search(29);
+    /// const WHERE_6: SearchResult = PRIMES.binary_search(6);
+    /// const WHERE_1000: SearchResult = PRIMES.binary_search(1_000);
     ///
     /// assert_eq!(WHERE_29, Ok(9));
     /// assert_eq!(WHERE_6, Err(Some(3)));
