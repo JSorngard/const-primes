@@ -197,6 +197,7 @@ impl<const N: usize> Primes<N> {
     // endregion: Next prime
 
     /// Searches the underlying array of primes for the target integer.
+    ///
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
     /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
     /// If the target could be inserted into the array while maintaining the sorted order, the [`Option::Some`]
