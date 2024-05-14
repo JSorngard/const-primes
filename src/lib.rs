@@ -110,7 +110,7 @@
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
 
-mod cache;
+pub mod cache;
 mod check;
 mod count;
 mod generate;
