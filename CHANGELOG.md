@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.6.0
+
+ - Make the `Primes<N>::iter` function and the `IntoIterator` implementation for `Primes<N>` return custom iterator types. Allows less disruptive refactoring in the future.
+
 # 0.5.1
 
  - Implement `IntoIterator` for `&Primes<N>`.
