@@ -12,9 +12,6 @@ pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
 ) -> [bool; N] {
-    const {
-        assert!(N > 0, "`N` must be at least 1");
-    }
 
     let mut segment_sieve = [true; N];
 
@@ -61,7 +58,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is: `MEM`^2 must be at least as large as `upper_limit`.
 ///
-/// Fails to compile if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// Fails to compile if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
 ///
 /// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
 /// the integers above some number, see [`sieve_geq`].
@@ -121,7 +118,6 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
     const {
-        assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
     }
     let mem_sqr = const {
@@ -140,6 +136,10 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 
     if upper_limit < n64 {
         return Err(SieveError::TooSmallLimit);
+    }
+  
+    if N == 0 {
+        return Ok([false; N]);
     }
 
     if upper_limit == n64 {
@@ -164,8 +164,6 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 
 /// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
 ///
-/// Fails to compile if `N` is 0.
-///
 /// # Example
 ///
 /// ```
@@ -176,11 +174,11 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 /// ```
 #[must_use = "the function only returns a new value"]
 pub const fn sieve<const N: usize>() -> [bool; N] {
-    const {
-        assert!(N > 0, "`N` must be at least 1");
-    }
 
     let mut sieve = [true; N];
+    if N == 0 {
+        return sieve;
+    }
     if N > 0 {
         sieve[0] = false;
     }
@@ -247,7 +245,7 @@ impl std::error::Error for SieveError {}
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is `MEM`^2 must be larger than `lower_limit + N`.
 ///
-/// Fails to compile if `N` is 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// Fails to compile if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
 ///
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
 /// prime status of the integers below some number, see [`sieve_lt`].
@@ -296,7 +294,6 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
     const {
-        assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
     }
 
@@ -314,6 +311,10 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 
     if upper_limit > mem_sqr {
         return Err(SieveError::TooSmallSieveSize);
+    }
+  
+    if N == 0 {
+        return Ok([false; N]);
     }
 
     // If `lower_limit` is zero then this is the same as just calling `sieve`, and we can return early.

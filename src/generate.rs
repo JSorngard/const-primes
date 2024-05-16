@@ -10,8 +10,6 @@ use crate::{sieve, sieve::sieve_segment, Underlying};
 ///
 /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
 ///
-/// Fails to compile if `N` is 0.
-///
 /// # Example
 ///
 /// ```
@@ -21,11 +19,8 @@ use crate::{sieve, sieve::sieve_segment, Underlying};
 /// ```
 #[must_use = "the function only returns a new value"]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-    const {
-        assert!(N > 0, "`N` must be at least 1");
-    }
 
-    if N == 1 {
+    if N <= 1 {
         return [2; N];
     } else if N == 2 {
         let mut primes = [0; N];
@@ -112,7 +107,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Set `MEM` such that `MEM*MEM >= upper_limit`.
 ///
-/// Fails to compile if `N` or `MEM` are 0, if `MEM < N` or if `MEM`^2 does not fit in a u64.
+/// Fails to compile if `MEM` issmaller than `N` or if `MEM`^2 does not fit in a u64.
 ///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
@@ -166,7 +161,6 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
     const {
-        assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
     }
 
@@ -187,6 +181,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     }
 
     let mut primes: [u64; N] = [0; N];
+  
+    if N == 0 {
+        return Ok(primes);
+    }
 
     // This will be used to sieve all upper ranges.
     let base_sieve: [bool; MEM] = sieve();
@@ -276,7 +274,7 @@ macro_rules! primes_segment {
 ///
 /// Set `MEM` such that `MEM`^2 is larger than the largest prime you will encounter.
 ///
-/// Fails to compile if `N` or `MEM` are 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// Fails to compile if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
 ///
 /// If you want to compute primes smaller than some limit, take a look at [`primes_lt`].
 ///
@@ -327,10 +325,9 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
     const {
-        assert!(N > 0, "`N` must be at least 1");
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
     }
-
+  
     let (mem64, mem_sqr) = const {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -339,6 +336,10 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
         }
     };
 
+    if N == 0 {
+        return Ok([0; N]);
+    }
+  
     // If `lower_limit` is 2 or less, this is the same as calling `primes`,
     // so we just do that and convert the result to `u64`.
     if lower_limit <= 2 {

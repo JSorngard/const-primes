@@ -12,13 +12,8 @@ use crate::sieve;
 /// const COUNTS: [usize; 10] = count_primes();
 /// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 /// ```
-///
-/// # Panics
-///
-/// Panics if `N` is 0. In const contexts this is a compile error.
 #[must_use = "the function only returns a new value"]
 pub const fn count_primes<const N: usize>() -> [usize; N] {
-    assert!(N > 0, "`N` must be at least 1");
     let mut counts = [0; N];
     if N <= 2 {
         return counts;
