@@ -19,7 +19,6 @@ use crate::{sieve, sieve::sieve_segment, Underlying};
 /// ```
 #[must_use = "the function only returns a new value"]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-
     if N <= 1 {
         return [2; N];
     } else if N == 2 {
@@ -181,7 +180,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     }
 
     let mut primes: [u64; N] = [0; N];
-  
+
     if N == 0 {
         return Ok(primes);
     }
@@ -327,7 +326,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     const {
         assert!(MEM >= N, "`MEM` must be at least as large as `N`");
     }
-  
+
     let (mem64, mem_sqr) = const {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -339,7 +338,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     if N == 0 {
         return Ok([0; N]);
     }
-  
+
     // If `lower_limit` is 2 or less, this is the same as calling `primes`,
     // so we just do that and convert the result to `u64`.
     if lower_limit <= 2 {

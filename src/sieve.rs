@@ -12,7 +12,6 @@ pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
 ) -> [bool; N] {
-
     let mut segment_sieve = [true; N];
 
     let lower_limit = upper_limit - N as u64;
@@ -137,7 +136,7 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
     if upper_limit < n64 {
         return Err(SieveError::TooSmallLimit);
     }
-  
+
     if N == 0 {
         return Ok([false; N]);
     }
@@ -174,7 +173,6 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 /// ```
 #[must_use = "the function only returns a new value"]
 pub const fn sieve<const N: usize>() -> [bool; N] {
-
     let mut sieve = [true; N];
     if N == 0 {
         return sieve;
@@ -312,7 +310,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
     if upper_limit > mem_sqr {
         return Err(SieveError::TooSmallSieveSize);
     }
-  
+
     if N == 0 {
         return Ok([false; N]);
     }
