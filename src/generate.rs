@@ -17,20 +17,9 @@ use crate::{sieve, sieve::sieve_segment, Underlying};
 /// const PRIMES: [u32; 10] = primes();
 /// assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 /// ```
-///
-/// # Panics
-///
-/// Panics if `N` is 0. In const contexts this is a compile error:
-/// ```compile_fail
-/// # use const_primes::primes;
-/// const PRIMES: [u32; 0] = primes();
-/// ```
-///
 #[must_use = "the function only returns a new value"]
 pub const fn primes<const N: usize>() -> [Underlying; N] {
-    assert!(N > 0, "`N` must be at least 1");
-
-    if N == 1 {
+    if N <= 1 {
         return [2; N];
     } else if N == 2 {
         let mut primes = [0; N];
@@ -167,12 +156,11 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// # Panics
 ///
-/// Panics if `N` or `MEM` are 0, if `MEM < N` or if `MEM`^2 does not fit in a `u64`.
+/// Panics if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a `u64`.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    assert!(N > 0, "`N` must be at least 1");
     assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
     let mem64 = MEM as u64;
@@ -326,12 +314,11 @@ macro_rules! primes_segment {
 ///
 /// # Panics
 ///
-/// Panics if `N` or `MEM` are 0, if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    assert!(N > 0, "`N` must be at least 1");
     assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
     let mem64 = MEM as u64;
