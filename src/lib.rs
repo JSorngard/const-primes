@@ -1,6 +1,6 @@
 //! A crate for generating and working with prime numbers in const contexts.   
 //! This lets you for example pre-compute prime numbers at compile time and store them in the binary.
-//! 
+//!
 //! `#![no_std]` compatible, and currently supports Rust versions 1.79.0 or newer.
 //!
 //! # Examples
