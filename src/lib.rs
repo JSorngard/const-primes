@@ -101,7 +101,7 @@
 //!
 //! # Features
 //!
-//! `std`: implements the [`Error`](std::error::Error) trait for the error types.
+//! `std`: implements the `Error` trait from the standard library for the error types.
 
 #![forbid(unsafe_code)]
 #![cfg_attr(all(not(test), not(feature = "std")), no_std)]

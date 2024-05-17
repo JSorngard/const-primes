@@ -106,7 +106,7 @@ and more!
 
 ## Features
 
-`std`: implements the `Error` trait for the error types.  
+`std`: implements the `Error` trait from the standard library for the error types.
 
 ## License
 
