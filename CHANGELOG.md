@@ -3,6 +3,7 @@ This file contains the changes to the crate since version 0.4.8.
 # 0.6.0
 
  - Make the `Primes<N>::iter` function and the `IntoIterator` implementation for `Primes<N>` return custom iterator types. Allows less disruptive refactoring in the future.
+ - Remove panics in functions (like `primes`) when `N` is zero. It results in an empty array, but may be what you want.
 
 # 0.5.1
 
