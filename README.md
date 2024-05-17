@@ -5,7 +5,8 @@
 # const-primes
 
 A crate for generating and working with prime numbers in const contexts.  
-This lets you for example pre-compute prime numbers at compile time and store them in the binary.
+This lets you for example pre-compute prime numbers at compile time and store them in the binary,
+or check whether a number is prime in a const function.
 
 `#![no_std]` compatible, and currently supports Rust versions 1.67.1 and newer.
 
@@ -41,6 +42,11 @@ assert_eq!(PRIMES_LEQ_100, Some(25));
 // outside the cache it returns None
 assert!(CACHE.is_prime(1000).is_none());
 assert!(CACHE.count_primes_leq(1000).is_none());
+```
+Use `is_prime` to test whether a given number is prime:
+```rust
+const CHECK: bool = is_prime(18_446_744_073_709_551_557);
+assert!(CHECK);
 ```
 Sieve a range of numbers for their prime status with `sieve`:
 ```rust
@@ -84,11 +90,6 @@ assert_eq!(PRIMES_GEQ, Ok([617, 619]));
 
 ## Other functionality
 
-Use `is_prime` to test whether a given number is prime:
-```rust
-const CHECK: bool = is_prime(18_446_744_073_709_551_557);
-assert!(CHECK);
-```
 Find the next or previous prime numbers with `next_prime` and `previous_prime` if they exist and can be represented in a `u64`:
 ```rust
 const NEXT: Option<u64> = next_prime(25);
