@@ -143,6 +143,13 @@ mod test {
     }
 
     #[test]
+    fn check_is_prime() {
+        for (i, &status) in PRIMALITIES.iter().enumerate() {
+            assert_eq!(crate::is_prime(i as u64), status);
+        }
+    }
+
+    #[test]
     fn check_sieve() {
         macro_rules! test_to {
             ($($n:expr),+) => {
