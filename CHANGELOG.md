@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.6.2
+
+ - Minor documentation tweaks.
+
 # 0.6.1
 
  - Corrected MSRV to 1.67.1.
