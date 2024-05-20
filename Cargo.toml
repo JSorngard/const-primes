@@ -1,10 +1,10 @@
 [package]
 name = "const-primes"
 authors = ["Johanna Sörngård (jsorngard@gmail.com)"]
-version = "0.6.1"
+version = "0.6.2"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-keywords = ["primes", "const"]
+keywords = ["const", "primes"]
 categories = ["mathematics", "no-std", "no-std::no-alloc"]
 description = "Generate and work with prime numbers in const contexts"
 repository = "https://github.com/JSorngard/const-primes"
