@@ -1,5 +1,6 @@
-//! A crate for generating and working with prime numbers in const contexts.   
-//! This lets you for example pre-compute prime numbers at compile time and store them in the binary.
+//! A crate for generating and working with prime numbers in const contexts.  
+//! This lets you for example pre-compute prime numbers at compile time and store them in the binary,
+//! or check whether a number is prime in a const function.
 //!
 //! `#![no_std]` compatible, and currently supports Rust versions 1.79.0 or newer.
 //!
@@ -38,6 +39,12 @@
 //! // If questions are asked about numbers outside the cache it returns None
 //! assert!(CACHE.is_prime(1000).is_none());
 //! assert!(CACHE.count_primes_leq(1000).is_none());
+//! ```
+//! Use [`is_prime`] to test whether a given number is prime:
+//! ```
+//! # use const_primes::is_prime;
+//! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
+//! assert!(CHECK);
 //! ```
 //! Sieve a range of numbers for their prime status with [`sieve`](crate::sieve()):
 //! ```
@@ -79,12 +86,6 @@
 //!
 //! ## Other functionality
 //!
-//! Use [`is_prime`] to test whether a given number is prime:
-//! ```
-//! # use const_primes::is_prime;
-//! const CHECK: bool = is_prime(18_446_744_073_709_551_557);
-//! assert!(CHECK);
-//! ```
 //! Find the next or previous prime numbers with [`next_prime`] and [`previous_prime`] if they exist:
 //! ```
 //! # use const_primes::{next_prime, previous_prime};
@@ -100,7 +101,7 @@
 //!
 //! # Features
 //!
-//! `std`: implements the [`Error`](std::error::Error) trait for the error types.
+//! `std`: implements the `Error` trait from the standard library for the error types.
 
 #![forbid(unsafe_code)]
 #![cfg_attr(all(not(test), not(feature = "std")), no_std)]
@@ -140,6 +141,13 @@ mod test {
         assert_eq!(SET.is_prime(4), Some(false));
         assert_eq!(SET.is_prime(5), Some(true));
         assert_eq!(SET.is_prime(6), None);
+    }
+
+    #[test]
+    fn check_is_prime() {
+        for (i, &status) in PRIMALITIES.iter().enumerate() {
+            assert_eq!(crate::is_prime(i as u64), status);
+        }
     }
 
     #[test]

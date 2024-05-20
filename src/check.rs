@@ -18,42 +18,46 @@ use crate::integer_math::{mod_mul, mod_pow};
 #[must_use]
 pub const fn is_prime(n: u64) -> bool {
     if n == 2 || n == 3 {
-        true
+        return true;
     } else if n <= 1 || n % 2 == 0 || n % 3 == 0 {
-        false
-    } else {
-        let mut candidate_factor = 5;
-        let trial_limit = n.ilog2() as u64;
-        while candidate_factor <= trial_limit {
-            if n % candidate_factor == 0 || n % (candidate_factor + 2) == 0 {
-                return false;
-            }
-            candidate_factor += 6;
-        }
-
-        // Find r such that n = 2^d * r + 1 for some r >= 1
-        let mut d = n - 1;
-        while d % 2 == 0 {
-            d /= 2;
-        }
-
-        // Since we know the maximum size of the numbers we test against we can use the fact that there are known perfect bases
-        // in order to make the test both fast and deterministic.
-        // This list of witnesses was taken from https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Testing_against_small_sets_of_bases
-        // and is sufficient for all numbers smaller than 2^64.
-        const NUM_WITNESSES: usize = 12;
-        const WITNESSES: [u64; NUM_WITNESSES] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
-
-        let mut i = 0;
-        while i < NUM_WITNESSES && WITNESSES[i] < n {
-            if !miller_test(d, n, WITNESSES[i]) {
-                return false;
-            }
-            i += 1;
-        }
-
-        true
+        return false;
     }
+
+    // Use a small wheel to check up to log2(n).
+    // This keeps the complexity at O(log(n)).
+    let mut candidate_factor = 5;
+    let trial_limit = n.ilog2() as u64;
+    while candidate_factor <= trial_limit {
+        if n % candidate_factor == 0 || n % (candidate_factor + 2) == 0 {
+            return false;
+        }
+        candidate_factor += 6;
+    }
+
+    // Find r such that n = 2^d * r + 1 for some r >= 1
+    let mut d = n - 1;
+    while d % 2 == 0 {
+        d /= 2;
+    }
+
+    // Since we know the maximum size of the numbers we test against
+    // we can use the fact that there are known perfect bases
+    // in order to make the test both fast and deterministic.
+    // This list of witnesses was taken from
+    // <https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Testing_against_small_sets_of_bases>
+    // and is sufficient for all numbers smaller than 2^64.
+    const NUM_WITNESSES: usize = 12;
+    const WITNESSES: [u64; NUM_WITNESSES] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
+
+    let mut i = 0;
+    while i < NUM_WITNESSES && WITNESSES[i] < n {
+        if !miller_test(d, n, WITNESSES[i]) {
+            return false;
+        }
+        i += 1;
+    }
+
+    true
 }
 
 /// Performs a Miller-Rabin test with the witness k.
