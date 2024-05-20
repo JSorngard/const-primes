@@ -148,6 +148,9 @@ mod test {
         for (i, &status) in PRIMALITIES.iter().enumerate() {
             assert_eq!(crate::is_prime(i as u64), status);
         }
+        for number in PRECOMPUTED_PRIMES.into_iter().map(u64::from) {
+            assert!(crate::is_prime(number));
+        }
     }
 
     #[test]
