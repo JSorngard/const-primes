@@ -1,9 +1,15 @@
 This file contains the changes to the crate since version 0.4.8.
 
-# 0.7.0
+# 0.8.0
 
  - Change all panics that only involve const generics into const assertions that fail at compile time.
  - Update MSRV to 1.79.0.
+
+# 0.7.0
+
+## Breaking changes
+
+  - Remove the `N` const generic from `PrimesIter` as it doesn't use it.
 
 # 0.6.2
 
