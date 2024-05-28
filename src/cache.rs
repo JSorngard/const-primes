@@ -295,7 +295,7 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(primes.as_slice(), &[19, 23, 29]);
     /// ```
     #[inline]
-    pub fn iter(&self) -> PrimesIter<'_, N> {
+    pub fn iter(&self) -> PrimesIter<'_> {
         PrimesIter::new(IntoIterator::into_iter(&self.primes))
     }
 
@@ -422,9 +422,9 @@ mod primes_iter {
     /// Created by the [`iter`](super::Primes::iter) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone)]
-    pub struct PrimesIter<'a, const N: usize>(core::slice::Iter<'a, Underlying>);
+    pub struct PrimesIter<'a>(core::slice::Iter<'a, Underlying>);
 
-    impl<'a, const N: usize> PrimesIter<'a, N> {
+    impl<'a> PrimesIter<'a> {
         pub(crate) const fn new(iter: core::slice::Iter<'a, Underlying>) -> Self {
             Self(iter)
         }
@@ -435,7 +435,7 @@ mod primes_iter {
         }
     }
 
-    impl<'a, const N: usize> Iterator for PrimesIter<'a, N> {
+    impl<'a> Iterator for PrimesIter<'a> {
         type Item = &'a Underlying;
 
         #[inline]
@@ -464,16 +464,16 @@ mod primes_iter {
         }
     }
 
-    impl<'a, const N: usize> ExactSizeIterator for PrimesIter<'a, N> {
+    impl<'a> ExactSizeIterator for PrimesIter<'a> {
         #[inline]
         fn len(&self) -> usize {
             self.0.len()
         }
     }
 
-    impl<'a, const N: usize> FusedIterator for PrimesIter<'a, N> {}
+    impl<'a> FusedIterator for PrimesIter<'a> {}
 
-    impl<'a, const N: usize> DoubleEndedIterator for PrimesIter<'a, N> {
+    impl<'a> DoubleEndedIterator for PrimesIter<'a> {
         #[inline]
         fn next_back(&mut self) -> Option<Self::Item> {
             self.0.next_back()
@@ -560,7 +560,7 @@ mod primes_into_iter {
 }
 
 impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
-    type IntoIter = PrimesIter<'a, N>;
+    type IntoIter = PrimesIter<'a>;
     type Item = &'a Underlying;
     fn into_iter(self) -> Self::IntoIter {
         PrimesIter::new(IntoIterator::into_iter(&self.primes))
