@@ -9,7 +9,7 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## Breaking changes
 
-  - Remove the `N` const generic from `PrimesIter` as it doesn't use it.
+ - `PrimesIter` no longer takes a const generic.
 
 # 0.6.2
 
