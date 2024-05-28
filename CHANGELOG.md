@@ -1,5 +1,11 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.7.0
+
+## Breaking changes
+
+ - `PrimesIter` no longer takes a const generic.
+
 # 0.6.2
 
  - Minor documentation tweaks.
