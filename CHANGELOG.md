@@ -2,8 +2,10 @@ This file contains the changes to the crate since version 0.4.8.
 
 # 0.8.0
 
+## Breaking changes
+
  - Change all panics that only involve const generics into const assertions that fail at compile time.
- - Update MSRV to 1.79.0.
+ - Update information about minimum supported version to 1.79.0.
 
 # 0.7.0
 
