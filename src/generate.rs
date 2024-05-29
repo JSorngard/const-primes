@@ -226,11 +226,12 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 ///
 /// ```
 /// # use const_primes::{primes_segment, GenerationError};
+/// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_031;
-/// const PRIMES_GEQ: Result<[u64; 3], GenerationError> = primes_segment!(3; >= LIMIT);
-/// const PRIMES_LT: Result<[u64; 3], GenerationError> = primes_segment!(3; < LIMIT);
+/// const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_segment!(N; >= LIMIT);
+/// const PRIMES_LT: Result<[u64; N], GenerationError> = primes_segment!(N; < LIMIT);
 /// // Can also be used at runtime:
-/// let primes_geq = primes_segment!(3; >= LIMIT);
+/// let primes_geq = primes_segment!(N; >= LIMIT);
 ///
 /// assert_eq!(PRIMES_GEQ, primes_geq);
 /// assert_eq!(PRIMES_GEQ, Ok([5000000039, 5000000059, 5000000063]));
