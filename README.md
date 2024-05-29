@@ -14,7 +14,10 @@ or check whether a number is prime in a const function.
 
 Generate arrays of prime numbers at compile time with the function `primes` which uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve):
 ```rust
+use const_primes::primes;
+
 const PRIMES: [u32; 10] = primes();
+
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
@@ -23,7 +26,10 @@ assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 
 The struct `Primes` is a wrapper around an array of primes:
 ```rust
+use const_primes::Primes;
+
 const PRIMES: Primes<10> = Primes::new();
+
 assert_eq!(PRIMES[5], 13);
 assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 ```
@@ -51,7 +57,10 @@ assert!(CACHE.count_primes_leq(1000).is_none());
 
 Use `is_prime` to test whether a given number is prime:
 ```rust
+use const_primes::is_prime;
+
 const CHECK: bool = is_prime(18_446_744_073_709_551_557);
+
 assert!(CHECK);
 ```
 
@@ -59,7 +68,10 @@ assert!(CHECK);
 
 Sieve a range of numbers for their prime status with `sieve`:
 ```rust
+use const_primes::sieve;
+
 const PRIME_STATUS: [bool; 10] = sieve();
+
 //                        0      1      2     3     4      5     6      7     8      9
 assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
 ```  
@@ -71,16 +83,22 @@ They are most conveniently used through the macros `primes_segment!` and `sieve_
 
 Compute 3 primes greater than or equal to 5000000031:
 ```rust
+use const_primes::{primes_segment, GenerationError};
+
 const N: usize = 3;
 const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_segment!(N; >= 5_000_000_031);
+
 assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
 ```
 
 ## Example: determine the prime status of the three largest numbers less than 100005
 
 ```rust
+use const_primes::{sieve_segment, SieveError};
+
 const N: usize = 3;
 const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_segment!(N; < 100_005);
+
 //                              100_102  100_103  100_104
 assert_eq!(PRIME_STATUS_LT, Ok([false,   true,    false]));
 ```
@@ -89,6 +107,8 @@ assert_eq!(PRIME_STATUS_LT, Ok([false,   true,    false]));
 
 Find the next or previous prime numbers with `next_prime` and `previous_prime` if they exist and can be represented in a `u64`:
 ```rust
+use const_primes::{previous_prime, next_prime};
+
 const NEXT: Option<u64> = next_prime(25);
 const PREV: Option<u64> = previous_prime(25);
 const NO_SUCH: Option<u64> = previous_prime(2);

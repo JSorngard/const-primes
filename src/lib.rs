@@ -100,7 +100,7 @@
 //!
 //! Find the next or previous prime numbers with [`next_prime`] and [`previous_prime`] if they exist:
 //! ```
-//! use const_primes::{next_prime, previous_prime};
+//! use const_primes::{previous_prime, next_prime};
 //!
 //! const NEXT: Option<u64> = next_prime(25);
 //! const PREV: Option<u64> = previous_prime(25);
