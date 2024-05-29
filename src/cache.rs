@@ -1,7 +1,5 @@
-//! This module contains the implementation of the type [`Primes`], which functions as a cache of prime numbers
+//! This module contains the implementation of the type [`Primes`] (and related iterators), which functions as a cache of prime numbers
 //! for related computations.
-//!
-//! It also contains the implementations of related iterators.
 
 use crate::{primes, Underlying};
 
@@ -303,7 +301,8 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<5> = Primes::new();
-    /// assert_eq!(PRIMES.get(2), Some(&5));
+    /// const THIRD_PRIME: Option<&u32> = PRIMES.get(2);
+    /// assert_eq!(THIRD_PRIME, Some(&5));
     /// ```
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]

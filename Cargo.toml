@@ -1,6 +1,6 @@
 [package]
 name = "const-primes"
-authors = ["Johanna Sörngård (jsorngard@gmail.com)"]
+authors = ["Johanna Sörngård <jsorngard@gmail.com>"]
 version = "0.8.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
