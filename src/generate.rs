@@ -215,7 +215,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 
 /// Call [`primes_geq`] or [`primes_lt`], and automatically compute the memory requirement of the sieve.
 ///
-/// Estimates the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`primes_lt`]
+/// Compute `N` primes larger than or equal to some limit as `primes_segment!(N; >= LIMIT)`,
+/// and `N` primes less than some limit as `primes_segment!(N; < LIMIT)`.
+///
+/// Estimates the sieve size as `isqrt(upper_limit) + 1` for [`primes_lt`]
 /// and as `isqrt(lower_limit) + 1 + N` for [`primes_geq`].
 /// This may overestimate the memory requirement for `primes_geq`.
 ///

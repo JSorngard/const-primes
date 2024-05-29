@@ -325,7 +325,10 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 
 /// Call [`sieve_geq`] or [`sieve_lt`], and automatically compute the memory requirement of the sieve.
 ///
-/// Computes the value of the const generic `MEM` as `isqrt(upper_limit) + 1` for [`sieve_lt`]
+/// Sieve the `N` smallest numbers larger than or equal to some limit as `sieve_segment!(N; >= LIMIT)`,
+/// and the `N` largest numbers smaller than some limit as `sieve_segment!(N; < LIMIT)`.
+///
+/// Computes the sieve size as `isqrt(upper_limit) + 1` for [`sieve_lt`]
 /// and as `isqrt(lower_limit) + 1 + N` for [`sieve_geq`].
 /// This may overestimate the memory requirement for `sieve_geq`.
 ///
