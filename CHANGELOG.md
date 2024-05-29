@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.7.1
+
+ - Organize the examples in the readme and top level crate documentation in a clearer way.
+
 # 0.7.0
 
 ## Breaking changes
