@@ -1,7 +1,5 @@
-//! This module contains the implementation of the type [`Primes`], which functions as a cache of prime numbers
+//! This module contains the implementation of the type [`Primes`] (and related iterators), which functions as a cache of prime numbers
 //! for related computations.
-//!
-//! It also contains the implementations of related iterators.
 
 use crate::{primes, Underlying};
 
