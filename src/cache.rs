@@ -309,7 +309,8 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<5> = Primes::new();
-    /// assert_eq!(PRIMES.get(2), Some(&5));
+    /// const THIRD_PRIME: Option<&u32> = PRIMES.get(2);
+    /// assert_eq!(THIRD_PRIME, Some(&5));
     /// ```
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
