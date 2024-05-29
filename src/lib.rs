@@ -27,7 +27,7 @@
 //! assert_eq!(PRIMES[5], 13);
 //! assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 //! ```
-//! that can be used as a cache of primes for related computations:
+//! and it can be used as a cache of primes for related computations:
 //! ```
 //! # use const_primes::Primes;
 //! const CACHE: Primes<100> = Primes::new();
