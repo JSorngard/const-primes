@@ -145,6 +145,7 @@ impl<const N: usize> Primes<N> {
     /// Basic usage:
     /// ```
     /// # use const_primes::Primes;
+    /// // Contains the primes [2, 3, 5]
     /// const CACHE: Primes<3> = Primes::new();
     ///
     /// assert_eq!(CACHE.prime_factorization(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
@@ -156,9 +157,7 @@ impl<const N: usize> Primes<N> {
     /// // 1024 = 2^10
     /// assert_eq!(CACHE.prime_factorization(1024).collect::<Vec<_>>(), &[(2, 10)]);
     /// ```
-    /// If a number contains prime factors that are larger than the largest prime in the cache,
-    /// they will not be yielded by the iterator, but can instead be obtained by calling `remainder`
-    /// on the iterator once it is exhausted:
+    /// 42 has 7 as a prime factor, but 7 is not in the cache:
     /// ```
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
