@@ -137,9 +137,10 @@ impl<const N: usize> Primes<N> {
     /// multiplicities.
     ///
     /// If a number contains prime factors larger than the largest prime in `self`,
-    /// their product can be retrieved by calling `remainder` on the iterator.
+    /// their product can be retrieved by calling [`remainder`](PrimeFactorization::remainder) on the iterator
+    /// once it is exhausted.
     ///
-    /// # Example
+    /// # Examples
     ///
     /// Basic usage:
     /// ```
@@ -147,13 +148,24 @@ impl<const N: usize> Primes<N> {
     /// const CACHE: Primes<3> = Primes::new();
     ///
     /// assert_eq!(CACHE.prime_factorization(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
-    ///
-    /// // 9 contains the prime 3 to the second power:
+    /// ```
+    /// The second element of the returned tuples is the multiplicity of the prime in the number:
+    /// ```
+    /// # use const_primes::Primes;
+    /// # const CACHE: Primes<3> = Primes::new();
+    /// // 9 = 3*3
     /// assert_eq!(CACHE.prime_factorization(9).collect::<Vec<_>>(), &[(3, 2)]);
-    ///
-    /// // 42 is 2*3*7, but seven is not in the cache, so the iterator only returns the two and three:
+    /// ```
+    /// If a number contains prime factors that are larger than the largest prime in the cache,
+    /// they will not be yeilded by the iterator, but can instead be obtained by calling `remainder`
+    /// on the iterator once it is exhausted:
+    /// ```
+    /// # use const_primes::Primes;
+    /// # const CACHE: Primes<3> = Primes::new();
+    /// // 42 = 2*3*7
     /// let mut factorization_of_42 = CACHE.prime_factorization(42);
     ///
+    /// // only 2 and 3 are in the cache:
     /// assert_eq!(factorization_of_42.by_ref().collect::<Vec<_>>(), &[(2, 1), (3, 1)]);
     ///
     /// // the factor of 7 can be found with the remainder function:
