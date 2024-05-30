@@ -64,7 +64,12 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Panics
     ///
-    /// Panics if `N` is zero. In const contexts this is a compile error.
+    /// Panics if `N` is zero:
+    /// ```should_panic
+    /// # use const_primes::Primes;
+    /// let no_primes = Primes::<0>::new();
+    /// ```
+    /// In const contexts this is a compile error:
     /// ```compile_fail
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
