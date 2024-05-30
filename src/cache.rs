@@ -172,7 +172,6 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(factorization_of_42.remainder(), Some(7));
     /// ```
     #[inline]
-    #[must_use = "the method only returns a new value and does not modify `self`"]
     pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
         PrimeFactorization::new(&self.primes, number)
     }
@@ -455,6 +454,7 @@ mod prime_factors {
     /// Created by the [`prime_factorization`](super::Primes::prime_factorization) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone)]
+    #[must_use = "iterators are lazy and do nothing unless consumed"]
     pub struct PrimeFactorization<'a> {
         primes_cache: &'a [Underlying],
         cache_index: usize,
