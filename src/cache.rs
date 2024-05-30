@@ -146,16 +146,16 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// const CACHE: Primes<3> = Primes::new();
     ///
-    /// assert_eq!(CACHE.factorize(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
-    /// assert_eq!(CACHE.factorize(9).collect::<Vec<_>>(), &[(3, 2)]);
+    /// assert_eq!(CACHE.prime_factorization(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
+    /// assert_eq!(CACHE.prime_factorization(9).collect::<Vec<_>>(), &[(3, 2)]);
     ///
     /// // 14 is 2*7, but 7 is not in the cache, so the iterator only returns the 2:
-    /// let mut factorization_of_14 = CACHE.factorize(14);
+    /// let mut factorization_of_14 = CACHE.prime_factorization(14);
     /// assert_eq!(factorization_of_14.next(), Some((2, 1)));
     /// // the factor of 7 can be found with the remainder function:
     /// assert_eq!(factorization_of_14.remainder(), Some(7));
     /// ```
-    pub fn factorize(&self, number: Underlying) -> PrimeFactors<'_> {
+    pub fn prime_factorization(&self, number: Underlying) -> PrimeFactors<'_> {
         PrimeFactors::new(&self.primes, number)
     }
 
@@ -434,7 +434,7 @@ mod prime_factors {
     use core::iter::FusedIterator;
 
     /// An iterator over the prime factors of a number and their multiplicities.
-    /// Created by the [`factorize`](super::Primes::factorize) function on [`Primes`](super::Primes),
+    /// Created by the [`prime_factorization`](super::Primes::prime_factorization) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone, Copy)]
     pub struct PrimeFactors<'a> {
@@ -806,6 +806,27 @@ mod test {
         assert_eq!(PREV400, Some(397));
         assert_eq!(PREV541, Some(523));
         assert_eq!(PREV542, None);
+    }
+
+    #[test]
+    fn check_prime_factorization() {
+        const CACHE: Primes<3> = Primes::new();
+
+        let mut factorization_of_14 = CACHE.prime_factorization(14);
+
+        assert_eq!(factorization_of_14.next(), Some((2, 1)));
+        assert_eq!(factorization_of_14.next(), None);
+        assert_eq!(factorization_of_14.remainder(), Some(7));
+        assert_eq!(
+            CACHE.prime_factorization(15).collect::<Vec<_>>(),
+            &[(3, 1), (5, 1)]
+        );
+        assert_eq!(
+            CACHE
+                .prime_factorization(2 * 3 * 3 * 3 * 5)
+                .collect::<Vec<_>>(),
+            &[(2, 1), (3, 3), (5, 1)]
+        );
     }
 
     #[test]
