@@ -505,6 +505,11 @@ mod prime_factors {
 
             None
         }
+
+        #[inline]
+        fn size_hint(&self) -> (usize, Option<usize>) {
+            (0, Some(self.primes_cache.len() - self.cache_index))
+        }
     }
 
     impl<'a> FusedIterator for PrimeFactorization<'a> {}
