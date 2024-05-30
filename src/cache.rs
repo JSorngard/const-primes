@@ -467,22 +467,20 @@ mod prime_factors {
     impl<'a> Iterator for PrimeFactors<'a> {
         type Item = (Underlying, u8);
         fn next(&mut self) -> Option<Self::Item> {
-            if let Some(prime) = self.primes_cache.get(self.cache_index) {
+            while let Some(prime) = self.primes_cache.get(self.cache_index) {
                 let mut count = 0;
                 while self.number % prime == 0 {
                     count += 1;
                     self.number /= prime;
                 }
+
                 self.cache_index += 1;
-                if count == 0 {
-                    // This prime was not a factor, check the next one
-                    self.next()
-                } else {
-                    Some((*prime, count))
+
+                if count > 0 {
+                    return Some((*prime, count));
                 }
-            } else {
-                None
             }
+            None
         }
     }
 
