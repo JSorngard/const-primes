@@ -155,7 +155,7 @@ impl<const N: usize> Primes<N> {
     /// // the factor of 7 can be found with the remainder function:
     /// assert_eq!(factorization_of_14.remainder(), Some(7));
     /// ```
-    pub const fn factorize(&self, number: Underlying) -> PrimeFactors<'_> {
+    pub fn factorize(&self, number: Underlying) -> PrimeFactors<'_> {
         PrimeFactors::new(&self.primes, number)
     }
 
