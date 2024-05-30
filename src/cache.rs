@@ -133,7 +133,7 @@ impl<const N: usize> Primes<N> {
         }
     }
 
-    /// Returns an iterator over the prime factors of the given number as well as their
+    /// Returns an iterator over the prime factors of the given number in increasing order as well as their
     /// multiplicities.
     ///
     /// If a number contains prime factors larger than the largest prime in `self`,
