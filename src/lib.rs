@@ -42,6 +42,9 @@
 //! const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
 //! assert_eq!(PRIMES_LEQ_100, Some(25));
 //!
+//! // Or prime factorization
+//! assert_eq!(CACHE.prime_factorization(3072).collect::<Vec<_>>(), &[(2, 10), (3, 1)]);
+//!
 //! // If questions are asked about numbers outside the cache it returns None
 //! assert!(CACHE.is_prime(1000).is_none());
 //! assert!(CACHE.count_primes_leq(1000).is_none());
