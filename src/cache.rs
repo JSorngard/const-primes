@@ -147,6 +147,8 @@ impl<const N: usize> Primes<N> {
     /// const CACHE: Primes<3> = Primes::new();
     ///
     /// assert_eq!(CACHE.prime_factorization(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
+    ///
+    /// // 9 contains the prime 3 to the second power:
     /// assert_eq!(CACHE.prime_factorization(9).collect::<Vec<_>>(), &[(3, 2)]);
     ///
     /// // 42 is 2*3*7, but seven is not in the cache, so the iterator only returns the two and three:
