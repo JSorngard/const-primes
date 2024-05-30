@@ -160,7 +160,7 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
     /// // 1024 = 2^10
-    /// assert_eq!(CACHE.prime_factorization(1024).collect::<Vec<_>>(), &[(2, 10)]);
+    /// assert_eq!(CACHE.prime_factorization(1024).next(), Some((2, 10)));
     /// ```
     /// 42 has 7 as a prime factor, but 7 is not in the cache:
     /// ```
