@@ -133,6 +133,32 @@ impl<const N: usize> Primes<N> {
         }
     }
 
+    /// Returns an iterator over the prime factors of the given number as well as their
+    /// multiplicities.
+    ///
+    /// If a number contains prime factors larger than the largest prime in `self`,
+    /// their product can be retrieved by calling `remainder` on the iterator.
+    ///
+    /// # Example
+    ///
+    /// Basic usage:
+    /// ```
+    /// # use const_primes::Primes;
+    /// const CACHE: Primes<3> = Primes::new();
+    ///
+    /// assert_eq!(CACHE.factorize(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
+    /// assert_eq!(CACHE.factorize(9).collect::<Vec<_>>(), &[(3, 2)]);
+    ///
+    /// // 14 is 2*7, but 7 is not in the cache, so the iterator only returns the 2:
+    /// let mut factorization_of_14 = CACHE.factorize(14);
+    /// assert_eq!(factorization_of_14.next(), Some((2, 1)));
+    /// // the factor of 7 can be found with the remainder function:
+    /// assert_eq!(factorization_of_14.remainder(), Some(7));
+    /// ```
+    pub const fn factorize(&self, number: Underlying) -> PrimeFactors<'_> {
+        PrimeFactors::new(&self.primes, number)
+    }
+
     // region: Next prime
 
     /// Returns the largest prime less than `n`.  
@@ -400,6 +426,68 @@ impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
 }
 
 // endregion: AsRef
+
+pub use prime_factors::PrimeFactors;
+mod prime_factors {
+    use super::Underlying;
+
+    use core::iter::FusedIterator;
+
+    /// An iterator over the prime factors of a number and their multiplicities.
+    /// Created by the [`factorize`](super::Primes::factorize) function on [`Primes`](super::Primes),
+    /// see it for more information.
+    #[derive(Debug, Clone, Copy)]
+    pub struct PrimeFactors<'a> {
+        primes_cache: &'a [Underlying],
+        cache_index: usize,
+        number: Underlying,
+    }
+
+    impl<'a> PrimeFactors<'a> {
+        pub(crate) const fn new(primes_cache: &'a [Underlying], number: Underlying) -> Self {
+            Self {
+                primes_cache,
+                cache_index: 0,
+                number,
+            }
+        }
+
+        /// If the number contains prime factors that are larger than the largest prime
+        /// in the cache, this function returns their product.
+        pub fn remainder(mut self) -> Option<Underlying> {
+            for _ in self.by_ref() {}
+            if self.number > 1 {
+                Some(self.number)
+            } else {
+                None
+            }
+        }
+    }
+
+    impl<'a> Iterator for PrimeFactors<'a> {
+        type Item = (Underlying, u8);
+        fn next(&mut self) -> Option<Self::Item> {
+            if let Some(prime) = self.primes_cache.get(self.cache_index) {
+                let mut count = 0;
+                while self.number % prime == 0 {
+                    count += 1;
+                    self.number /= prime;
+                }
+                self.cache_index += 1;
+                if count == 0 {
+                    // This prime was not a factor, check the next one
+                    self.next()
+                } else {
+                    Some((*prime, count))
+                }
+            } else {
+                None
+            }
+        }
+    }
+
+    impl<'a> FusedIterator for PrimeFactors<'a> {}
+}
 
 // region: IntoIterator
 
