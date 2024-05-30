@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.7.2
+
+ - Add `Primes<N>::prime_factorization` function that returns an iterator over the prime factors of the given number and their multiplicities.
+
 # 0.7.1
 
  - Organize the examples in the readme and top level crate documentation in a clearer way.
