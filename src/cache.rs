@@ -807,11 +807,13 @@ mod test {
         const INSERT4: BSResult = CACHE.binary_search(4);
         const FOUND541: BSResult = CACHE.binary_search(541);
         const NOINFO542: BSResult = CACHE.binary_search(542);
+        const BIG: BSResult = CACHE.binary_search(1000000);
         assert_eq!(FOUND2, Ok(0));
         assert_eq!(INSERT0, Err(0));
         assert_eq!(INSERT4, Err(2));
         assert_eq!(FOUND541, Ok(99));
         assert_eq!(NOINFO542, Err(100));
+        assert_eq!(BIG, Err(100));
     }
 
     #[test]

@@ -1,5 +1,11 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.8.0
+
+## Breaking changes
+
+ - Change `Primes<N>::binary_search` to have the same API as `slice::binary_search`.
+
 # 0.7.2
 
  - Add `Primes<N>::prime_factorization` function that returns an iterator over the prime factors of the given number and their multiplicities.
