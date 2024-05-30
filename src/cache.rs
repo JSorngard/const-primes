@@ -485,6 +485,10 @@ mod prime_factors {
     impl<'a> Iterator for PrimeFactorization<'a> {
         type Item = (Underlying, u8);
         fn next(&mut self) -> Option<Self::Item> {
+            if self.number == 1 {
+                return None;
+            }
+
             while let Some(prime) = self.primes_cache.get(self.cache_index) {
                 let mut count = 0;
                 while self.number % prime == 0 {
@@ -498,6 +502,7 @@ mod prime_factors {
                     return Some((*prime, count));
                 }
             }
+
             None
         }
     }
