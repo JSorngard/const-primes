@@ -159,6 +159,8 @@ impl<const N: usize> Primes<N> {
     /// // the factor of 7 can be found with the remainder function:
     /// assert_eq!(factorization_of_42.remainder(), Some(7));
     /// ```
+    #[inline]
+    #[must_use = "the method only returns a new value and does not modify `self`"]
     pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
         PrimeFactorization::new(&self.primes, number)
     }
