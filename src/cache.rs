@@ -149,11 +149,11 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(CACHE.prime_factorization(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
     /// assert_eq!(CACHE.prime_factorization(9).collect::<Vec<_>>(), &[(3, 2)]);
     ///
-    /// // 14 is 2*7, but 7 is not in the cache, so the iterator only returns the 2:
-    /// let mut factorization_of_14 = CACHE.prime_factorization(14);
-    /// assert_eq!(factorization_of_14.next(), Some((2, 1)));
+    /// // 42 is 2*3*7, but seven is not in the cache, so the iterator only returns the twos:
+    /// let mut factorization_of_42 = CACHE.prime_factorization(42);
+    /// assert_eq!(factorization_of_42.by_ref().collect::<Vec<_>>(), &[(2, 1), (3, 1)]);
     /// // the factor of 7 can be found with the remainder function:
-    /// assert_eq!(factorization_of_14.remainder(), Some(7));
+    /// assert_eq!(factorization_of_42.remainder(), Some(7));
     /// ```
     pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
         PrimeFactorization::new(&self.primes, number)
@@ -436,7 +436,7 @@ mod prime_factors {
     /// An iterator over the prime factors of a number and their multiplicities.
     /// Created by the [`prime_factorization`](super::Primes::prime_factorization) function on [`Primes`](super::Primes),
     /// see it for more information.
-    #[derive(Debug, Clone, Copy)]
+    #[derive(Debug, Clone)]
     pub struct PrimeFactorization<'a> {
         primes_cache: &'a [Underlying],
         cache_index: usize,
@@ -817,10 +817,15 @@ mod test {
         assert_eq!(factorization_of_14.next(), Some((2, 1)));
         assert_eq!(factorization_of_14.next(), None);
         assert_eq!(factorization_of_14.remainder(), Some(7));
+
+        let mut factorization_of_15 = CACHE.prime_factorization(15);
+
         assert_eq!(
-            CACHE.prime_factorization(15).collect::<Vec<_>>(),
+            factorization_of_15.by_ref().collect::<Vec<_>>(),
             &[(3, 1), (5, 1)]
         );
+        assert!(factorization_of_15.remainder().is_none());
+
         assert_eq!(
             CACHE
                 .prime_factorization(2 * 3 * 3 * 3 * 5)
