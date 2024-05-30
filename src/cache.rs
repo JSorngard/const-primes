@@ -155,8 +155,8 @@ impl<const N: usize> Primes<N> {
     /// // the factor of 7 can be found with the remainder function:
     /// assert_eq!(factorization_of_14.remainder(), Some(7));
     /// ```
-    pub fn prime_factorization(&self, number: Underlying) -> PrimeFactors<'_> {
-        PrimeFactors::new(&self.primes, number)
+    pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
+        PrimeFactorization::new(&self.primes, number)
     }
 
     // region: Next prime
@@ -427,7 +427,7 @@ impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
 
 // endregion: AsRef
 
-pub use prime_factors::PrimeFactors;
+pub use prime_factors::PrimeFactorization;
 mod prime_factors {
     use super::Underlying;
 
@@ -437,13 +437,13 @@ mod prime_factors {
     /// Created by the [`prime_factorization`](super::Primes::prime_factorization) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone, Copy)]
-    pub struct PrimeFactors<'a> {
+    pub struct PrimeFactorization<'a> {
         primes_cache: &'a [Underlying],
         cache_index: usize,
         number: Underlying,
     }
 
-    impl<'a> PrimeFactors<'a> {
+    impl<'a> PrimeFactorization<'a> {
         pub(crate) const fn new(primes_cache: &'a [Underlying], number: Underlying) -> Self {
             Self {
                 primes_cache,
@@ -464,7 +464,7 @@ mod prime_factors {
         }
     }
 
-    impl<'a> Iterator for PrimeFactors<'a> {
+    impl<'a> Iterator for PrimeFactorization<'a> {
         type Item = (Underlying, u8);
         fn next(&mut self) -> Option<Self::Item> {
             while let Some(prime) = self.primes_cache.get(self.cache_index) {
@@ -484,7 +484,7 @@ mod prime_factors {
         }
     }
 
-    impl<'a> FusedIterator for PrimeFactors<'a> {}
+    impl<'a> FusedIterator for PrimeFactorization<'a> {}
 }
 
 // region: IntoIterator
