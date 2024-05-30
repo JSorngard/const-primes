@@ -525,6 +525,7 @@ mod primes_iter {
     /// Created by the [`iter`](super::Primes::iter) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone)]
+    #[must_use = "iterators are lazy and do nothing unless consumed"]
     pub struct PrimesIter<'a>(core::slice::Iter<'a, Underlying>);
 
     impl<'a> PrimesIter<'a> {
@@ -598,6 +599,7 @@ mod primes_into_iter {
     /// An owning iterator over prime numbers.
     /// Created by the [`IntoIterator`] implementation on [`Primes`](super::Primes).
     #[derive(Debug, Clone)]
+    #[must_use = "iterators are lazy and do nothing unless consumed"]
     pub struct PrimesIntoIter<const N: usize>(core::array::IntoIter<Underlying, N>);
 
     impl<const N: usize> PrimesIntoIter<N> {
