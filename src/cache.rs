@@ -479,6 +479,7 @@ mod prime_factors {
 
         /// If the number contains prime factors that are larger than the largest prime
         /// in the cache, this function returns their product.
+        #[must_use = "`self` will be dropped if the result is not used"]
         pub fn remainder(mut self) -> Option<Underlying> {
             for _ in self.by_ref() {}
             if self.number > 1 {
