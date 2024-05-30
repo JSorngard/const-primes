@@ -104,8 +104,13 @@ impl<const N: usize> Primes<N> {
     pub const fn is_prime(&self, n: u32) -> Option<bool> {
         match self.binary_search(n) {
             Ok(_) => Some(true),
-            Err(Some(_)) => Some(false),
-            Err(None) => None,
+            Err(i) => {
+                if i < N {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -131,10 +136,13 @@ impl<const N: usize> Primes<N> {
     pub const fn count_primes_leq(&self, n: Underlying) -> Option<usize> {
         match self.binary_search(n) {
             Ok(i) => Some(i + 1),
-            Err(maybe_i) => match maybe_i {
-                Some(i) => Some(i),
-                None => None,
-            },
+            Err(maybe_i) => {
+                if maybe_i < N {
+                    Some(maybe_i)
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -199,14 +207,13 @@ impl<const N: usize> Primes<N> {
             None
         } else {
             match self.binary_search(n) {
-                Ok(i) | Err(Some(i)) => {
-                    if i > 0 {
+                Ok(i) | Err(i) => {
+                    if i > 0 && i < N {
                         Some(self.primes[i - 1])
                     } else {
                         None
                     }
                 }
-                Err(None) => None,
             }
         }
     }
@@ -234,8 +241,13 @@ impl<const N: usize> Primes<N> {
                     None
                 }
             }
-            Err(Some(i)) => Some(self.primes[i]),
-            Err(None) => None,
+            Err(i) => {
+                if i < N {
+                    Some(self.primes[i])
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -244,11 +256,8 @@ impl<const N: usize> Primes<N> {
     /// Searches the underlying array of primes for the target integer.
     ///
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
-    /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
-    /// If the target could be inserted into the array while maintaining the sorted order, the [`Option::Some`]
-    /// variant is returned and contains the index of that location.
-    /// If the target is larger than the largest prime in the array no information about where it might fit is available,
-    /// and an [`Option::None`] is returned.
+    /// If the target is not found in the array a [`Result::Err`] is returned that indicates where the
+    /// target could be inserted into the array while maintaining the sorted order.
     ///
     /// # Example
     ///
@@ -258,38 +267,32 @@ impl<const N: usize> Primes<N> {
     /// // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
     /// const PRIMES: Primes<10> = Primes::new();
     ///
-    /// type SearchResult = Result<usize, Option<usize>>;
-    ///
-    /// const WHERE_29: SearchResult = PRIMES.binary_search(29);
-    /// const WHERE_6: SearchResult = PRIMES.binary_search(6);
-    /// const WHERE_1000: SearchResult = PRIMES.binary_search(1_000);
+    /// const WHERE_29: Result<usize, usize> = PRIMES.binary_search(29);
+    /// const WHERE_6: Result<usize, usize> = PRIMES.binary_search(6);
+    /// const WHERE_1000: Result<usize, usize> = PRIMES.binary_search(1_000);
     ///
     /// assert_eq!(WHERE_29, Ok(9));
-    /// assert_eq!(WHERE_6, Err(Some(3)));
-    /// assert_eq!(WHERE_1000, Err(None));
+    /// assert_eq!(WHERE_6, Err(3));
+    /// assert_eq!(WHERE_1000, Err(10));
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
-        if target > *self.last() {
-            Err(None)
-        } else {
-            let mut size = N;
-            let mut left = 0;
-            let mut right = size;
-            while left < right {
-                let mid = left + size / 2;
-                let candidate = self.primes[mid];
-                if candidate < target {
-                    left = mid + 1;
-                } else if candidate > target {
-                    right = mid;
-                } else {
-                    return Ok(mid);
-                }
-                size = right - left;
+    pub const fn binary_search(&self, target: Underlying) -> Result<usize, usize> {
+        let mut size = N;
+        let mut left = 0;
+        let mut right = size;
+        while left < right {
+            let mid = left + size / 2;
+            let candidate = self.primes[mid];
+            if candidate < target {
+                left = mid + 1;
+            } else if candidate > target {
+                right = mid;
+            } else {
+                return Ok(mid);
             }
-            Err(Some(left))
+            size = right - left;
         }
+        Err(left)
     }
 
     // region: Conversions
@@ -798,17 +801,17 @@ mod test {
     #[test]
     fn check_binary_search() {
         const CACHE: Primes<100> = Primes::new();
-        type BSResult = Result<usize, Option<usize>>;
+        type BSResult = Result<usize, usize>;
         const FOUND2: BSResult = CACHE.binary_search(2);
         const INSERT0: BSResult = CACHE.binary_search(0);
         const INSERT4: BSResult = CACHE.binary_search(4);
         const FOUND541: BSResult = CACHE.binary_search(541);
         const NOINFO542: BSResult = CACHE.binary_search(542);
         assert_eq!(FOUND2, Ok(0));
-        assert_eq!(INSERT0, Err(Some(0)));
-        assert_eq!(INSERT4, Err(Some(2)));
+        assert_eq!(INSERT0, Err(0));
+        assert_eq!(INSERT4, Err(2));
         assert_eq!(FOUND541, Ok(99));
-        assert_eq!(NOINFO542, Err(None));
+        assert_eq!(NOINFO542, Err(100));
     }
 
     #[test]
