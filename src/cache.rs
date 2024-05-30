@@ -151,7 +151,9 @@ impl<const N: usize> Primes<N> {
     ///
     /// // 42 is 2*3*7, but seven is not in the cache, so the iterator only returns the two and three:
     /// let mut factorization_of_42 = CACHE.prime_factorization(42);
+    ///
     /// assert_eq!(factorization_of_42.by_ref().collect::<Vec<_>>(), &[(2, 1), (3, 1)]);
+    ///
     /// // the factor of 7 can be found with the remainder function:
     /// assert_eq!(factorization_of_42.remainder(), Some(7));
     /// ```
