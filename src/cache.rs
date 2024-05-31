@@ -165,18 +165,18 @@ impl<const N: usize> Primes<N> {
     /// // 1024 = 2^10
     /// assert_eq!(CACHE.prime_factorization(1024).next(), Some((2, 10)));
     /// ```
-    /// 42 has 7 as a prime factor, but 7 is not in the cache:
+    /// 294 has 7 as a prime factor, but 7 is not in the cache:
     /// ```
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
-    /// // 42 = 2*3*7
-    /// let mut factorization_of_42 = CACHE.prime_factorization(42);
+    /// // 294 = 2*3*7*7
+    /// let mut factorization_of_294 = CACHE.prime_factorization(294);
     ///
     /// // only 2 and 3 are in the cache:
-    /// assert_eq!(factorization_of_42.by_ref().collect::<Vec<_>>(), &[(2, 1), (3, 1)]);
+    /// assert_eq!(factorization_of_294.by_ref().collect::<Vec<_>>(), &[(2, 1), (3, 1)]);
     ///
-    /// // the factor of 7 can be found with the remainder function:
-    /// assert_eq!(factorization_of_42.remainder(), Some(7));
+    /// // the factor of 7*7 can be found with the remainder function:
+    /// assert_eq!(factorization_of_294.remainder(), Some(49));
     /// ```
     #[inline]
     pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
