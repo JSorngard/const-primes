@@ -207,13 +207,13 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
     /// // 294 = 2*3*7*7
-    /// let mut factors_of_42 = CACHE.prime_factors(294);
+    /// let mut factors_of_294 = CACHE.prime_factors(294);
     ///
     /// // only 2 and 3 are in the cache
-    /// assert_eq!(factors_of_42.by_ref().collect::<Vec<_>>(), &[2, 3]);
+    /// assert_eq!(factors_of_294.by_ref().collect::<Vec<_>>(), &[2, 3]);
     ///
     /// // the factor of 7*7 can be found with the remainder function
-    /// assert_eq!(factors_of_42.remainder(), Some(49));
+    /// assert_eq!(factors_of_294.remainder(), Some(49));
     /// ```
     #[inline]
     pub fn prime_factors(&self, number: Underlying) -> PrimeFactors<'_> {
