@@ -387,6 +387,9 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
 
 /// The error returned by [`primes_lt`] and [`primes_geq`] if the input
 /// is invalid or does not work to produce the requested primes.
+///
+/// Only implements the [`Error`](std::error::Error) trait
+/// if the `std` feature is enabled.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum GenerationError {
     /// The limit was larger than or equal to `MEM^2`.
