@@ -1,5 +1,11 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.8.0
+
+## Breaking changes
+
+ - Change `Primes<N>::binary_search` to have the same API as `slice::binary_search`.
+
 # 0.7.4
 
  - Correct wrong doclink to `remainder` in docstring of `Primes<N>::prime_factors`.
