@@ -143,7 +143,7 @@ impl<const N: usize> Primes<N> {
     ///
     /// If a number contains prime factors larger than the largest prime in `self`,
     /// they will not be yielded by the iterator, but their product can be retrieved by calling
-    /// [`remainder`](PrimeFactorization::remainder) on the iterator once it is exhausted.
+    /// [`remainder`](PrimeFactorization::remainder) on the iterator.
     ///
     /// If you do not need to know the multiplicity of each prime factor,
     /// it may be faster to use [`prime_factors`](Self::prime_factors).
