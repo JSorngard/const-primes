@@ -591,7 +591,7 @@ mod prime_factors {
             // We haven't actually divided out any of the factors to save work,
             // so we do that by just delegating to PrimeFactorization,
             // which does the work in its implementation of this function.
-            PrimeFactorization::new(&self.primes_cache, self.number).remainder()
+            PrimeFactorization::new(self.primes_cache, self.number).remainder()
         }
     }
 
