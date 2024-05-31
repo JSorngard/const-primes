@@ -1,5 +1,5 @@
-//! This module contains the implementation of the type [`Primes`] (and related iterators), which functions as a cache of prime numbers
-//! for related computations.
+//! This module contains the implementation of the type [`Primes`] (and related iterators),
+//! which functions as a cache of prime numbers for related computations.
 
 mod prime_factors;
 mod primes_into_iter;
