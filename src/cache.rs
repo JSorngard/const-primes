@@ -598,10 +598,6 @@ mod prime_factors {
     impl<'a> Iterator for PrimeFactors<'a> {
         type Item = Underlying;
         fn next(&mut self) -> Option<Self::Item> {
-            if self.number == 1 {
-                return None;
-            }
-
             while let Some(prime) = self.primes_cache.get(self.cache_index) {
                 self.cache_index += 1;
                 if self.number % prime == 0 {
