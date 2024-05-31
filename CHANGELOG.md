@@ -6,6 +6,10 @@ This file contains the changes to the crate since version 0.4.8.
 
  - Change `Primes<N>::binary_search` to have the same API as `slice::binary_search`.
 
+# 0.7.4
+
+ - Correct wrong doclink to `remainder` in docstring of `Primes<N>::prime_factors`.
+
 # 0.7.3
 
  - Add `Primes<N>::prime_factors` function that returns an iterator over the prime factors of the given number (and not their multiplicities).
