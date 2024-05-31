@@ -234,7 +234,9 @@ impl<const N: usize> Primes<N> {
     /// If `n` is 0, 1, 2, or larger than the largest prime in `self` this returns `None`.
     ///
     /// Uses a binary search.
+    ///
     /// # Example
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
