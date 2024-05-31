@@ -498,6 +498,7 @@ mod prime_factors {
     use core::iter::FusedIterator;
 
     /// An iterator over the prime factors of a number and their multiplicities.
+    ///
     /// Created by the [`prime_factorization`](super::Primes::prime_factorization) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone)]
@@ -638,6 +639,7 @@ mod primes_iter {
     use core::iter::FusedIterator;
 
     /// A borrowing iterator over prime numbers.
+    ///
     /// Created by the [`iter`](super::Primes::iter) function on [`Primes`](super::Primes),
     /// see it for more information.
     #[derive(Debug, Clone)]
@@ -713,6 +715,7 @@ mod primes_into_iter {
     use super::Underlying;
 
     /// An owning iterator over prime numbers.
+    ///
     /// Created by the [`IntoIterator`] implementation on [`Primes`](super::Primes).
     #[derive(Debug, Clone)]
     #[must_use = "iterators are lazy and do nothing unless consumed"]
