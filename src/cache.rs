@@ -145,6 +145,9 @@ impl<const N: usize> Primes<N> {
     /// they will not be yielded by the iterator, but their product can be retrieved by calling
     /// [`remainder`](PrimeFactorization::remainder) on the iterator once it is exhausted.
     ///
+    /// If you do not need to know the multiplicity of each prime factor,
+    /// it may be faster to use [`prime_factors`](Self::prime_factors).
+    ///
     /// # Examples
     ///
     /// Basic usage:
@@ -178,6 +181,43 @@ impl<const N: usize> Primes<N> {
     #[inline]
     pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
         PrimeFactorization::new(&self.primes, number)
+    }
+
+    /// Returns an iterator over all the prime factors of the given number in increasing order.
+    ///
+    /// If a number contains prime factors larger than the largest prime in `self`,
+    /// they will not be yielded by the iterator, but their product can be retrieved by calling
+    /// [`remainder`](PrimeFactorization::remainder) on the iterator.
+    ///
+    /// If you also wish to know the multiplicity of each prime factor of the number,
+    /// take a look at [`prime_factorization`](Self::prime_factorization).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use const_primes::Primes;
+    /// // Contains [2, 3, 5]
+    /// const CACHE: Primes<3> = Primes::new();
+    ///
+    /// assert_eq!(CACHE.prime_factors(3*5).collect::<Vec<_>>(), &[3, 5]);
+    /// assert_eq!(CACHE.prime_factors(2*2*2*2*3).collect::<Vec<_>>(), &[2, 3]);
+    /// ```
+    /// 294 has 7 as a prime factor, but 7 is not in the cache:
+    /// ```
+    /// # use const_primes::Primes;
+    /// # const CACHE: Primes<3> = Primes::new();
+    /// // 294 = 2*3*7*7
+    /// let mut factors_of_42 = CACHE.prime_factors(294);
+    ///
+    /// // only 2 and 3 are in the cache
+    /// assert_eq!(factors_of_42.by_ref().collect::<Vec<_>>(), &[2, 3]);
+    ///
+    /// // the factor of 7*7 can be found with the remainder function
+    /// assert_eq!(factors_of_42.remainder(), Some(49));
+    /// ```
+    #[inline]
+    pub fn prime_factors(&self, number: Underlying) -> PrimeFactors<'_> {
+        PrimeFactors::new(&self.primes, number)
     }
 
     // region: Next prime
@@ -448,7 +488,7 @@ impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
 
 // endregion: AsRef
 
-pub use prime_factors::PrimeFactorization;
+pub use prime_factors::{PrimeFactorization, PrimeFactors};
 mod prime_factors {
     use super::Underlying;
 
@@ -517,6 +557,68 @@ mod prime_factors {
     }
 
     impl<'a> FusedIterator for PrimeFactorization<'a> {}
+
+    /// An iterator over the prime factors of a given number.
+    ///
+    /// Created by the [`factors`](super::Primes::factors)
+    /// function on [`Primes`](super::Primes), see it for more information.
+    #[derive(Debug, Clone)]
+    #[must_use = "iterators are lazy and do nothing unless consumed"]
+    pub struct PrimeFactors<'a> {
+        primes_cache: &'a [Underlying],
+        cache_index: usize,
+        number: Underlying,
+    }
+
+    impl<'a> PrimeFactors<'a> {
+        #[inline]
+        pub(crate) const fn new(primes_cache: &'a [Underlying], number: Underlying) -> Self {
+            Self {
+                primes_cache,
+                cache_index: 0,
+                number,
+            }
+        }
+
+        /// If the number contains prime factors that are larger than the largest prime
+        /// in the cache, this function returns their product.
+        ///
+        /// It does this by doing all the work that [`PrimeFactorization`] would have done,
+        /// so the performance advantage of this iterator over that one dissapears if this function is called.
+        #[inline]
+        #[must_use = "`self` will be dropped if the result is not used"]
+        pub fn remainder(self) -> Option<Underlying> {
+            // We haven't actually divided out any of the factors to save work,
+            // so we do that by just delegating to PrimeFactorization,
+            // which does the work in its implementation of this function.
+            PrimeFactorization::new(&self.primes_cache, self.number).remainder()
+        }
+    }
+
+    impl<'a> Iterator for PrimeFactors<'a> {
+        type Item = Underlying;
+        fn next(&mut self) -> Option<Self::Item> {
+            if self.number == 1 {
+                return None;
+            }
+
+            while let Some(prime) = self.primes_cache.get(self.cache_index) {
+                self.cache_index += 1;
+                if self.number % prime == 0 {
+                    return Some(*prime);
+                }
+            }
+
+            None
+        }
+
+        #[inline]
+        fn size_hint(&self) -> (usize, Option<usize>) {
+            (0, Some(self.primes_cache.len() - self.cache_index))
+        }
+    }
+
+    impl<'a> FusedIterator for PrimeFactors<'a> {}
 }
 
 // region: IntoIterator
