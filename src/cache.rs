@@ -560,7 +560,7 @@ mod prime_factors {
 
     /// An iterator over the prime factors of a given number.
     ///
-    /// Created by the [`factors`](super::Primes::factors)
+    /// Created by the [`prime_factors`](super::Primes::prime_factors)
     /// function on [`Primes`](super::Primes), see it for more information.
     #[derive(Debug, Clone)]
     #[must_use = "iterators are lazy and do nothing unless consumed"]
