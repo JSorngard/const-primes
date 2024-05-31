@@ -971,6 +971,27 @@ mod test {
     }
 
     #[test]
+    fn check_prime_factors() {
+        const CACHE: Primes<3> = Primes::new();
+
+        let mut factors_of_14 = CACHE.prime_factors(14);
+
+        assert_eq!(factors_of_14.next(), Some(2));
+        assert_eq!(factors_of_14.next(), None);
+        assert_eq!(factors_of_14.remainder(), Some(7));
+
+        let mut factors_of_15 = CACHE.prime_factors(15);
+
+        assert_eq!(factors_of_15.by_ref().collect::<Vec<_>>(), &[3, 5]);
+        assert!(factors_of_15.remainder().is_none());
+
+        assert_eq!(
+            CACHE.prime_factors(2 * 3 * 3 * 3 * 5).collect::<Vec<_>>(),
+            &[2, 3, 5]
+        );
+    }
+
+    #[test]
     fn check_next_prime() {
         const CACHE: Primes<100> = Primes::new();
         const SPGEQ0: Option<Underlying> = CACHE.next_prime(0);
