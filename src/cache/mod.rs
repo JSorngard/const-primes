@@ -690,18 +690,14 @@ mod test {
 
         let mut factorization_of_15 = CACHE.prime_factorization(15);
 
-        assert_eq!(
-            factorization_of_15.by_ref().collect::<Vec<_>>(),
-            &[(3, 1), (5, 1)]
-        );
+        assert_eq!(factorization_of_15.next(), Some((3, 1)));
+        assert_eq!(factorization_of_15.next(), Some((5, 1)));
         assert!(factorization_of_15.remainder().is_none());
 
-        assert_eq!(
-            CACHE
-                .prime_factorization(2 * 3 * 3 * 3 * 5)
-                .collect::<Vec<_>>(),
-            &[(2, 1), (3, 3), (5, 1)]
-        );
+        let mut factorization_of_270 = CACHE.prime_factorization(2 * 3 * 3 * 3 * 5);
+        assert_eq!(factorization_of_270.next(), Some((2, 1)));
+        assert_eq!(factorization_of_270.next(), Some((3, 3)));
+        assert_eq!(factorization_of_270.next(), Some((5, 1)));
     }
 
     #[test]
@@ -715,14 +711,14 @@ mod test {
         assert_eq!(factors_of_14.remainder(), Some(7));
 
         let mut factors_of_15 = CACHE.prime_factors(15);
-
-        assert_eq!(factors_of_15.by_ref().collect::<Vec<_>>(), &[3, 5]);
+        assert_eq!(factors_of_15.next(), Some(3));
+        assert_eq!(factors_of_15.next(), Some(5));
         assert!(factors_of_15.remainder().is_none());
 
-        assert_eq!(
-            CACHE.prime_factors(2 * 3 * 3 * 3 * 5).collect::<Vec<_>>(),
-            &[2, 3, 5]
-        );
+        let mut factors_of_270 = CACHE.prime_factors(2 * 3 * 3 * 3 * 5);
+        assert_eq!(factors_of_270.next(), Some(2));
+        assert_eq!(factors_of_270.next(), Some(3));
+        assert_eq!(factors_of_270.next(), Some(5));
     }
 
     #[test]

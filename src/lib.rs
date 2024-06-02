@@ -124,7 +124,7 @@
 //! `std`: implements the `Error` trait from the standard library for the error types.
 
 #![forbid(unsafe_code)]
-#![cfg_attr(all(not(test), not(feature = "std")), no_std)]
+#![cfg_attr(not(feature = "std"), no_std)]
 
 /// The type that `Primes<N>` stores, and `primes::<N>()` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
@@ -249,8 +249,8 @@ mod test {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], *prime as u32);
                         }
                         assert_eq!(
-                            PRECOMPUTED_PRIMES[25-$n..25],
-                            primes_lt::<$n, $n>(100).unwrap().as_slice().into_iter().map(|i| *i as u32).collect::<Vec<_>>()
+                            PRECOMPUTED_PRIMES.map(|i| i as u64)[25-$n..25],
+                            primes_lt::<$n, $n>(100).unwrap()
                         );
                     }
                 )+
