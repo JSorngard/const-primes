@@ -94,7 +94,7 @@ impl<'a> PrimeFactors<'a> {
     /// in the cache, this function returns their product.
     ///
     /// It does this by doing all the work that [`PrimeFactorization`] would have done,
-    /// so the performance advantage of this iterator over that one dissapears if this function is called.
+    /// so the performance advantage of this iterator over that one disappears if this function is called.
     #[inline]
     #[must_use = "`self` will be dropped if the result is not used"]
     pub fn remainder(self) -> Option<Underlying> {
