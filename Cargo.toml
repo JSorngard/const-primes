@@ -20,6 +20,8 @@ std = []
 [package.metadata.docs.rs]
 # Document all features.
 all-features = true
+# Enable the docsrs configuration attribute on docs.rs
+rustdoc-args = ["--cfg", "docsrs"]
 
 [[bench]]
 name = "prime_benches"
