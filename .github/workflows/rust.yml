@@ -52,6 +52,13 @@ jobs:
     - name: document
       run: cargo +nightly doc --all-features
 
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: taiki-e/install-action@cargo-hack
+    - run: cargo hack check --rust-version --workspace --all-targets --ignore-private
+
   coverage:
     runs-on: ubuntu-latest
     steps:
