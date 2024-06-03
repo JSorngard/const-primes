@@ -41,9 +41,7 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
-pub struct Primes<const N: usize> {
-    primes: [Underlying; N],
-}
+pub struct Primes<const N: usize>([Underlying; N]);
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
@@ -87,7 +85,7 @@ impl<const N: usize> Primes<N> {
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
         assert!(N > 0, "`N` must be at least 1");
-        Self { primes: primes() }
+        Self(primes())
     }
 
     /// Returns whether `n` is prime, if it is smaller than or equal to the largest prime in `self`.
@@ -196,7 +194,7 @@ impl<const N: usize> Primes<N> {
     /// ```
     #[inline]
     pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
-        PrimeFactorization::new(&self.primes, number)
+        PrimeFactorization::new(&self.0, number)
     }
 
     /// Returns an iterator over all the prime factors of the given number in increasing order.
@@ -233,7 +231,7 @@ impl<const N: usize> Primes<N> {
     /// ```
     #[inline]
     pub fn prime_factors(&self, number: Underlying) -> PrimeFactors<'_> {
-        PrimeFactors::new(&self.primes, number)
+        PrimeFactors::new(&self.0, number)
     }
 
     // region: Next prime
@@ -259,7 +257,7 @@ impl<const N: usize> Primes<N> {
             match self.binary_search(n) {
                 Ok(i) | Err(i) => {
                     if i > 0 && i < N {
-                        Some(self.primes[i - 1])
+                        Some(self.0[i - 1])
                     } else {
                         None
                     }
@@ -286,14 +284,14 @@ impl<const N: usize> Primes<N> {
         match self.binary_search(n) {
             Ok(i) => {
                 if i + 1 < self.len() {
-                    Some(self.primes[i + 1])
+                    Some(self.0[i + 1])
                 } else {
                     None
                 }
             }
             Err(i) => {
                 if i < N {
-                    Some(self.primes[i])
+                    Some(self.0[i])
                 } else {
                     None
                 }
@@ -332,7 +330,7 @@ impl<const N: usize> Primes<N> {
         let mut right = size;
         while left < right {
             let mid = left + size / 2;
-            let candidate = self.primes[mid];
+            let candidate = self.0[mid];
             if candidate < target {
                 left = mid + 1;
             } else if candidate > target {
@@ -360,21 +358,21 @@ impl<const N: usize> Primes<N> {
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn into_array(self) -> [Underlying; N] {
-        self.primes
+        self.0
     }
 
     /// Returns a reference to the underlying array.
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn as_array(&self) -> &[Underlying; N] {
-        &self.primes
+        &self.0
     }
 
     /// Returns a slice that contains the entire underlying array.
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn as_slice(&self) -> &[Underlying] {
-        self.primes.as_slice()
+        self.0.as_slice()
     }
 
     /// Returns a borrowing iterator over the primes.
@@ -394,7 +392,7 @@ impl<const N: usize> Primes<N> {
     /// ```
     #[inline]
     pub fn iter(&self) -> PrimesIter<'_> {
-        PrimesIter::new(IntoIterator::into_iter(&self.primes))
+        PrimesIter::new(IntoIterator::into_iter(&self.0))
     }
 
     // endregion: Conversions
@@ -414,7 +412,7 @@ impl<const N: usize> Primes<N> {
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn get(&self, index: usize) -> Option<&Underlying> {
         if index < N {
-            Some(&self.primes[index])
+            Some(&self.0[index])
         } else {
             None
         }
@@ -433,7 +431,7 @@ impl<const N: usize> Primes<N> {
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn last(&self) -> &Underlying {
-        match self.primes.last() {
+        match self.0.last() {
             Some(l) => l,
             None => panic!("this should panic during creation"),
         }
@@ -461,7 +459,7 @@ impl<const N: usize> Primes<N> {
 impl<const N: usize> Default for Primes<N> {
     fn default() -> Self {
         assert!(N > 0, "`N` must be at least 1");
-        Self { primes: primes() }
+        Self(primes())
     }
 }
 
@@ -472,14 +470,14 @@ where
     type Output = I::Output;
     #[inline]
     fn index(&self, index: I) -> &Self::Output {
-        self.primes.index(index)
+        self.0.index(index)
     }
 }
 
 impl<const N: usize> From<Primes<N>> for [Underlying; N] {
     #[inline]
     fn from(const_primes: Primes<N>) -> Self {
-        const_primes.primes
+        const_primes.0
     }
 }
 
@@ -488,14 +486,14 @@ impl<const N: usize> From<Primes<N>> for [Underlying; N] {
 impl<const N: usize> AsRef<[Underlying]> for Primes<N> {
     #[inline]
     fn as_ref(&self) -> &[Underlying] {
-        &self.primes
+        &self.0
     }
 }
 
 impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
     #[inline]
     fn as_ref(&self) -> &[Underlying; N] {
-        &self.primes
+        &self.0
     }
 }
 
@@ -508,7 +506,7 @@ impl<const N: usize> IntoIterator for Primes<N> {
     type IntoIter = PrimesIntoIter<N>;
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        PrimesIntoIter::new(self.primes.into_iter())
+        PrimesIntoIter::new(self.0.into_iter())
     }
 }
 
@@ -516,7 +514,7 @@ impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
     type IntoIter = PrimesIter<'a>;
     type Item = &'a Underlying;
     fn into_iter(self) -> Self::IntoIter {
-        PrimesIter::new(IntoIterator::into_iter(&self.primes))
+        PrimesIter::new(IntoIterator::into_iter(&self.0))
     }
 }
 
@@ -527,28 +525,28 @@ impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
 impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
     #[inline]
     fn eq(&self, other: &T) -> bool {
-        other == &self.primes
+        other == &self.0
     }
 }
 
 impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
     #[inline]
     fn eq(&self, other: &Primes<N>) -> bool {
-        self == &other.primes
+        self == &other.0
     }
 }
 
 impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
     #[inline]
     fn eq(&self, other: &Primes<N>) -> bool {
-        self == &other.primes
+        self == &other.0
     }
 }
 
 impl<const N: usize> PartialEq<[Underlying]> for Primes<N> {
     #[inline]
     fn eq(&self, other: &[Underlying]) -> bool {
-        self.primes == other
+        self.0 == other
     }
 }
 
@@ -560,21 +558,21 @@ use core::cmp::Ordering;
 impl<const N: usize, T: PartialOrd<[Underlying; N]>> PartialOrd<T> for Primes<N> {
     #[inline]
     fn partial_cmp(&self, other: &T) -> Option<Ordering> {
-        other.partial_cmp(&self.primes)
+        other.partial_cmp(&self.0)
     }
 }
 
 impl<const N: usize> PartialOrd<Primes<N>> for [Underlying; N] {
     #[inline]
     fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
-        other.primes.partial_cmp(self)
+        other.0.partial_cmp(self)
     }
 }
 
 impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
     #[inline]
     fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
-        other.primes.as_slice().partial_cmp(self)
+        other.0.as_slice().partial_cmp(self)
     }
 }
 
