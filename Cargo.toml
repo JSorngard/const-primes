@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 keywords = ["const", "primes"]
 categories = ["mathematics", "no-std", "no-std::no-alloc", "algorithms"]
 description = "Work with prime numbers in const contexts. Prime generation, primality testing, prime counting, factorization, and more."
-repository = "https://github.com/JSorngard/const-primes/tree/main"
+repository = "https://github.com/JSorngard/const-primes/"
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
