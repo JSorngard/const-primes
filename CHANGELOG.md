@@ -1,5 +1,11 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.8.1
+
+ - Added a crate feature flag badge to the docs.
+ - Mention what can be done with the crate clearer in the description.
+
+
 # 0.8.0
 
 ## Breaking changes
