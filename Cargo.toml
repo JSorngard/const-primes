@@ -8,6 +8,7 @@ keywords = ["const", "primes"]
 categories = ["mathematics", "no-std", "no-std::no-alloc", "algorithms"]
 description = "Work with prime numbers in const contexts. Prime generation, primality testing, prime counting, and more."
 repository = "https://github.com/JSorngard/const-primes/"
+rust-version = "1.67.1"
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
