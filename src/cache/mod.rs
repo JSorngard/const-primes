@@ -41,9 +41,9 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Primes<const N: usize>(
-    #[cfg_attr(feature = "serde", serde(serialize_with = "serialize"))] [Underlying; N],
+    #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );
 
 impl<const N: usize> Primes<N> {
@@ -456,21 +456,6 @@ impl<const N: usize> Primes<N> {
     pub const fn len(&self) -> usize {
         N
     }
-}
-
-#[cfg(feature = "serde")]
-use serde::ser::SerializeTuple;
-#[cfg(feature = "serde")]
-fn serialize<const N: usize, S, T>(t: &[T; N], serializer: S) -> Result<S::Ok, S::Error>
-where
-    S: serde::Serializer,
-    T: serde::Serialize,
-{
-    let mut ser_tuple = serializer.serialize_tuple(N)?;
-    for elem in t {
-        ser_tuple.serialize_element(elem)?;
-    }
-    ser_tuple.end()
 }
 
 /// Panics if `N` is 0.
