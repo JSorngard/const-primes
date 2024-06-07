@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.8.2
+
+ - Add the `serde` feature that derives the `Serialize` and `Deserialize` traits from `serde` for the `Primes` struct.
+
 # 0.8.1
 
  - Added a crate feature flag badge to the docs.
