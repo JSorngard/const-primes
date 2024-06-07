@@ -9,6 +9,9 @@ categories = ["mathematics", "no-std", "no-std::no-alloc", "algorithms"]
 description = "Work with prime numbers in const contexts. Prime generation, primality testing, prime counting, and more."
 repository = "https://github.com/JSorngard/const-primes/"
 
+[dependencies]
+serde = { version = "1.0", default-features = false, features = ["derive"], optional = true}
+
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
 rand = "0.8"
@@ -16,6 +19,7 @@ rand = "0.8"
 [features]
 # Implements the `Error` trait from the standard library for the error types.
 std = []
+serde = ["dep:serde"]
 
 # docs.rs-specific configuration. Taken from <https://stackoverflow.com/a/61417700/>.
 [package.metadata.docs.rs]
