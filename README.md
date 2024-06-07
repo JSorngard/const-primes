@@ -126,8 +126,8 @@ and more!
 
 ## Features
 
-`std`: implements the [`Error`](https://doc.rust-lang.org/std/error/trait.Error.html) trait from the standard library for the error types.  
-`serde`: derives the [`Serialize`](https://docs.rs/serde/latest/serde/trait.Serialize.html) and [`Deserialize`](https://docs.rs/serde/latest/serde/trait.Deserialize.html) traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct.
+`std`: implements the `Error` trait from the standard library for the error types.  
+`serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct.
 
 ## License
 
