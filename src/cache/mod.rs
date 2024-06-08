@@ -41,7 +41,10 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
-pub struct Primes<const N: usize>([Underlying; N]);
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Primes<const N: usize>(
+    #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
+);
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
