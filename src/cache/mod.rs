@@ -488,6 +488,10 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(TOTIENT_OF_2450, Err((20, 49)))
     /// ```
     pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, (Underlying, Underlying)> {
+        if n == 0 {
+            return Ok(0);
+        }
+
         let mut i = 0;
         let mut ans = 1;
         while let Some(&prime) = self.get(i) {
@@ -639,6 +643,8 @@ impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
 
 #[cfg(test)]
 mod test {
+    use crate::next_prime;
+
     use super::*;
 
     // region: TraitImpls
@@ -885,9 +891,32 @@ mod test {
 
     #[test]
     fn check_totient() {
-        const CACHE: Primes<3> = Primes::new();
+        const TOTIENTS: [Underlying; 101] = [
+            0, 1, 1, 2, 2, 4, 2, 6, 4, 6, 4, 10, 4, 12, 6, 8, 8, 16, 6, 18, 8, 12, 10, 22, 8, 20,
+            12, 18, 12, 28, 8, 30, 16, 20, 16, 24, 12, 36, 18, 24, 16, 40, 12, 42, 20, 24, 22, 46,
+            16, 42, 20, 32, 24, 52, 18, 40, 24, 36, 28, 58, 16, 60, 30, 36, 32, 48, 20, 66, 32, 44,
+            24, 70, 24, 72, 36, 40, 36, 60, 24, 78, 32, 54, 40, 82, 24, 64, 42, 56, 40, 88, 24, 72,
+            44, 60, 46, 72, 32, 96, 42, 60, 40,
+        ];
+        const NEXT_OUTSIDE: Underlying = match next_prime(*BIG_CACHE.last() as u64) {
+            Some(np) => np as Underlying,
+            None => panic!(),
+        };
 
-        assert_eq!(CACHE.totient(6), Ok(2));
-        assert_eq!(CACHE.totient(2 * 5 * 5 * 7 * 7), Err((20, 49)))
+        const SMALL_CACHE: Primes<3> = Primes::new();
+        const BIG_CACHE: Primes<100> = Primes::new();
+
+        assert_eq!(SMALL_CACHE.totient(6), Ok(2));
+        assert_eq!(SMALL_CACHE.totient(2 * 5 * 5 * 7 * 7), Err((20, 49)));
+
+        for (i, totient) in TOTIENTS.into_iter().enumerate() {
+            assert_eq!(BIG_CACHE.totient(i as Underlying), Ok(totient));
+            if i != 0 {
+                assert_eq!(
+                    BIG_CACHE.totient((i as Underlying) * NEXT_OUTSIDE),
+                    Err((totient, NEXT_OUTSIDE))
+                );
+            }
+        }
     }
 }
