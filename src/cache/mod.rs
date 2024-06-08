@@ -882,4 +882,14 @@ mod test {
             assert_eq!(p1, p2);
         }
     }
+
+    #[test]
+    fn check_totient() {
+        const CACHE: Primes<3> = Primes::new();
+        const TOTIENT_OF_6: Result<u32, (u32, u32)> = CACHE.totient(6);
+        const TOTIENT_OF_2450: Result<u32, (u32, u32)> = CACHE.totient(2 * 5 * 5 * 7 * 7);
+
+        assert_eq!(TOTIENT_OF_6, Ok(2));
+        assert_eq!(TOTIENT_OF_2450, Err((20, 49)))
+    }
 }
