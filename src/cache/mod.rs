@@ -500,14 +500,17 @@ impl<const N: usize> Primes<N> {
                 n /= prime;
                 count += 1;
             }
+
             if count > 0 {
                 ans *= prime.pow(count - 1) * (prime - 1);
             }
+
             if n == 1 {
                 break;
             }
             i += 1;
         }
+
         if n == 1 {
             Ok(ans)
         } else {
