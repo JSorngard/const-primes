@@ -457,14 +457,14 @@ impl<const N: usize> Primes<N> {
         N
     }
 
-    /// Returns value of the Euler totient function of the given number,
-    /// the number of positive integers up to `n` that are relatively prime to `n`.
+    /// Returns value of the Euler totient function of `n`,
+    /// the number of positive integers up to `n` that are relatively prime to it.
     ///
     /// # Errors
     ///
     /// The totient function is computed here as the product over all factors of the form p^(k-1)*(p-1) where
     /// p is the primes in the prime factorization of `n` and k is their multiplicity.
-    /// If the number contains prime factors that are not part of `self`, a [`Result::Err`] is returned
+    /// If `n` contains prime factors that are not part of `self`, a [`Result::Err`] is returned
     /// that contains a tuple where the first element is the result from using only the primes in `self`,
     /// and the second element is the product of the factors that are not included in `self`.
     ///
