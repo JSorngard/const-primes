@@ -453,6 +453,60 @@ impl<const N: usize> Primes<N> {
     pub const fn len(&self) -> usize {
         N
     }
+
+    /// Returns value of the Euler totient function of the given number,
+    /// the number of positive integers up to `n` that are relatively prime to `n`.
+    ///
+    /// # Errors
+    ///
+    /// The totient function is computed here as the product over all factors of the form p^(k-1)*(p-1) where
+    /// p is the primes in the prime factorization of `n` and k is their multiplicity.
+    /// If the number contains prime factors that are not part of `self`, a [`Result::Err`] is returned
+    /// that contains a tuple where the first element is the result from using only the primes in `self`,
+    /// and the second element is the product of the factors that are not included in `self`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use const_primes::Primes;
+    /// const CACHE: Primes<3> = Primes::new();
+    /// const TOTIENT_OF_6: Result<u32, (u32, u32)> = CACHE.totient(2*3);
+    ///
+    /// assert_eq!(TOTIENT_OF_6, Ok(2));
+    /// ```
+    /// The number 2450 is equal to 2\*5\*5\*7\*7, but the cache does not contain 7.
+    /// This means that the implementation runs out of primes after 5, and can not finish the computation.
+    /// The returned value is then `Err((totient(2*5*5), 7*7))`
+    /// ```
+    /// # use const_primes::Primes;
+    /// # const CACHE: Primes<3> = Primes::new();
+    /// const TOTIENT_OF_2450: Result<u32, (u32, u32)> = CACHE.totient(2*5*5*7*7);
+    ///
+    /// assert_eq!(TOTIENT_OF_2450, Err((20, 49)))
+    /// ```
+    pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, (Underlying, Underlying)> {
+        let mut i = 0;
+        let mut ans = 1;
+        while let Some(&prime) = self.get(i) {
+            let mut count = 0;
+            while n % prime == 0 {
+                n /= prime;
+                count += 1;
+            }
+            if count > 0 {
+                ans *= prime.pow(count - 1) * (prime - 1);
+            }
+            if n == 1 {
+                break;
+            }
+            i += 1;
+        }
+        if n == 1 {
+            Ok(ans)
+        } else {
+            Err((ans, n))
+        }
+    }
 }
 
 /// Panics if `N` is 0.
