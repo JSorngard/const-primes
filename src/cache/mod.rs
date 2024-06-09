@@ -488,7 +488,7 @@ impl<const N: usize> Primes<N> {
     ///
     /// assert_eq!(
     ///     TOTIENT_OF_2450,
-    ///     Err(PartialTotient { result_using_known_primes: 20, product_of_other_factors: 49} )
+    ///     Err( PartialTotient { result_using_known_primes: 20, product_of_other_factors: 49} )
     /// );
     /// ```
     pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, PartialTotient> {
