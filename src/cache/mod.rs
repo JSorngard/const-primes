@@ -457,7 +457,7 @@ impl<const N: usize> Primes<N> {
         N
     }
 
-    /// Returns the value of the Euler totient function of `n`,
+    /// Returns the value of the Euler totient function of `n`:
     /// the number of positive integers up to `n` that are relatively prime to it.
     ///
     /// # Errors
