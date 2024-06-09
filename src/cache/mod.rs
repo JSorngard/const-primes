@@ -480,7 +480,7 @@ impl<const N: usize> Primes<N> {
     /// The number 2450 is equal to 2\*5\*5\*7\*7, but the cache does not contain 7.
     /// This means that the function runs out of primes after 5, and can not finish the computation.
     /// The returned value is then:  
-    /// `Err( PartialTotient { value: totient(2*5*5), remainder: 7*7 } )`
+    /// `Err( PartialTotient { partial_value: totient(2*5*5), remainder: 7*7 } )`
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
     /// # const CACHE: Primes<3> = Primes::new();
@@ -488,7 +488,7 @@ impl<const N: usize> Primes<N> {
     ///
     /// assert_eq!(
     ///     TOTIENT_OF_2450,
-    ///     Err( PartialTotient { value: 20, remainder: 49} )
+    ///     Err( PartialTotient { partial_value: 20, remainder: 49} )
     /// );
     /// ```
     pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, PartialTotient> {
@@ -519,7 +519,7 @@ impl<const N: usize> Primes<N> {
             Ok(ans)
         } else {
             Err(PartialTotient {
-                value: ans,
+                partial_value: ans,
                 remainder: n,
             })
         }
@@ -533,7 +533,7 @@ impl<const N: usize> Primes<N> {
 /// [`Primes`] struct, and the product of all other remaining prime factors of the given number.
 pub struct PartialTotient {
     /// The result of computing the totient function with only the primes in the related `Primes` struct.
-    pub value: Underlying,
+    pub partial_value: Underlying,
     /// The product of all remaining prime factors of the number.
     pub remainder: Underlying,
 }
@@ -932,7 +932,7 @@ mod test {
         assert_eq!(
             SMALL_CACHE.totient(2 * 5 * 5 * 7 * 7),
             Err(PartialTotient {
-                value: 20,
+                partial_value: 20,
                 remainder: 49
             })
         );
@@ -943,7 +943,7 @@ mod test {
                 assert_eq!(
                     BIG_CACHE.totient((i as Underlying) * NEXT_OUTSIDE),
                     Err(PartialTotient {
-                        value: totient,
+                        partial_value: totient,
                         remainder: NEXT_OUTSIDE
                     })
                 );
