@@ -465,15 +465,15 @@ impl<const N: usize> Primes<N> {
     /// The totient function is computed here as the product over all factors of the form p^(k-1)*(p-1) where
     /// p is the primes in the prime factorization of `n` and k is their multiplicity.
     /// If `n` contains prime factors that are not part of `self`, a [`Result::Err`] is returned
-    /// that contains a tuple where the first element is the result from using only the primes in `self`,
-    /// and the second element is the product of the factors that are not included in `self`.
+    /// that contains a struct that contains the result from using only the primes in `self`,
+    /// and the product of the factors that are not included in `self`.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use const_primes::Primes;
+    /// # use const_primes::{Primes, cache::PartialTotient};
     /// const CACHE: Primes<3> = Primes::new();
-    /// const TOTIENT_OF_6: Result<u32, (u32, u32)> = CACHE.totient(2*3);
+    /// const TOTIENT_OF_6: Result<u32, PartialTotient> = CACHE.totient(2*3);
     ///
     /// assert_eq!(TOTIENT_OF_6, Ok(2));
     /// ```
@@ -481,13 +481,13 @@ impl<const N: usize> Primes<N> {
     /// This means that the implementation runs out of primes after 5, and can not finish the computation.
     /// The returned value is then `Err((totient(2*5*5), 7*7))`
     /// ```
-    /// # use const_primes::Primes;
+    /// # use const_primes::{Primes, cache::PartialTotient};
     /// # const CACHE: Primes<3> = Primes::new();
-    /// const TOTIENT_OF_2450: Result<u32, (u32, u32)> = CACHE.totient(2*5*5*7*7);
+    /// const TOTIENT_OF_2450: Result<u32, PartialTotient> = CACHE.totient(2*5*5*7*7);
     ///
-    /// assert_eq!(TOTIENT_OF_2450, Err((20, 49)))
+    /// assert_eq!(TOTIENT_OF_2450, Err(PartialTotient { partial_result: 20, remainder: 49} ))
     /// ```
-    pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, (Underlying, Underlying)> {
+    pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, PartialTotient> {
         if n == 0 {
             return Ok(0);
         }
@@ -514,9 +514,18 @@ impl<const N: usize> Primes<N> {
         if n == 1 {
             Ok(ans)
         } else {
-            Err((ans, n))
+            Err(PartialTotient {
+                partial_result: ans,
+                remainder: n,
+            })
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct PartialTotient {
+    pub partial_result: Underlying,
+    pub remainder: Underlying,
 }
 
 /// Panics if `N` is 0.
@@ -910,14 +919,23 @@ mod test {
         const BIG_CACHE: Primes<100> = Primes::new();
 
         assert_eq!(SMALL_CACHE.totient(6), Ok(2));
-        assert_eq!(SMALL_CACHE.totient(2 * 5 * 5 * 7 * 7), Err((20, 49)));
+        assert_eq!(
+            SMALL_CACHE.totient(2 * 5 * 5 * 7 * 7),
+            Err(PartialTotient {
+                partial_result: 20,
+                remainder: 49
+            })
+        );
 
         for (i, totient) in TOTIENTS.into_iter().enumerate() {
             assert_eq!(BIG_CACHE.totient(i as Underlying), Ok(totient));
             if i != 0 {
                 assert_eq!(
                     BIG_CACHE.totient((i as Underlying) * NEXT_OUTSIDE),
-                    Err((totient, NEXT_OUTSIDE))
+                    Err(PartialTotient {
+                        partial_result: totient,
+                        remainder: NEXT_OUTSIDE
+                    })
                 );
             }
         }
