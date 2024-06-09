@@ -465,7 +465,7 @@ impl<const N: usize> Primes<N> {
     /// The totient function is computed here as the product over all factors of the form p^(k-1)*(p-1) where
     /// p is the primes in the prime factorization of `n` and k is their multiplicity.
     /// If `n` contains prime factors that are not part of `self`, a [`Result::Err`] is returned
-    /// that contains a struct that contains the result from using only the primes in `self`,
+    /// that contains a [`PartialTotient`] struct that contains the result from using only the primes in `self`,
     /// and the product of the factors that are not included in `self`.
     ///
     /// # Examples
