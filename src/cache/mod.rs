@@ -478,7 +478,7 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(TOTIENT_OF_6, Ok(2));
     /// ```
     /// The number 2450 is equal to 2\*5\*5\*7\*7, but the cache does not contain 7.
-    /// This means that the implementation runs out of primes after 5, and can not finish the computation.
+    /// This means that the function runs out of primes after 5, and can not finish the computation.
     /// The returned value is then `Err((totient(2*5*5), 7*7))`
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
