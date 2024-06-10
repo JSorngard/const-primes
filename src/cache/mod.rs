@@ -530,13 +530,10 @@ impl<const N: usize> Primes<N> {
 }
 
 /// Contains the result of the partial evaluation of the [`totient`](Primes::totient) function.
-///
-/// Specifically, this contains the partial result from computing the totient using only the primes in the related
-/// [`Primes`] struct, as well as the product of all other remaining prime factors of the given number.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct PartialTotient {
-    /// The result of computing the totient function with only the primes in the related `Primes` struct.
+    /// The result of computing the totient function with only the primes in the related [`Primes`] struct.
     pub totient_using_known_primes: Underlying,
     /// The product of all remaining prime factors of the number.
     pub product_of_unknown_prime_factors: Underlying,
