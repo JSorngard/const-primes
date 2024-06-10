@@ -20,7 +20,7 @@ rand = "0.8"
 [features]
 # Implements the `Error` trait from the standard library for the error types.
 std = []
-# Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct.
+# Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
 serde = ["dep:serde", "dep:serde_arrays"]
 
 # docs.rs-specific configuration. Taken from <https://stackoverflow.com/a/61417700/>.
