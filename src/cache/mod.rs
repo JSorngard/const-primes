@@ -539,19 +539,6 @@ pub struct PartialTotient {
     pub product_of_unknown_prime_factors: Underlying,
 }
 
-impl fmt::Display for PartialTotient {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "the totient function could only be partially evaluated. The product of the unknown prime factors of the number is {}, and if they are ignored the value of the totient function of the number is {}",
-            self.product_of_unknown_prime_factors, self.totient_using_known_primes
-        )
-    }
-}
-
-#[cfg(feature = "std")]
-impl std::error::Error for PartialTotient {}
-
 /// Panics if `N` is 0.
 impl<const N: usize> Default for Primes<N> {
     fn default() -> Self {
@@ -651,7 +638,7 @@ impl<const N: usize> PartialEq<[Underlying]> for Primes<N> {
 
 // region: PartialOrd
 
-use core::{cmp::Ordering, fmt};
+use core::cmp::Ordering;
 impl<const N: usize, T: PartialOrd<[Underlying; N]>> PartialOrd<T> for Primes<N> {
     #[inline]
     fn partial_cmp(&self, other: &T) -> Option<Ordering> {
