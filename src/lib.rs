@@ -327,6 +327,15 @@ mod test {
         assert_eq!(previous_prime(3), Some(2));
     }
 
+    #[test]
+    fn test_totient_on_primes() {
+        const CACHE: Primes<10_000> = Primes::new();
+
+        for &prime in CACHE.iter() {
+            assert_eq!(CACHE.totient(prime), Ok(prime - 1));
+        }
+    }
+
     #[rustfmt::skip]
     const PRIMALITIES: [bool; 100] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false];
 
