@@ -331,7 +331,7 @@ mod test {
     fn test_totient_on_primes() {
         const CACHE: Primes<10_000> = Primes::new();
 
-        for &prime in CACHE.iter() {
+        for &prime in &CACHE {
             assert_eq!(CACHE.totient(prime), Ok(prime - 1));
         }
     }
