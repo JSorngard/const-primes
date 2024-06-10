@@ -483,7 +483,7 @@ impl<const N: usize> Primes<N> {
     /// The number 2450 is equal to 2\*5\*5\*7\*7, but the cache does not contain 7.
     /// This means that the function runs out of primes after 5, and can not finish the computation.
     /// The returned value is then:  
-    /// `Err(PartialTotient{ partial_totient: totient(2*5*5), product_of_remaining_prime_factors: 7*7})`
+    /// `Err(PartialTotient{ totient_using_known_primes: totient(2*5*5), product_of_other_prime_factors: 7*7})`
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
     /// # const CACHE: Primes<3> = Primes::new();
@@ -491,7 +491,7 @@ impl<const N: usize> Primes<N> {
     ///
     /// assert_eq!(
     ///     TOTIENT_OF_2450,
-    ///     Err( PartialTotient { partial_totient: 20, product_of_remaining_prime_factors: 49} )
+    ///     Err( PartialTotient { totient_using_known_primes: 20, product_of_other_prime_factors: 49} )
     /// );
     /// ```
     pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, PartialTotient> {
@@ -522,8 +522,8 @@ impl<const N: usize> Primes<N> {
             Ok(ans)
         } else {
             Err(PartialTotient {
-                partial_totient: ans,
-                product_of_remaining_prime_factors: n,
+                totient_using_known_primes: ans,
+                product_of_other_prime_factors: n,
             })
         }
     }
@@ -537,9 +537,9 @@ impl<const N: usize> Primes<N> {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct PartialTotient {
     /// The result of computing the totient function with only the primes in the related `Primes` struct.
-    pub partial_totient: Underlying,
+    pub totient_using_known_primes: Underlying,
     /// The product of all remaining prime factors of the number.
-    pub product_of_remaining_prime_factors: Underlying,
+    pub product_of_other_prime_factors: Underlying,
 }
 
 /// Panics if `N` is 0.
@@ -936,8 +936,8 @@ mod test {
         assert_eq!(
             SMALL_CACHE.totient(2 * 5 * 5 * 7 * 7),
             Err(PartialTotient {
-                partial_totient: 20,
-                product_of_remaining_prime_factors: 49
+                totient_using_known_primes: 20,
+                product_of_other_prime_factors: 49
             })
         );
 
@@ -947,8 +947,8 @@ mod test {
                 assert_eq!(
                     BIG_CACHE.totient((i as Underlying) * NEXT_OUTSIDE),
                     Err(PartialTotient {
-                        partial_totient: totient,
-                        product_of_remaining_prime_factors: NEXT_OUTSIDE
+                        totient_using_known_primes: totient,
+                        product_of_other_prime_factors: NEXT_OUTSIDE
                     })
                 );
             }
