@@ -529,7 +529,7 @@ impl<const N: usize> Primes<N> {
     }
 }
 
-/// Contains the result of the partial evaluation of the [`totient`](Primes::totient) function.
+/// Contains the result of a partially successful evaluation of the [`totient`](Primes::totient) function.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct PartialTotient {
