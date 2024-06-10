@@ -208,7 +208,8 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
 ///
 /// Only implements the [`Error`](std::error::Error) trait
 /// if the `std` feature is enabled.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum SieveError {
     /// The limit was less than or equal to `N` (for `sieve_lt`).
     TooSmallLimit,
