@@ -11,6 +11,9 @@ pub use primes_iter::PrimesIter;
 
 use crate::{primes, Underlying};
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 // region: Primes<N>
 
 /// A wrapper around an array that consists of the first `N` primes. Can use those primes for related computations.
@@ -41,7 +44,7 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Primes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );
@@ -526,11 +529,12 @@ impl<const N: usize> Primes<N> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 /// Contains the result of the partial evaluation of the [`totient`](Primes::totient) function.
 ///
 /// It contains the result from computing the totient using only the primes in the related
 /// [`Primes`] struct, and the product of all other remaining prime factors of the given number.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct PartialTotient {
     /// The result of computing the totient function with only the primes in the related `Primes` struct.
     pub partial_value: Underlying,

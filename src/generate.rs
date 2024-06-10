@@ -391,6 +391,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
 /// Only implements the [`Error`](std::error::Error) trait
 /// if the `std` feature is enabled.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum GenerationError {
     /// The limit was larger than or equal to `MEM^2`.
     TooSmallSieveSize,
