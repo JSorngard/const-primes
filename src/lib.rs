@@ -121,8 +121,8 @@
 //!
 //! # Features
 //!
-//! *`std`*: implements the [`Error`](std::error::Error) trait from the standard library for the error types.  
-//! *`serde`*: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct.
+//! `std`: implements the [`Error`](std::error::Error) trait from the standard library for the error types.  
+//! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct.
 
 #![forbid(unsafe_code)]
 #![cfg_attr(not(feature = "std"), no_std)]
