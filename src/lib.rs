@@ -119,10 +119,10 @@
 //! ```
 //! and more!
 //!
-//! # Features
+//! # Feature flags
 //!
-//! *`std`*: implements the [`Error`](std::error::Error) trait from the standard library for the error types.  
-//! *`serde`*: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct.
+//! `std`: implements the [`Error`](std::error::Error) trait from the standard library for the error types.  
+//! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct, as well as a few others.
 
 #![forbid(unsafe_code)]
 #![cfg_attr(not(feature = "std"), no_std)]
@@ -325,6 +325,15 @@ mod test {
         assert_eq!(previous_prime(1), None);
         assert_eq!(previous_prime(2), None);
         assert_eq!(previous_prime(3), Some(2));
+    }
+
+    #[test]
+    fn test_totient_on_primes() {
+        const CACHE: Primes<10_000> = Primes::new();
+
+        for &prime in &CACHE {
+            assert_eq!(CACHE.totient(prime), Ok(prime - 1));
+        }
     }
 
     #[rustfmt::skip]

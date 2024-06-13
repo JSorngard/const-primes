@@ -3,6 +3,8 @@ This file contains the changes to the crate since version 0.4.8.
 # 0.8.3
 
  - Add the `totient` function to the `Primes` struct.
+ - Derive `Serialize` and `Deserialize` for the error types.
+ - Derive `Hash` for `SieveError`.
 
 # 0.8.2
 

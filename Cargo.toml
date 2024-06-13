@@ -10,8 +10,8 @@ description = "Work with prime numbers in const contexts. Prime generation, prim
 repository = "https://github.com/JSorngard/const-primes/"
 
 [dependencies]
-serde = { version = "1.0", default-features = false, features = ["derive"], optional = true}
-serde_arrays = {version = "0.1.0", optional = true}
+serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
+serde_arrays = { version = "0.1.0", optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
@@ -20,7 +20,7 @@ rand = "0.8"
 [features]
 # Implements the `Error` trait from the standard library for the error types.
 std = []
-# Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct.
+# Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
 serde = ["dep:serde", "dep:serde_arrays"]
 
 # docs.rs-specific configuration. Taken from <https://stackoverflow.com/a/61417700/>.
