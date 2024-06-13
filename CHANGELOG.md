@@ -1,5 +1,10 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.8.4
+
+ - License and docs.rs link improvements in README. 
+ - Minor documentation improvements. 
+
 # 0.8.3
 
  - Add the `totient` function to the `Primes` struct.
