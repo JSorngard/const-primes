@@ -2,18 +2,8 @@ name: CI
 
 on:
   push:
-    paths-ignore: 
-      - 'README.md'
-      - 'CHANGELOG.md' 
-      - 'LICENSE-APACHE' 
-      - 'LICENSE-MIT' 
     branches: [ "main" ]
   pull_request:
-    paths-ignore: 
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - 'LICENSE-APACHE' 
-      - 'LICENSE-MIT' 
     branches: [ "main" ]
     
 
