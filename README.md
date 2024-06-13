@@ -1,6 +1,5 @@
 [![Latest Version](https://img.shields.io/crates/v/const-primes.svg)](https://crates.io/crates/const-primes)
-[![docs.rs](https://img.shields.io/docsrs/const-primes)
-](https://docs.rs/const-primes/latest/const_primes/)
+[![docs.rs](https://img.shields.io/docsrs/const-primes)](https://docs.rs/const-primes/latest/const_primes/)
 [![Build Status](https://github.com/JSorngard/const-primes/actions/workflows/rust.yml/badge.svg)](https://github.com/JSorngard/const-primes/actions/workflows/rust.yml)
 [![codecov](https://codecov.io/gh/JSorngard/const-primes/graph/badge.svg?token=KXBSRZ71Q0)](https://codecov.io/gh/JSorngard/const-primes)
 
