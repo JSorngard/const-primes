@@ -106,7 +106,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Set `MEM` such that `MEM*MEM >= upper_limit`.
 ///
-/// Fails to compile if `MEM` issmaller than `N` or if `MEM`^2 does not fit in a u64.
+/// Fails to compile if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a u64.
 ///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
