@@ -27,8 +27,8 @@ fn benchmarks(c: &mut Criterion) {
             b.iter_batched(
                 || (0..N).map(|_| rng.gen()).collect::<Vec<u64>>(),
                 |data| {
-                    for number in data.iter() {
-                        black_box(is_prime(*number));
+                    for &number in &data {
+                        black_box(is_prime(number));
                     }
                 },
                 BatchSize::SmallInput,

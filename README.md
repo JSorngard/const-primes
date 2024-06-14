@@ -1,11 +1,13 @@
 [![Latest Version](https://img.shields.io/crates/v/const-primes.svg)](https://crates.io/crates/const-primes)
+[![docs.rs (with version)](https://img.shields.io/docsrs/const-primes/latest?logo=docs.rs&label=docs.rs)](https://docs.rs/const-primes/latest/const_primes/)
 [![Build Status](https://github.com/JSorngard/const-primes/actions/workflows/rust.yml/badge.svg)](https://github.com/JSorngard/const-primes/actions/workflows/rust.yml)
 [![codecov](https://codecov.io/gh/JSorngard/const-primes/graph/badge.svg?token=KXBSRZ71Q0)](https://codecov.io/gh/JSorngard/const-primes)
 
 # const-primes
 
-A crate for generating and working with prime numbers in const contexts.  
-This lets you for example pre-compute prime numbers at compile time and store them in the binary,
+Generate and work with prime numbers in const contexts.
+
+This crate lets you for example pre-compute prime numbers at compile time, store them in the binary, and use them later for related computations,
 or check whether a number is prime in a const function.
 
 `#![no_std]` compatible, and currently supports Rust versions 1.79.0 or newer.
@@ -124,16 +126,17 @@ assert_eq!(TOO_BIG, None);
 ```
 and more!
 
-## Features
+## Feature flags
 
-`std`: implements the `Error` trait from the standard library for the error types.
+`std`: implements the `Error` trait from the standard library for the error types.  
+`serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others. 
 
 ## License
 
 Licensed under either of
 
- * [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
- * [MIT license](http://opensource.org/licenses/MIT)
+ * Apache License, Version 2.0 ([LICENSE-APACHE](https://github.com/JSorngard/const-primes/blob/main/LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+ * MIT license ([LICENSE-MIT](https://github.com/JSorngard/const-primes/blob/main/LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
 
 at your option.
 

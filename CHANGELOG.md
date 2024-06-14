@@ -1,11 +1,45 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.9.0
+
+## Breaking changes
+
+ - Change all panics that only involve const generics into const assertions that fail at compile time.  
+ - Update information about minimum supported version to 1.79.0.
+
+# 0.8.4
+
+ - License and docs.rs link improvements in README. 
+ - Minor documentation improvements. 
+
+# 0.8.3
+
+ - Add the `totient` function to the `Primes` struct.
+ - Derive `Serialize` and `Deserialize` for the error types.
+ - Derive `Hash` for `SieveError`.
+
+# 0.8.2
+
+ - Add the `serde` feature that derives the `Serialize` and `Deserialize` traits from `serde` for the `Primes` struct.
+
+# 0.8.1
+
+ - Added a crate feature flag badge to the docs.
+ - Mention what can be done with the crate clearer in the description.
+
 # 0.8.0
 
 ## Breaking changes
 
- - Change all panics that only involve const generics into const assertions that fail at compile time.
- - Update information about minimum supported version to 1.79.0.
+ - Change `Primes<N>::binary_search` to have the same API as `slice::binary_search`.
+
+# 0.7.4
+
+ - Correct wrong doclink to `remainder` in docstring of `Primes<N>::prime_factors`.
+
+# 0.7.3
+
+ - Add `Primes<N>::prime_factors` function that returns an iterator over the prime factors of the given number (and not their multiplicities).
 
 # 0.7.2
 

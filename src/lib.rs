@@ -1,5 +1,6 @@
-//! A crate for generating and working with prime numbers in const contexts.  
-//! This lets you for example pre-compute prime numbers at compile time and store them in the binary,
+//! Generate and work with prime numbers in const contexts.
+//!  
+//! This crate lets you for example pre-compute prime numbers at compile time, store them in the binary, and use them later for related computations,
 //! or check whether a number is prime in a const function.
 //!
 //! `#![no_std]` compatible, and currently supports Rust versions 1.79.0 or newer.
@@ -119,14 +120,16 @@
 //! ```
 //! and more!
 //!
-//! # Features
+//! # Feature flags
 //!
-//! `std`: implements the `Error` trait from the standard library for the error types.
+//! `std`: implements the [`Error`](std::error::Error) trait from the standard library for the error types.  
+//! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct, as well as a few others.
 
 #![forbid(unsafe_code)]
-#![cfg_attr(all(not(test), not(feature = "std")), no_std)]
+#![cfg_attr(not(feature = "std"), no_std)]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
-/// The type that `Primes<N>` stores, and `primes::<N>()`` returns. Currently `u32`.
+/// The type that `Primes<N>` stores, and `primes::<N>()` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.
 type Underlying = u32;
@@ -249,8 +252,8 @@ mod test {
                             assert_eq!(PRECOMPUTED_PRIMES[25-$n..25][i], *prime as u32);
                         }
                         assert_eq!(
-                            PRECOMPUTED_PRIMES[25-$n..25],
-                            primes_lt::<$n, $n>(100).unwrap().as_slice().into_iter().map(|i| *i as u32).collect::<Vec<_>>()
+                            PRECOMPUTED_PRIMES.map(|i| i as u64)[25-$n..25],
+                            primes_lt::<$n, $n>(100).unwrap()
                         );
                     }
                 )+
@@ -323,6 +326,15 @@ mod test {
         assert_eq!(previous_prime(1), None);
         assert_eq!(previous_prime(2), None);
         assert_eq!(previous_prime(3), Some(2));
+    }
+
+    #[test]
+    fn test_totient_on_primes() {
+        const CACHE: Primes<10_000> = Primes::new();
+
+        for &prime in &CACHE {
+            assert_eq!(CACHE.totient(prime), Ok(prime - 1));
+        }
     }
 
     #[rustfmt::skip]

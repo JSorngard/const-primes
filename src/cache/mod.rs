@@ -1,7 +1,18 @@
-//! This module contains the implementation of the type [`Primes`] (and related iterators), which functions as a cache of prime numbers
-//! for related computations.
+//! This module contains the implementation of the type [`Primes`] (and related iterators),
+//! which functions as a cache of prime numbers for related computations.
+
+mod prime_factors;
+mod primes_into_iter;
+mod primes_iter;
+
+pub use prime_factors::{PrimeFactorization, PrimeFactors};
+pub use primes_into_iter::PrimesIntoIter;
+pub use primes_iter::PrimesIter;
 
 use crate::{primes, Underlying};
+
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
 
 // region: Primes<N>
 
@@ -33,14 +44,13 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
-pub struct Primes<const N: usize> {
-    primes: [Underlying; N],
-}
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct Primes<const N: usize>(
+    #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
+);
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
-    ///
-    /// Fails to compile if `N` is 0.
     ///
     /// Uses a [segmented sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Segmented_sieve).
     ///
@@ -63,12 +73,25 @@ impl<const N: usize> Primes<N> {
     /// let primes = Primes::<5>::new();
     /// assert_eq!(primes, [2, 3, 5, 7, 11]);
     /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if `N` is zero:
+    /// ```should_panic
+    /// # use const_primes::Primes;
+    /// let no_primes = Primes::<0>::new();
+    /// ```
+    /// In const contexts this is a compile error:
+    /// ```compile_fail
+    /// # use const_primes::Primes;
+    /// const NO_PRIMES: Primes<0> = Primes::new();
+    /// ```
+    ///
+    /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        const {
-            assert!(N > 0, "`N` must be at least 1");
-        }
-        Self { primes: primes() }
+        assert!(N > 0, "`N` must be at least 1");
+        Self(primes())
     }
 
     /// Returns whether `n` is prime, if it is smaller than or equal to the largest prime in `self`.
@@ -93,8 +116,13 @@ impl<const N: usize> Primes<N> {
     pub const fn is_prime(&self, n: u32) -> Option<bool> {
         match self.binary_search(n) {
             Ok(_) => Some(true),
-            Err(Some(_)) => Some(false),
-            Err(None) => None,
+            Err(i) => {
+                if i < N {
+                    Some(false)
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -120,10 +148,13 @@ impl<const N: usize> Primes<N> {
     pub const fn count_primes_leq(&self, n: Underlying) -> Option<usize> {
         match self.binary_search(n) {
             Ok(i) => Some(i + 1),
-            Err(maybe_i) => match maybe_i {
-                Some(i) => Some(i),
-                None => None,
-            },
+            Err(maybe_i) => {
+                if maybe_i < N {
+                    Some(maybe_i)
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -132,7 +163,10 @@ impl<const N: usize> Primes<N> {
     ///
     /// If a number contains prime factors larger than the largest prime in `self`,
     /// they will not be yielded by the iterator, but their product can be retrieved by calling
-    /// [`remainder`](PrimeFactorization::remainder) on the iterator once it is exhausted.
+    /// [`remainder`](PrimeFactorization::remainder) on the iterator.
+    ///
+    /// If you do not need to know the multiplicity of each prime factor,
+    /// it may be faster to use [`prime_factors`](Self::prime_factors).
     ///
     /// # Examples
     ///
@@ -151,22 +185,59 @@ impl<const N: usize> Primes<N> {
     /// // 1024 = 2^10
     /// assert_eq!(CACHE.prime_factorization(1024).next(), Some((2, 10)));
     /// ```
-    /// 42 has 7 as a prime factor, but 7 is not in the cache:
+    /// 294 has 7 as a prime factor, but 7 is not in the cache:
     /// ```
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
-    /// // 42 = 2*3*7
-    /// let mut factorization_of_42 = CACHE.prime_factorization(42);
+    /// // 294 = 2*3*7*7
+    /// let mut factorization_of_294 = CACHE.prime_factorization(294);
     ///
     /// // only 2 and 3 are in the cache:
-    /// assert_eq!(factorization_of_42.by_ref().collect::<Vec<_>>(), &[(2, 1), (3, 1)]);
+    /// assert_eq!(factorization_of_294.by_ref().collect::<Vec<_>>(), &[(2, 1), (3, 1)]);
     ///
-    /// // the factor of 7 can be found with the remainder function:
-    /// assert_eq!(factorization_of_42.remainder(), Some(7));
+    /// // the factor of 7*7 can be found with the remainder function:
+    /// assert_eq!(factorization_of_294.remainder(), Some(49));
     /// ```
     #[inline]
     pub fn prime_factorization(&self, number: Underlying) -> PrimeFactorization<'_> {
-        PrimeFactorization::new(&self.primes, number)
+        PrimeFactorization::new(&self.0, number)
+    }
+
+    /// Returns an iterator over all the prime factors of the given number in increasing order.
+    ///
+    /// If a number contains prime factors larger than the largest prime in `self`,
+    /// they will not be yielded by the iterator, but their product can be retrieved by calling
+    /// [`remainder`](PrimeFactors::remainder) on the iterator.
+    ///
+    /// If you also wish to know the multiplicity of each prime factor of the number,
+    /// take a look at [`prime_factorization`](Self::prime_factorization).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use const_primes::Primes;
+    /// // Contains [2, 3, 5]
+    /// const CACHE: Primes<3> = Primes::new();
+    ///
+    /// assert_eq!(CACHE.prime_factors(3*5).collect::<Vec<_>>(), &[3, 5]);
+    /// assert_eq!(CACHE.prime_factors(2*2*2*2*3).collect::<Vec<_>>(), &[2, 3]);
+    /// ```
+    /// 294 has 7 as a prime factor, but 7 is not in the cache:
+    /// ```
+    /// # use const_primes::Primes;
+    /// # const CACHE: Primes<3> = Primes::new();
+    /// // 294 = 2*3*7*7
+    /// let mut factors_of_294 = CACHE.prime_factors(294);
+    ///
+    /// // only 2 and 3 are in the cache
+    /// assert_eq!(factors_of_294.by_ref().collect::<Vec<_>>(), &[2, 3]);
+    ///
+    /// // the factor of 7*7 can be found with the remainder function
+    /// assert_eq!(factors_of_294.remainder(), Some(49));
+    /// ```
+    #[inline]
+    pub fn prime_factors(&self, number: Underlying) -> PrimeFactors<'_> {
+        PrimeFactors::new(&self.0, number)
     }
 
     // region: Next prime
@@ -175,7 +246,9 @@ impl<const N: usize> Primes<N> {
     /// If `n` is 0, 1, 2, or larger than the largest prime in `self` this returns `None`.
     ///
     /// Uses a binary search.
+    ///
     /// # Example
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
@@ -188,14 +261,13 @@ impl<const N: usize> Primes<N> {
             None
         } else {
             match self.binary_search(n) {
-                Ok(i) | Err(Some(i)) => {
-                    if i > 0 {
-                        Some(self.primes[i - 1])
+                Ok(i) | Err(i) => {
+                    if i > 0 && i < N {
+                        Some(self.0[i - 1])
                     } else {
                         None
                     }
                 }
-                Err(None) => None,
             }
         }
     }
@@ -218,13 +290,18 @@ impl<const N: usize> Primes<N> {
         match self.binary_search(n) {
             Ok(i) => {
                 if i + 1 < self.len() {
-                    Some(self.primes[i + 1])
+                    Some(self.0[i + 1])
                 } else {
                     None
                 }
             }
-            Err(Some(i)) => Some(self.primes[i]),
-            Err(None) => None,
+            Err(i) => {
+                if i < N {
+                    Some(self.0[i])
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -233,11 +310,8 @@ impl<const N: usize> Primes<N> {
     /// Searches the underlying array of primes for the target integer.
     ///
     /// If the target is found it returns a [`Result::Ok`] that contains the index of the matching element.
-    /// If the target is not found in the array a [`Result::Err`] is returned that contains an [`Option`].   
-    /// If the target could be inserted into the array while maintaining the sorted order, the [`Option::Some`]
-    /// variant is returned and contains the index of that location.
-    /// If the target is larger than the largest prime in the array no information about where it might fit is available,
-    /// and an [`Option::None`] is returned.
+    /// If the target is not found in the array a [`Result::Err`] is returned that indicates where the
+    /// target could be inserted into the array while maintaining the sorted order.
     ///
     /// # Example
     ///
@@ -247,38 +321,32 @@ impl<const N: usize> Primes<N> {
     /// // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
     /// const PRIMES: Primes<10> = Primes::new();
     ///
-    /// type SearchResult = Result<usize, Option<usize>>;
-    ///
-    /// const WHERE_29: SearchResult = PRIMES.binary_search(29);
-    /// const WHERE_6: SearchResult = PRIMES.binary_search(6);
-    /// const WHERE_1000: SearchResult = PRIMES.binary_search(1_000);
+    /// const WHERE_29: Result<usize, usize> = PRIMES.binary_search(29);
+    /// const WHERE_6: Result<usize, usize> = PRIMES.binary_search(6);
+    /// const WHERE_1000: Result<usize, usize> = PRIMES.binary_search(1_000);
     ///
     /// assert_eq!(WHERE_29, Ok(9));
-    /// assert_eq!(WHERE_6, Err(Some(3)));
-    /// assert_eq!(WHERE_1000, Err(None));
+    /// assert_eq!(WHERE_6, Err(3));
+    /// assert_eq!(WHERE_1000, Err(10));
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn binary_search(&self, target: Underlying) -> Result<usize, Option<usize>> {
-        if target > *self.last() {
-            Err(None)
-        } else {
-            let mut size = N;
-            let mut left = 0;
-            let mut right = size;
-            while left < right {
-                let mid = left + size / 2;
-                let candidate = self.primes[mid];
-                if candidate < target {
-                    left = mid + 1;
-                } else if candidate > target {
-                    right = mid;
-                } else {
-                    return Ok(mid);
-                }
-                size = right - left;
+    pub const fn binary_search(&self, target: Underlying) -> Result<usize, usize> {
+        let mut size = N;
+        let mut left = 0;
+        let mut right = size;
+        while left < right {
+            let mid = left + size / 2;
+            let candidate = self.0[mid];
+            if candidate < target {
+                left = mid + 1;
+            } else if candidate > target {
+                right = mid;
+            } else {
+                return Ok(mid);
             }
-            Err(Some(left))
+            size = right - left;
         }
+        Err(left)
     }
 
     // region: Conversions
@@ -296,21 +364,21 @@ impl<const N: usize> Primes<N> {
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn into_array(self) -> [Underlying; N] {
-        self.primes
+        self.0
     }
 
     /// Returns a reference to the underlying array.
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn as_array(&self) -> &[Underlying; N] {
-        &self.primes
+        &self.0
     }
 
     /// Returns a slice that contains the entire underlying array.
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn as_slice(&self) -> &[Underlying] {
-        self.primes.as_slice()
+        self.0.as_slice()
     }
 
     /// Returns a borrowing iterator over the primes.
@@ -330,7 +398,7 @@ impl<const N: usize> Primes<N> {
     /// ```
     #[inline]
     pub fn iter(&self) -> PrimesIter<'_> {
-        PrimesIter::new(IntoIterator::into_iter(&self.primes))
+        PrimesIter::new(IntoIterator::into_iter(&self.0))
     }
 
     // endregion: Conversions
@@ -350,7 +418,7 @@ impl<const N: usize> Primes<N> {
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn get(&self, index: usize) -> Option<&Underlying> {
         if index < N {
-            Some(&self.primes[index])
+            Some(&self.0[index])
         } else {
             None
         }
@@ -369,9 +437,9 @@ impl<const N: usize> Primes<N> {
     #[inline]
     #[must_use = "the method only returns a new value and does not modify `self`"]
     pub const fn last(&self) -> &Underlying {
-        match self.primes.last() {
+        match self.0.last() {
             Some(l) => l,
-            None => panic!("creating an empty `Primes` fails to compile"),
+            None => panic!("this should panic during creation"),
         }
     }
 
@@ -391,15 +459,93 @@ impl<const N: usize> Primes<N> {
     pub const fn len(&self) -> usize {
         N
     }
+
+    /// Returns the value of the Euler totient function of `n`:
+    /// the number of positive integers up to `n` that are relatively prime to it.
+    ///
+    /// # Errors
+    ///
+    /// The totient function is computed here as the product over all factors of the form p^(k-1)*(p-1) where
+    /// p is the primes in the prime factorization of `n` and k is their multiplicity.
+    /// If `n` contains prime factors that are not part of `self`, a [`Result::Err`] is returned
+    /// that contains a [`PartialTotient`] struct that contains the result from using only the primes in `self`,
+    /// as well as the product of the prime factors that are not included in `self`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use const_primes::{Primes, cache::PartialTotient};
+    /// const CACHE: Primes<3> = Primes::new();
+    /// const TOTIENT_OF_6: Result<u32, PartialTotient> = CACHE.totient(2*3);
+    ///
+    /// assert_eq!(TOTIENT_OF_6, Ok(2));
+    /// ```
+    /// The number 2450 is equal to 2\*5\*5\*7\*7, but the cache does not contain 7.
+    /// This means that the function runs out of primes after 5, and can not finish the computation:
+    /// ```
+    /// # use const_primes::{Primes, cache::PartialTotient};
+    /// # const CACHE: Primes<3> = Primes::new();
+    /// const TOTIENT_OF_2450: Result<u32, PartialTotient> = CACHE.totient(2*5*5*7*7);
+    ///
+    /// assert_eq!(
+    ///     TOTIENT_OF_2450,
+    ///     Err( PartialTotient {
+    /// //                 totient(2*5*5) = 20
+    ///         totient_using_known_primes: 20,
+    ///         product_of_unknown_prime_factors: 49
+    ///     })
+    /// );
+    /// ```
+    pub const fn totient(&self, mut n: Underlying) -> Result<Underlying, PartialTotient> {
+        if n == 0 {
+            return Ok(0);
+        }
+
+        let mut i = 0;
+        let mut ans = 1;
+        while let Some(&prime) = self.get(i) {
+            let mut count = 0;
+            while n % prime == 0 {
+                n /= prime;
+                count += 1;
+            }
+
+            if count > 0 {
+                ans *= prime.pow(count - 1) * (prime - 1);
+            }
+
+            if n == 1 {
+                break;
+            }
+            i += 1;
+        }
+
+        if n == 1 {
+            Ok(ans)
+        } else {
+            Err(PartialTotient {
+                totient_using_known_primes: ans,
+                product_of_unknown_prime_factors: n,
+            })
+        }
+    }
 }
 
-/// Fails to compile if `N` is 0.
+/// Contains the result of a partially successful evaluation of the [`totient`](Primes::totient) function.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct PartialTotient {
+    /// The result of computing the totient function with only the primes in the related [`Primes`] struct.
+    pub totient_using_known_primes: Underlying,
+    /// The product of all remaining prime factors of the number.
+    pub product_of_unknown_prime_factors: Underlying,
+}
+
+/// Panics if `N` is 0.
 impl<const N: usize> Default for Primes<N> {
     fn default() -> Self {
-        const {
-            assert!(N > 0, "`N` must be at least 1");
-        }
-        Self { primes: primes() }
+        assert!(N > 0, "`N` must be at least 1");
+        Self(primes())
     }
 }
 
@@ -410,14 +556,14 @@ where
     type Output = I::Output;
     #[inline]
     fn index(&self, index: I) -> &Self::Output {
-        self.primes.index(index)
+        self.0.index(index)
     }
 }
 
 impl<const N: usize> From<Primes<N>> for [Underlying; N] {
     #[inline]
     fn from(const_primes: Primes<N>) -> Self {
-        const_primes.primes
+        const_primes.0
     }
 }
 
@@ -426,89 +572,18 @@ impl<const N: usize> From<Primes<N>> for [Underlying; N] {
 impl<const N: usize> AsRef<[Underlying]> for Primes<N> {
     #[inline]
     fn as_ref(&self) -> &[Underlying] {
-        &self.primes
+        &self.0
     }
 }
 
 impl<const N: usize> AsRef<[Underlying; N]> for Primes<N> {
     #[inline]
     fn as_ref(&self) -> &[Underlying; N] {
-        &self.primes
+        &self.0
     }
 }
 
 // endregion: AsRef
-
-pub use prime_factors::PrimeFactorization;
-mod prime_factors {
-    use super::Underlying;
-
-    use core::iter::FusedIterator;
-
-    /// An iterator over the prime factors of a number and their multiplicities.
-    /// Created by the [`prime_factorization`](super::Primes::prime_factorization) function on [`Primes`](super::Primes),
-    /// see it for more information.
-    #[derive(Debug, Clone)]
-    #[must_use = "iterators are lazy and do nothing unless consumed"]
-    pub struct PrimeFactorization<'a> {
-        primes_cache: &'a [Underlying],
-        cache_index: usize,
-        number: Underlying,
-    }
-
-    impl<'a> PrimeFactorization<'a> {
-        pub(crate) const fn new(primes_cache: &'a [Underlying], number: Underlying) -> Self {
-            Self {
-                primes_cache,
-                cache_index: 0,
-                number,
-            }
-        }
-
-        /// If the number contains prime factors that are larger than the largest prime
-        /// in the cache, this function returns their product.
-        pub fn remainder(mut self) -> Option<Underlying> {
-            for _ in self.by_ref() {}
-            if self.number > 1 {
-                Some(self.number)
-            } else {
-                None
-            }
-        }
-    }
-
-    impl<'a> Iterator for PrimeFactorization<'a> {
-        type Item = (Underlying, u8);
-        fn next(&mut self) -> Option<Self::Item> {
-            if self.number == 1 {
-                return None;
-            }
-
-            while let Some(prime) = self.primes_cache.get(self.cache_index) {
-                let mut count = 0;
-                while self.number % prime == 0 {
-                    count += 1;
-                    self.number /= prime;
-                }
-
-                self.cache_index += 1;
-
-                if count > 0 {
-                    return Some((*prime, count));
-                }
-            }
-
-            None
-        }
-
-        #[inline]
-        fn size_hint(&self) -> (usize, Option<usize>) {
-            (0, Some(self.primes_cache.len() - self.cache_index))
-        }
-    }
-
-    impl<'a> FusedIterator for PrimeFactorization<'a> {}
-}
 
 // region: IntoIterator
 
@@ -517,155 +592,7 @@ impl<const N: usize> IntoIterator for Primes<N> {
     type IntoIter = PrimesIntoIter<N>;
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        PrimesIntoIter::new(self.primes.into_iter())
-    }
-}
-
-pub use primes_iter::PrimesIter;
-mod primes_iter {
-    use super::Underlying;
-    use core::iter::FusedIterator;
-
-    /// A borrowing iterator over prime numbers.
-    /// Created by the [`iter`](super::Primes::iter) function on [`Primes`](super::Primes),
-    /// see it for more information.
-    #[derive(Debug, Clone)]
-    #[must_use = "iterators are lazy and do nothing unless consumed"]
-    pub struct PrimesIter<'a>(core::slice::Iter<'a, Underlying>);
-
-    impl<'a> PrimesIter<'a> {
-        pub(crate) const fn new(iter: core::slice::Iter<'a, Underlying>) -> Self {
-            Self(iter)
-        }
-
-        /// Returns an immutable slice of all the primes that have not been yielded yet.
-        pub fn as_slice(&self) -> &[Underlying] {
-            self.0.as_slice()
-        }
-    }
-
-    impl<'a> Iterator for PrimesIter<'a> {
-        type Item = &'a Underlying;
-
-        #[inline]
-        fn next(&mut self) -> Option<Self::Item> {
-            self.0.next()
-        }
-
-        #[inline]
-        fn size_hint(&self) -> (usize, Option<usize>) {
-            self.0.size_hint()
-        }
-
-        #[inline]
-        fn nth(&mut self, n: usize) -> Option<Self::Item> {
-            self.0.nth(n)
-        }
-
-        #[inline]
-        fn count(self) -> usize {
-            self.0.count()
-        }
-
-        #[inline]
-        fn last(self) -> Option<Self::Item> {
-            self.0.last()
-        }
-    }
-
-    impl<'a> ExactSizeIterator for PrimesIter<'a> {
-        #[inline]
-        fn len(&self) -> usize {
-            self.0.len()
-        }
-    }
-
-    impl<'a> FusedIterator for PrimesIter<'a> {}
-
-    impl<'a> DoubleEndedIterator for PrimesIter<'a> {
-        #[inline]
-        fn next_back(&mut self) -> Option<Self::Item> {
-            self.0.next_back()
-        }
-
-        #[inline]
-        fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
-            self.0.nth_back(n)
-        }
-    }
-}
-
-pub use primes_into_iter::PrimesIntoIter;
-mod primes_into_iter {
-    use core::iter::FusedIterator;
-
-    use super::Underlying;
-
-    /// An owning iterator over prime numbers.
-    /// Created by the [`IntoIterator`] implementation on [`Primes`](super::Primes).
-    #[derive(Debug, Clone)]
-    #[must_use = "iterators are lazy and do nothing unless consumed"]
-    pub struct PrimesIntoIter<const N: usize>(core::array::IntoIter<Underlying, N>);
-
-    impl<const N: usize> PrimesIntoIter<N> {
-        pub(crate) const fn new(iter: core::array::IntoIter<Underlying, N>) -> Self {
-            Self(iter)
-        }
-
-        /// Returns an immutable slice of all primes that have not been yielded yet.
-        pub fn as_slice(&self) -> &[Underlying] {
-            self.0.as_slice()
-        }
-    }
-
-    impl<const N: usize> Iterator for PrimesIntoIter<N> {
-        type Item = Underlying;
-
-        #[inline]
-        fn next(&mut self) -> Option<Self::Item> {
-            self.0.next()
-        }
-
-        #[inline]
-        fn nth(&mut self, n: usize) -> Option<Self::Item> {
-            self.0.nth(n)
-        }
-
-        #[inline]
-        fn count(self) -> usize {
-            self.0.count()
-        }
-
-        #[inline]
-        fn last(self) -> Option<Self::Item> {
-            self.0.last()
-        }
-
-        #[inline]
-        fn size_hint(&self) -> (usize, Option<usize>) {
-            self.0.size_hint()
-        }
-    }
-
-    impl<const N: usize> DoubleEndedIterator for PrimesIntoIter<N> {
-        #[inline]
-        fn next_back(&mut self) -> Option<Self::Item> {
-            self.0.next_back()
-        }
-
-        #[inline]
-        fn nth_back(&mut self, n: usize) -> Option<Self::Item> {
-            self.0.nth_back(n)
-        }
-    }
-
-    impl<const N: usize> FusedIterator for PrimesIntoIter<N> {}
-
-    impl<const N: usize> ExactSizeIterator for PrimesIntoIter<N> {
-        #[inline]
-        fn len(&self) -> usize {
-            self.0.len()
-        }
+        PrimesIntoIter::new(self.0.into_iter())
     }
 }
 
@@ -673,7 +600,7 @@ impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
     type IntoIter = PrimesIter<'a>;
     type Item = &'a Underlying;
     fn into_iter(self) -> Self::IntoIter {
-        PrimesIter::new(IntoIterator::into_iter(&self.primes))
+        PrimesIter::new(IntoIterator::into_iter(&self.0))
     }
 }
 
@@ -684,28 +611,28 @@ impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
 impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
     #[inline]
     fn eq(&self, other: &T) -> bool {
-        other == &self.primes
+        other == &self.0
     }
 }
 
 impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
     #[inline]
     fn eq(&self, other: &Primes<N>) -> bool {
-        self == &other.primes
+        self == &other.0
     }
 }
 
 impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
     #[inline]
     fn eq(&self, other: &Primes<N>) -> bool {
-        self == &other.primes
+        self == &other.0
     }
 }
 
 impl<const N: usize> PartialEq<[Underlying]> for Primes<N> {
     #[inline]
     fn eq(&self, other: &[Underlying]) -> bool {
-        self.primes == other
+        self.0 == other
     }
 }
 
@@ -717,21 +644,21 @@ use core::cmp::Ordering;
 impl<const N: usize, T: PartialOrd<[Underlying; N]>> PartialOrd<T> for Primes<N> {
     #[inline]
     fn partial_cmp(&self, other: &T) -> Option<Ordering> {
-        other.partial_cmp(&self.primes)
+        other.partial_cmp(&self.0)
     }
 }
 
 impl<const N: usize> PartialOrd<Primes<N>> for [Underlying; N] {
     #[inline]
     fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
-        other.primes.partial_cmp(self)
+        other.0.partial_cmp(self)
     }
 }
 
 impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
     #[inline]
     fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
-        other.primes.as_slice().partial_cmp(self)
+        other.0.as_slice().partial_cmp(self)
     }
 }
 
@@ -741,6 +668,8 @@ impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
 
 #[cfg(test)]
 mod test {
+    use crate::next_prime;
+
     use super::*;
 
     // region: TraitImpls
@@ -789,17 +718,19 @@ mod test {
     #[test]
     fn check_binary_search() {
         const CACHE: Primes<100> = Primes::new();
-        type BSResult = Result<usize, Option<usize>>;
+        type BSResult = Result<usize, usize>;
         const FOUND2: BSResult = CACHE.binary_search(2);
         const INSERT0: BSResult = CACHE.binary_search(0);
         const INSERT4: BSResult = CACHE.binary_search(4);
         const FOUND541: BSResult = CACHE.binary_search(541);
         const NOINFO542: BSResult = CACHE.binary_search(542);
+        const BIG: BSResult = CACHE.binary_search(1000000);
         assert_eq!(FOUND2, Ok(0));
-        assert_eq!(INSERT0, Err(Some(0)));
-        assert_eq!(INSERT4, Err(Some(2)));
+        assert_eq!(INSERT0, Err(0));
+        assert_eq!(INSERT4, Err(2));
         assert_eq!(FOUND541, Ok(99));
-        assert_eq!(NOINFO542, Err(None));
+        assert_eq!(NOINFO542, Err(100));
+        assert_eq!(BIG, Err(100));
     }
 
     #[test]
@@ -845,18 +776,35 @@ mod test {
 
         let mut factorization_of_15 = CACHE.prime_factorization(15);
 
-        assert_eq!(
-            factorization_of_15.by_ref().collect::<Vec<_>>(),
-            &[(3, 1), (5, 1)]
-        );
+        assert_eq!(factorization_of_15.next(), Some((3, 1)));
+        assert_eq!(factorization_of_15.next(), Some((5, 1)));
         assert!(factorization_of_15.remainder().is_none());
 
-        assert_eq!(
-            CACHE
-                .prime_factorization(2 * 3 * 3 * 3 * 5)
-                .collect::<Vec<_>>(),
-            &[(2, 1), (3, 3), (5, 1)]
-        );
+        let mut factorization_of_270 = CACHE.prime_factorization(2 * 3 * 3 * 3 * 5);
+        assert_eq!(factorization_of_270.next(), Some((2, 1)));
+        assert_eq!(factorization_of_270.next(), Some((3, 3)));
+        assert_eq!(factorization_of_270.next(), Some((5, 1)));
+    }
+
+    #[test]
+    fn check_prime_factors() {
+        const CACHE: Primes<3> = Primes::new();
+
+        let mut factors_of_14 = CACHE.prime_factors(14);
+
+        assert_eq!(factors_of_14.next(), Some(2));
+        assert_eq!(factors_of_14.next(), None);
+        assert_eq!(factors_of_14.remainder(), Some(7));
+
+        let mut factors_of_15 = CACHE.prime_factors(15);
+        assert_eq!(factors_of_15.next(), Some(3));
+        assert_eq!(factors_of_15.next(), Some(5));
+        assert!(factors_of_15.remainder().is_none());
+
+        let mut factors_of_270 = CACHE.prime_factors(2 * 3 * 3 * 3 * 5);
+        assert_eq!(factors_of_270.next(), Some(2));
+        assert_eq!(factors_of_270.next(), Some(3));
+        assert_eq!(factors_of_270.next(), Some(5));
     }
 
     #[test]
@@ -963,6 +911,46 @@ mod test {
         const P: Primes<10> = Primes::new();
         for (p1, p2) in P.iter().zip([2, 3, 5, 7, 11, 13, 17, 19, 23, 29].iter()) {
             assert_eq!(p1, p2);
+        }
+    }
+
+    #[test]
+    fn check_totient() {
+        const TOTIENTS: [Underlying; 101] = [
+            0, 1, 1, 2, 2, 4, 2, 6, 4, 6, 4, 10, 4, 12, 6, 8, 8, 16, 6, 18, 8, 12, 10, 22, 8, 20,
+            12, 18, 12, 28, 8, 30, 16, 20, 16, 24, 12, 36, 18, 24, 16, 40, 12, 42, 20, 24, 22, 46,
+            16, 42, 20, 32, 24, 52, 18, 40, 24, 36, 28, 58, 16, 60, 30, 36, 32, 48, 20, 66, 32, 44,
+            24, 70, 24, 72, 36, 40, 36, 60, 24, 78, 32, 54, 40, 82, 24, 64, 42, 56, 40, 88, 24, 72,
+            44, 60, 46, 72, 32, 96, 42, 60, 40,
+        ];
+        const NEXT_OUTSIDE: Underlying = match next_prime(*BIG_CACHE.last() as u64) {
+            Some(np) => np as Underlying,
+            None => panic!(),
+        };
+
+        const SMALL_CACHE: Primes<3> = Primes::new();
+        const BIG_CACHE: Primes<100> = Primes::new();
+
+        assert_eq!(SMALL_CACHE.totient(6), Ok(2));
+        assert_eq!(
+            SMALL_CACHE.totient(2 * 5 * 5 * 7 * 7),
+            Err(PartialTotient {
+                totient_using_known_primes: 20,
+                product_of_unknown_prime_factors: 49
+            })
+        );
+
+        for (i, totient) in TOTIENTS.into_iter().enumerate() {
+            assert_eq!(BIG_CACHE.totient(i as Underlying), Ok(totient));
+            if i != 0 {
+                assert_eq!(
+                    BIG_CACHE.totient((i as Underlying) * NEXT_OUTSIDE),
+                    Err(PartialTotient {
+                        totient_using_known_primes: totient,
+                        product_of_unknown_prime_factors: NEXT_OUTSIDE
+                    })
+                );
+            }
         }
     }
 }
