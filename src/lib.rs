@@ -124,7 +124,7 @@
 //!
 //! `std`: implements the [`Error`](std::error::Error) trait from the standard library for the error types.  
 //! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct, as well as a few others.
-//! `const_assert` *(enabled by default)*: Uses the inline `const` feature from Rust 1.79.0 to convert panics into compile errors. Raises the MSRV of the crate to 1.79.0.
+//! `const_assert` *(enabled by default)*: uses the inline `const` feature from Rust 1.79.0 to convert panics into compile errors. Raises the MSRV of the crate to 1.79.0.
 
 #![forbid(unsafe_code)]
 #![cfg_attr(not(feature = "std"), no_std)]
