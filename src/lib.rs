@@ -3,7 +3,7 @@
 //! This crate lets you for example pre-compute prime numbers at compile time, store them in the binary, and use them later for related computations,
 //! or check whether a number is prime in a const function.
 //!
-//! `#![no_std]` compatible, and currently supports Rust versions 1.79.0 or newer.
+//! `#![no_std]` compatible, and currently supports Rust versions 1.79.0 or newer, but can be made to support version 1.67.1 by disabling the `const_assert` feature.
 //!
 //! # Example: generate primes at compile time
 //!
@@ -124,7 +124,7 @@
 //!
 //! `std`: implements the [`Error`](std::error::Error) trait from the standard library for the error types.  
 //! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct, as well as a few others.
-//! `const_assert`: Uses the inline `const` feature from Rust 1.79.0 to convert panics into compile errors. Raises the MSRV of the crate to 1.79.0.
+//! `const_assert` *(enabled by default)*: Uses the inline `const` feature from Rust 1.79.0 to convert panics into compile errors. Raises the MSRV of the crate to 1.79.0.
 
 #![forbid(unsafe_code)]
 #![cfg_attr(not(feature = "std"), no_std)]
