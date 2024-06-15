@@ -114,17 +114,17 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # Panics
 ///
 /// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
-/// This is a compile error instead if the feature `const-assert` is enabled.
+/// This is a compile error instead if the feature `const_assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    #[cfg(feature = "const-assert")]
+    #[cfg(feature = "const_assert")]
     inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
-    #[cfg(not(feature = "const-assert"))]
+    #[cfg(not(feature = "const_assert"))]
     assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    #[cfg(feature = "const-assert")]
+    #[cfg(feature = "const_assert")]
     let mem_sqr = inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -133,7 +133,7 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
         }
     });
 
-    #[cfg(not(feature = "const-assert"))]
+    #[cfg(not(feature = "const_assert"))]
     let mem_sqr = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -308,17 +308,17 @@ impl std::error::Error for SieveError {}
 /// # Panics
 ///
 /// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
-/// This is a compile error instead if the feature `const-assert` is enabled.
+/// This is a compile error instead if the feature `const_assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    #[cfg(feature = "const-assert")]
+    #[cfg(feature = "const_assert")]
     inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
-    #[cfg(not(feature = "const-assert"))]
+    #[cfg(not(feature = "const_assert"))]
     assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    #[cfg(feature = "const-assert")]
+    #[cfg(feature = "const_assert")]
     let (mem64, mem_sqr) = inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -326,7 +326,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
             None => panic!("`MEM`^2 must fit in a `u64`"),
         }
     });
-    #[cfg(not(feature = "const-assert"))]
+    #[cfg(not(feature = "const_assert"))]
     let (mem64, mem_sqr) = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {

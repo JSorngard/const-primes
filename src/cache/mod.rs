@@ -81,14 +81,14 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    /// This is a compile error instead if the `const-assert` feature is enabled.
+    /// This is a compile error instead if the `const_assert` feature is enabled.
     ///
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        #[cfg(feature = "const-assert")]
+        #[cfg(feature = "const_assert")]
         inline_const!(assert!(N > 0, "`N` must be at least 1"));
-        #[cfg(not(feature = "const-assert"))]
+        #[cfg(not(feature = "const_assert"))]
         assert!(N > 0, "`N` must be at least 1");
 
         Self(primes())
@@ -542,11 +542,11 @@ pub struct PartialTotient {
 }
 
 impl<const N: usize> Default for Primes<N> {
-    /// Panics if `N` is 0. This is a compile error if the `const-assert` feature is enabled.
+    /// Panics if `N` is 0. This is a compile error if the `const_assert` feature is enabled.
     fn default() -> Self {
-        #[cfg(feature = "const-assert")]
+        #[cfg(feature = "const_assert")]
         inline_const!(assert!(N > 0, "`N` must be at least 1"));
-        #[cfg(not(feature = "const-assert"))]
+        #[cfg(not(feature = "const_assert"))]
         assert!(N > 0, "`N` must be at least 1");
 
         Self(primes())
