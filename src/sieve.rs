@@ -57,8 +57,6 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is: `MEM`^2 must be at least as large as `upper_limit`.
 ///
-/// Fails to compile if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
-///
 /// If you just want the prime status of the first `N` integers, see [`sieve`], and if you want the prime status of
 /// the integers above some number, see [`sieve_geq`].
 ///
@@ -112,14 +110,31 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(4);
 /// assert_eq!(PS, Err(SieveError::TooSmallLimit));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
+/// This is a compile error instead if the feature `const-assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    const {
-        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-    }
-    let mem_sqr = const {
+    #[cfg(feature = "const-assert")]
+    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    #[cfg(not(feature = "const-assert"))]
+    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
+
+    #[cfg(feature = "const-assert")]
+    let mem_sqr = inline_const!({
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => mem_sqr,
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
+    });
+
+    #[cfg(not(feature = "const-assert"))]
+    let mem_sqr = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => mem_sqr,
@@ -247,8 +262,6 @@ impl std::error::Error for SieveError {}
 /// `MEM` must be large enough for the sieve to be able to determine the prime status of all numbers in the requested range,
 /// that is `MEM`^2 must be larger than `lower_limit + N`.
 ///
-/// Fails to compile if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
-///
 /// If you just want the prime status of the first N integers, see [`sieve`], and if you want the
 /// prime status of the integers below some number, see [`sieve_lt`].
 ///
@@ -291,15 +304,30 @@ impl std::error::Error for SieveError {}
 /// assert_eq!(P1, Err(SieveError::TooSmallSieveSize));
 /// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
+/// This is a compile error instead if the feature `const-assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    const {
-        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-    }
+    #[cfg(feature = "const-assert")]
+    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    #[cfg(not(feature = "const-assert"))]
+    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    let (mem64, mem_sqr) = const {
+    #[cfg(feature = "const-assert")]
+    let (mem64, mem_sqr) = inline_const!({
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => (mem64, mem_sqr),
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
+    });
+    #[cfg(not(feature = "const-assert"))]
+    let (mem64, mem_sqr) = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => (mem64, mem_sqr),

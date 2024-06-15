@@ -129,6 +129,27 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
+#[cfg(feature = "const-assert")]
+/// Places the expression or body in an inline `const` block.
+///
+/// Since the stability of inline const is checked early in compilation,
+/// before it could be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile
+/// ```rust,ignore
+/// #[cfg(feature = "use_inline_const")]
+/// const { code }
+/// #[cfg(not(feature = "use_inline_const"))]
+/// code
+/// ```
+/// This macro is expanded after the stability of inline `const` is checked, and thus enables feature gating its use.
+macro_rules! inline_const {
+    ($body:expr) => {
+        const {$body}
+    };
+    ($body:block) => {
+        const $body
+    };
+}
+
 /// The type that `Primes<N>` stores, and `primes::<N>()` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
 // This is used since there is currently no way to be generic over types that can do arithmetic at compile time.

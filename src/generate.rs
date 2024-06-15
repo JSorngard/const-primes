@@ -106,8 +106,6 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// Set `MEM` such that `MEM*MEM >= upper_limit`.
 ///
-/// Fails to compile if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a u64.
-///
 /// If you want to compute primes that are larger than some limit, take a look at [`primes_geq`].
 ///
 /// If you do not wish to compute the size requirement of the sieve manually, take a look at [`primes_segment!`](crate::primes_segment).
@@ -155,15 +153,30 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::TooSmallSieveSize));
 /// assert_eq!(TOO_SMALL_LIMIT, Err(GenerationError::TooSmallLimit));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a u64.  
+/// This is a compile error instead if the feature `const-assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    const {
-        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-    }
+    #[cfg(feature = "const-assert")]
+    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    #[cfg(not(feature = "const-assert"))]
+    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    let mem_sqr = const {
+    #[cfg(feature = "const-assert")]
+    let mem_sqr = inline_const!({
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => mem_sqr,
+            None => panic!("`MEM`^2 must fit in a u64"),
+        }
+    });
+    #[cfg(not(feature = "const-assert"))]
+    let mem_sqr = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => mem_sqr,
@@ -277,8 +290,6 @@ macro_rules! primes_segment {
 ///
 /// Set `MEM` such that `MEM`^2 is larger than the largest prime you will encounter.
 ///
-/// Fails to compile if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
-///
 /// If you want to compute primes smaller than some limit, take a look at [`primes_lt`].
 ///
 /// If you do not wish to compute the size requirement of the sieve manually, take a look at [`primes_segment!`](crate::primes_segment).
@@ -323,15 +334,30 @@ macro_rules! primes_segment {
 /// const PRIMES: Result<[u64; 5], GenerationError> = primes_geq::<5, 5>(26);
 /// assert_eq!(PRIMES, Err(GenerationError::TooSmallSieveSize));
 /// ```
+///
+/// # Panics
+///
+/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
+/// This is a compile error instead if the feature `const-assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    const {
-        assert!(MEM >= N, "`MEM` must be at least as large as `N`");
-    }
+    #[cfg(feature = "const-assert")]
+    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    #[cfg(not(feature = "const-assert"))]
+    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    let (mem64, mem_sqr) = const {
+    #[cfg(feature = "const-assert")]
+    let (mem64, mem_sqr) = inline_const!({
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => (mem64, mem_sqr),
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
+    });
+    #[cfg(not(feature = "const-assert"))]
+    let (mem64, mem_sqr) = {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => (mem64, mem_sqr),

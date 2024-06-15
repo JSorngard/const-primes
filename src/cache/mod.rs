@@ -76,21 +76,21 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Panics
     ///
-    /// Panics if `N` is zero:
-    /// ```should_panic
-    /// # use const_primes::Primes;
-    /// let no_primes = Primes::<0>::new();
-    /// ```
-    /// In const contexts this is a compile error:
+    /// If `N` is 0 this function panics, which is a compile error in const contexts:
     /// ```compile_fail
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
+    /// This is a compile error instead if the `const-assert` feature is enabled.
     ///
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
+        #[cfg(feature = "const-assert")]
+        inline_const!(assert!(N > 0, "`N` must be at least 1"));
+        #[cfg(not(feature = "const-assert"))]
         assert!(N > 0, "`N` must be at least 1");
+
         Self(primes())
     }
 
@@ -439,7 +439,7 @@ impl<const N: usize> Primes<N> {
     pub const fn last(&self) -> &Underlying {
         match self.0.last() {
             Some(l) => l,
-            None => panic!("this should panic during creation"),
+            None => panic!("unreachable: an empty `Primes<N>` can not be created"),
         }
     }
 
@@ -541,10 +541,14 @@ pub struct PartialTotient {
     pub product_of_unknown_prime_factors: Underlying,
 }
 
-/// Panics if `N` is 0.
 impl<const N: usize> Default for Primes<N> {
+    /// Panics if `N` is 0. This is a compile error if the `const-assert` feature is enabled.
     fn default() -> Self {
+        #[cfg(feature = "const-assert")]
+        inline_const!(assert!(N > 0, "`N` must be at least 1"));
+        #[cfg(not(feature = "const-assert"))]
         assert!(N > 0, "`N` must be at least 1");
+
         Self(primes())
     }
 }
