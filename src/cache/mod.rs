@@ -81,7 +81,7 @@ impl<const N: usize> Primes<N> {
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    /// This is a compile error instead if the `const_assert` feature is enabled.
+    /// This is always a compile error if the `const_assert` feature is enabled.
     ///
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
