@@ -18,7 +18,6 @@ criterion = { version = "0.5", features = ["html_reports"] }
 rand = "0.8"
 
 [features]
-default = ["const_assert"]
 # Implements the `Error` trait from the standard library for the error types.
 std = []
 # Uses the inline `const` feature from Rust 1.79.0 to convert all panics into compile errors. Raises the MSRV of the crate to 1.79.0.
