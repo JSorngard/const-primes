@@ -156,17 +156,32 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 ///
 /// # Panics
 ///
-/// Panics if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a `u64`.
+/// Panics if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a u64.  
+/// This is a compile error instead if the feature `const_assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
+    #[cfg(feature = "const_assert")]
+    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    #[cfg(not(feature = "const_assert"))]
     assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    let mem64 = MEM as u64;
-
-    let Some(mem_sqr) = mem64.checked_mul(mem64) else {
-        panic!("`MEM`^2 must fit in a u64")
+    #[cfg(feature = "const_assert")]
+    let mem_sqr = inline_const!({
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => mem_sqr,
+            None => panic!("`MEM`^2 must fit in a u64"),
+        }
+    });
+    #[cfg(not(feature = "const_assert"))]
+    let mem_sqr = {
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => mem_sqr,
+            None => panic!("`MEM`^2 must fit in a u64"),
+        }
     };
 
     if upper_limit <= 2 {
@@ -178,6 +193,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     }
 
     let mut primes: [u64; N] = [0; N];
+
+    if N == 0 {
+        return Ok(primes);
+    }
 
     // This will be used to sieve all upper ranges.
     let base_sieve: [bool; MEM] = sieve();
@@ -238,10 +257,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 /// assert_eq!(PRIMES_LT, Ok([4999999903, 4999999937, 5000000029]));
 /// ```
 ///
-/// # Errors and panics
+/// # Errors
 ///
-/// Has the same error and panic behaviour as [`primes_geq`] and [`primes_lt`], with the exception
-/// that it sets `MEM` such that the functions don't panic or run out of memory.
+/// Has the same error behaviour as [`primes_geq`] and [`primes_lt`], with the exception
+/// that it sets `MEM` such that the functions don't run out of memory.
 #[macro_export]
 macro_rules! primes_segment {
     ($n:expr; < $lim:expr) => {
@@ -318,18 +337,37 @@ macro_rules! primes_segment {
 ///
 /// # Panics
 ///
-/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
+/// This is a compile error instead if the feature `const_assert` is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
+    #[cfg(feature = "const_assert")]
+    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    #[cfg(not(feature = "const_assert"))]
     assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    let mem64 = MEM as u64;
-
-    let Some(mem_sqr) = mem64.checked_mul(mem64) else {
-        panic!("`MEM`^2 must fit in a `u64`")
+    #[cfg(feature = "const_assert")]
+    let (mem64, mem_sqr) = inline_const!({
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => (mem64, mem_sqr),
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
+    });
+    #[cfg(not(feature = "const_assert"))]
+    let (mem64, mem_sqr) = {
+        let mem64 = MEM as u64;
+        match mem64.checked_mul(mem64) {
+            Some(mem_sqr) => (mem64, mem_sqr),
+            None => panic!("`MEM`^2 must fit in a `u64`"),
+        }
     };
+
+    if N == 0 {
+        return Ok([0; N]);
+    }
 
     // If `lower_limit` is 2 or less, this is the same as calling `primes`,
     // so we just do that and convert the result to `u64`.
