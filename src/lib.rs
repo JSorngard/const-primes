@@ -134,7 +134,7 @@
 /// Places the expression or body in an inline `const` block.
 ///
 /// Since the stability of inline const is checked early in compilation,
-/// before it could be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile
+/// before it could be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
 /// ```rust,ignore
 /// #[cfg(feature = "use_inline_const")]
 /// const { code }
