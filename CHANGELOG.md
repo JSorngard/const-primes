@@ -2,7 +2,7 @@ This file contains the changes to the crate since version 0.4.8.
 
 # 0.8.5
 
- - Add the `const_assert` feature that changes all panics that only involve const generics into const assertions that fail at compile time.  
+ - Add the `const_assert` feature that changes all panics that only involve const generics into compile errors.  
 
 # 0.8.4
 
