@@ -20,7 +20,7 @@ rand = "0.8"
 [features]
 # Implements the `Error` trait from the standard library for the error types.
 std = []
-# promotes panics that only involve const generics into compile errors. Raises the MSRV of the crate to 1.79.0.
+# promotes panics that only involve const generics into compile errors. Increases the MSRV of the crate to 1.79.0.
 const_assert = []
 # Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
 serde = ["dep:serde", "dep:serde_arrays"]
