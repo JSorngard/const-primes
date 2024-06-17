@@ -119,12 +119,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    #[cfg(feature = "const_assert")]
     inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
-    #[cfg(not(feature = "const_assert"))]
-    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    #[cfg(feature = "const_assert")]
     let mem_sqr = inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -132,15 +128,6 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
             None => panic!("`MEM`^2 must fit in a `u64`"),
         }
     });
-
-    #[cfg(not(feature = "const_assert"))]
-    let mem_sqr = {
-        let mem64 = MEM as u64;
-        match mem64.checked_mul(mem64) {
-            Some(mem_sqr) => mem_sqr,
-            None => panic!("`MEM`^2 must fit in a `u64`"),
-        }
-    };
 
     if upper_limit > mem_sqr {
         return Err(SieveError::TooSmallSieveSize);
@@ -313,12 +300,8 @@ impl std::error::Error for SieveError {}
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    #[cfg(feature = "const_assert")]
     inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
-    #[cfg(not(feature = "const_assert"))]
-    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    #[cfg(feature = "const_assert")]
     let (mem64, mem_sqr) = inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -326,14 +309,6 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
             None => panic!("`MEM`^2 must fit in a `u64`"),
         }
     });
-    #[cfg(not(feature = "const_assert"))]
-    let (mem64, mem_sqr) = {
-        let mem64 = MEM as u64;
-        match mem64.checked_mul(mem64) {
-            Some(mem_sqr) => (mem64, mem_sqr),
-            None => panic!("`MEM`^2 must fit in a `u64`"),
-        }
-    };
 
     let Some(upper_limit) = mem64.checked_add(lower_limit) else {
         return Err(SieveError::TotalDoesntFitU64);
