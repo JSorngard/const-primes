@@ -418,6 +418,8 @@ macro_rules! sieve_segment {
 
 #[cfg(test)]
 mod test {
+    use crate::sieve::SegmentedSieveError;
+
     use super::{sieve, sieve_segment};
 
     #[test]
@@ -432,5 +434,9 @@ mod test {
         };
         assert_eq!(P, sieve());
         assert_eq!(PP, sieve::<11>()[1..]);
+        assert_eq!(
+            sieve_segment::<5>(&[false, false, true, true, false], 4),
+            Err(SegmentedSieveError::TooSmallLimit)
+        );
     }
 }
