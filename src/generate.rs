@@ -196,7 +196,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
         // Sieve for primes in the segment.
         let (offset, upper_sieve) = match sieve_segment(&base_sieve, upper_limit) {
             Ok(res) => (0, res),
-            Err(_) => (MEM - upper_limit as usize, base_sieve),
+            Err(_) => ((MEM as u64 - upper_limit) as usize, base_sieve),
         };
 
         let mut i: usize = 0;
