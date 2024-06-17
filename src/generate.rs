@@ -194,12 +194,15 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
         // This is the smallest prime we have found so far.
         let mut smallest_found_prime = primes[N - 1 - total_primes_found];
         // Sieve for primes in the segment.
-        let upper_sieve: [bool; MEM] = sieve_segment(&base_sieve, upper_limit);
+        let (offset, upper_sieve) = match sieve_segment(&base_sieve, upper_limit) {
+            Ok(res) => (0, res),
+            Err(_) => ((MEM as u64 - upper_limit) as usize, base_sieve),
+        };
 
         let mut i: usize = 0;
-        while i < MEM {
+        while i < MEM - offset {
             // Iterate backwards through the upper sieve.
-            if upper_sieve[MEM - 1 - i] {
+            if upper_sieve[MEM - 1 - i - offset] {
                 smallest_found_prime = upper_limit - 1 - i as u64;
                 // Write every found prime to the primes array.
                 primes[N - 1 - total_primes_found] = smallest_found_prime;
@@ -368,7 +371,10 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     let base_sieve: [bool; MEM] = sieve();
     let mut sieve_limit = lower_limit;
     'generate: while total_found_primes < N {
-        let upper_sieve = sieve_segment(&base_sieve, sieve_limit + mem64);
+        let upper_sieve = match sieve_segment(&base_sieve, sieve_limit + mem64) {
+            Ok(res) => res,
+            Err(_) => panic!("can not happen since we set upper limit to mem + nonzero stuff"),
+        };
 
         let mut i = 0;
         while i < MEM {
@@ -463,6 +469,36 @@ mod test {
         for &prime in primes_geq::<2_000, 2_008>(3_998_000).unwrap().as_slice() {
             assert!(is_prime(prime));
         }
+        assert_eq!(primes_geq::<0, 0>(10), Ok([]));
+        assert_eq!(primes_geq::<3, 3>(2), Ok([2, 3, 5]));
+        assert_eq!(
+            primes_geq::<3, 3>(10),
+            Err(GenerationError::TooSmallSieveSize)
+        );
+        assert_eq!(primes_geq::<2, 2>(3), Err(GenerationError::SieveOverrun(4)));
+    }
+
+    #[test]
+    fn sanity_check_primes_lt() {
+        {
+            const P: Result<[u64; 5], GenerationError> = primes_lt::<5, 5>(20);
+            assert_eq!(P, Ok([7, 11, 13, 17, 19]));
+        }
+        {
+            const P: Result<[u64; 5], GenerationError> = primes_lt::<5, 5>(12);
+            assert_eq!(P, Ok([2, 3, 5, 7, 11]));
+        }
+        {
+            const P: Result<[u64; 1], GenerationError> = primes_lt::<1, 2>(3);
+            assert_eq!(P, Ok([2]));
+        }
+        assert_eq!(primes_lt::<2, 2>(2), Err(GenerationError::TooSmallLimit));
+        assert_eq!(
+            primes_lt::<2, 2>(5),
+            Err(GenerationError::TooSmallSieveSize)
+        );
+        assert_eq!(primes_lt::<0, 2>(3), Ok([]));
+        assert_eq!(primes_lt::<3, 5>(4), Err(GenerationError::OutOfPrimes));
     }
 
     #[test]
