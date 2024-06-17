@@ -953,7 +953,7 @@ mod test {
     #[cfg(not(feature = "const_assert"))]
     #[test]
     #[should_panic]
-    fn check_panic() {
+    fn check_panic_on_empty_new() {
         let _primes = Primes::<0>::new();
     }
 }
