@@ -130,7 +130,7 @@ and more!
 
 `std`: implements the `Error` trait from the standard library for the error types.  
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.  
-`const_assert`: uses the inline `const` feature from Rust 1.79.0 to promote panics that only involve const generics into compile errors. Raises the MSRV of the crate to 1.79.0.
+`const_assert`: Promotes panics that only involve const generics into compile errors. Raises the MSRV of the crate to 1.79.0.
 
 ## License
 
