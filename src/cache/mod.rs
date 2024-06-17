@@ -459,15 +459,7 @@ impl<const N: usize> Primes<N> {
     /// Returns the value of the Euler totient function of `n`:
     /// the number of positive integers up to `n` that are relatively prime to it.
     ///
-    /// # Errors
-    ///
-    /// The totient function is computed here as the product over all factors of the form p^(k-1)*(p-1) where
-    /// p is the primes in the prime factorization of `n` and k is their multiplicity.
-    /// If `n` contains prime factors that are not part of `self`, a [`Result::Err`] is returned
-    /// that contains a [`PartialTotient`] struct that contains the result from using only the primes in `self`,
-    /// as well as the product of the prime factors that are not included in `self`.
-    ///
-    /// # Examples
+    /// # Example
     ///
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
@@ -476,11 +468,20 @@ impl<const N: usize> Primes<N> {
     ///
     /// assert_eq!(TOTIENT_OF_6, Ok(2));
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// The totient function is computed here as the product over all factors of the form p^(k-1)*(p-1) where
+    /// p is the primes in the prime factorization of `n` and k is their multiplicity.
+    /// If `n` contains prime factors that are not part of `self`, a [`Result::Err`] is returned
+    /// that contains a [`PartialTotient`] struct that contains the result from using only the primes in `self`,
+    /// as well as the product of the prime factors that are not included in `self`.
+    ///
     /// The number 2450 is equal to 2\*5\*5\*7\*7, but the cache does not contain 7.
     /// This means that the function runs out of primes after 5, and can not finish the computation:
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
-    /// # const CACHE: Primes<3> = Primes::new();
+    /// const CACHE: Primes<3> = Primes::new();
     /// const TOTIENT_OF_2450: Result<u32, PartialTotient> = CACHE.totient(2*5*5*7*7);
     ///
     /// assert_eq!(
