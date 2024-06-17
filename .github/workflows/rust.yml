@@ -62,7 +62,7 @@ jobs:
       with:
         components: clippy
     - name: clippy_1.67.1
-      run: cargo clippy -- -D warnings
+      run: cargo +1.67.1 clippy -- -D warnings
 
   coverage:
     runs-on: ubuntu-latest
