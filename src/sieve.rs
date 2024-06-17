@@ -443,5 +443,6 @@ mod test {
             sieve_segment::<5>(&[false, false, true, true, false], 4),
             Err(SegmentedSieveError)
         );
+        assert_eq!(sieve_segment(&sieve::<5>(), 5), Ok(sieve()));
     }
 }
