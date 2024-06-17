@@ -59,8 +59,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@1.67.1
+      with:
+        components: clippy
     - name: clippy_1.67.1
-      run: rustup add component clippy; cargo clippy -- -D warnings
+      run: cargo clippy -- -D warnings
 
   coverage:
     runs-on: ubuntu-latest
