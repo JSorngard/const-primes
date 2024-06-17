@@ -949,4 +949,11 @@ mod test {
             }
         }
     }
+
+    #[cfg(not(feature = "const_assert"))]
+    #[test]
+    #[should_panic]
+    fn check_const_assertions() {
+        let _primes = Primes::<0>::new();
+    }
 }
