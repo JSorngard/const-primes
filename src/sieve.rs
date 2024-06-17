@@ -30,12 +30,10 @@ pub(crate) const fn sieve_segment<const N: usize>(
 ) -> Result<[bool; N], SegmentedSieveError> {
     let mut segment_sieve = [true; N];
 
-    let lower_limit = if upper_limit < N as u64 {
-        return Err(SegmentedSieveError);
-    } else {
-        upper_limit - N as u64
+    let lower_limit = match upper_limit.checked_sub(N as u64) {
+        Some(diff) => diff,
+        None => return Err(SegmentedSieveError),
     };
-    //let lower_limit = upper_limit - N as u64;
 
     if lower_limit == 0 && N > 1 {
         // If the lower limit is 0 we can just return the base sieve.
