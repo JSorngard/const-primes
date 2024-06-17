@@ -463,6 +463,30 @@ mod test {
         for &prime in primes_geq::<2_000, 2_008>(3_998_000).unwrap().as_slice() {
             assert!(is_prime(prime));
         }
+        assert_eq!(primes_geq::<0, 0>(10), Ok([]));
+        assert_eq!(primes_geq::<3, 3>(2), Ok([2, 3, 5]));
+        assert_eq!(primes_geq::<3, 3>(10), Err(GenerationError::TooSmallSieveSize));
+        assert_eq!(primes_geq::<2, 2>(3), Err(GenerationError::SieveOverrun(4)));
+    }
+
+    #[test]
+    fn sanity_check_primes_lt() {
+        {
+            const P: Result<[u64; 5], GenerationError> = primes_lt::<5, 5>(20);
+            assert_eq!(P, Ok([7, 11, 13, 17, 19]));
+        }
+        {
+            const P: Result<[u64; 5], GenerationError> = primes_lt::<5,5>(12);
+            assert_eq!(P, Ok([2, 3, 5, 7, 11]));
+        }
+        {
+            const P: Result<[u64; 1], GenerationError> = primes_lt::<1, 2>(3);
+            assert_eq!(P, Ok([2]));
+        }
+        assert_eq!(primes_lt::<2, 2>(2), Err(GenerationError::TooSmallLimit));
+        assert_eq!(primes_lt::<2, 2>(5), Err(GenerationError::TooSmallSieveSize));
+        assert_eq!(primes_lt::<0, 2>(3), Ok([]));
+        assert_eq!(primes_lt::<3, 5>(4), Err(GenerationError::OutOfPrimes));
     }
 
     #[test]
