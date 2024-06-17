@@ -157,7 +157,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// # Panics
 ///
 /// Panics if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a u64.  
-/// This is a compile error instead if the feature `const_assert` is enabled.
+/// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
@@ -326,7 +326,7 @@ macro_rules! primes_segment {
 /// # Panics
 ///
 /// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
-/// This is a compile error instead if the feature `const_assert` is enabled.
+/// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
