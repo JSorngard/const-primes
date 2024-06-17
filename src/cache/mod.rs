@@ -481,6 +481,7 @@ impl<const N: usize> Primes<N> {
     /// This means that the function runs out of primes after 5, and can not finish the computation:
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
+    /// // Contains the primes [2, 3, 5]
     /// const CACHE: Primes<3> = Primes::new();
     /// const TOTIENT_OF_2450: Result<u32, PartialTotient> = CACHE.totient(2*5*5*7*7);
     ///
