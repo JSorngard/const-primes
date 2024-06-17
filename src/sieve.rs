@@ -7,6 +7,15 @@ use crate::isqrt;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct SegmentedSieveError;
 
+impl fmt::Display for SegmentedSieveError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "the upper limit was smaller than `N`")
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for SegmentedSieveError {}
+
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
 /// for the numbers below `N^2`.
