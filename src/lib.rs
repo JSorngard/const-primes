@@ -162,7 +162,6 @@ macro_rules! inline_const {
 /// code
 /// ```
 /// This macro is expanded after the stability of inline `const` is checked, and thus enables the feature gating of its use.
-#[cfg(not(feature = "const_assert"))]
 macro_rules! inline_const {
     ($body:expr) => {{
         $body
