@@ -173,7 +173,7 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
     // Use the result to sieve the higher range.
     let (offset, upper_sieve) = match sieve_segment(&base_sieve, upper_limit) {
         Ok(res) => (0, res),
-        // The sieve contained more entries than there are non-negative numbers below the upper limit.
+        // The sieve contained more entries than there are non-negative numbers below the upper limit, just use the base sieve.
         Err(_) => ((MEM as u64 - upper_limit) as usize, base_sieve),
     };
 
