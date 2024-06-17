@@ -425,7 +425,7 @@ macro_rules! sieve_segment {
 mod test {
     use crate::SieveError;
 
-    use super::{sieve, sieve_lt, sieve_segment, SegmentedSieveError};
+    use super::{sieve, sieve_geq, sieve_lt, sieve_segment, SegmentedSieveError};
 
     #[test]
     fn test_consistency_of_sieve_segment() {
@@ -452,5 +452,20 @@ mod test {
         assert_eq!(sieve_lt::<5, 5>(4), Err(SieveError::TooSmallLimit));
         assert_eq!(sieve_lt::<5, 5>(5), Ok(sieve()));
         assert_eq!(sieve_lt::<2, 5>(20), Ok([false, true]));
+    }
+
+    #[test]
+    fn test_sieve() {
+        assert_eq!(sieve(), [false; 0]);
+    }
+
+    #[test]
+    fn test_sieve_geq() {
+        assert_eq!(
+            sieve_geq::<5, 5>(u64::MAX),
+            Err(SieveError::TotalDoesntFitU64)
+        );
+        assert_eq!(sieve_geq::<5, 5>(30), Err(SieveError::TooSmallSieveSize));
+        assert_eq!(sieve_geq::<0, 1>(0), Ok([false; 0]))
     }
 }
