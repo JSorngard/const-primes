@@ -4,21 +4,35 @@ use core::fmt;
 
 use crate::isqrt;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum SegmentedSieveError {
+    TooSmallLimit,
+}
+
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
-/// for the numbers below `N^2`. Fails to compile if `N` is 0.
+/// for the numbers below `N^2`.
+///
+/// # Errors
+///
+/// Returns an error if `upper_limit` < `N`
 #[must_use = "the function only returns a new value and does not modify its inputs"]
 pub(crate) const fn sieve_segment<const N: usize>(
     base_sieve: &[bool; N],
     upper_limit: u64,
-) -> [bool; N] {
+) -> Result<[bool; N], SegmentedSieveError> {
     let mut segment_sieve = [true; N];
 
-    let lower_limit = upper_limit - N as u64;
+    let lower_limit = if upper_limit < N as u64 {
+        return Err(SegmentedSieveError::TooSmallLimit);
+    } else {
+        upper_limit - N as u64
+    };
+    //let lower_limit = upper_limit - N as u64;
 
     if lower_limit == 0 && N > 1 {
         // If the lower limit is 0 we can just return the base sieve.
-        return *base_sieve;
+        return Ok(*base_sieve);
     } else if lower_limit == 1 && N > 0 {
         // In case 1 is included in the upper sieve we need to treat it as a special case
         // since it's not a multiple of any prime in `base_sieve` even though it's not prime.
@@ -48,7 +62,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
         i += 1;
     }
 
-    segment_sieve
+    Ok(segment_sieve)
 }
 
 /// Returns an array of size `N` that indicates which of the `N` largest integers smaller than `upper_limit` are prime.
@@ -152,12 +166,16 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
     let base_sieve: [bool; MEM] = sieve();
 
     // Use the result to sieve the higher range.
-    let upper_sieve = sieve_segment(&base_sieve, upper_limit);
+    let (offset, upper_sieve) = match sieve_segment(&base_sieve, upper_limit) {
+        Ok(res) => (0, res),
+        // The sieve contained more entries than there are non-negative numbers below the upper limit.
+        Err(_) => (MEM - upper_limit as usize, base_sieve),
+    };
 
-    let mut ans = [false; N];
     let mut i = 0;
+    let mut ans = [false; N];
     while i < N {
-        ans[N - 1 - i] = upper_sieve[MEM - 1 - i];
+        ans[N - 1 - i] = upper_sieve[MEM - 1 - i - offset];
         i += 1;
     }
     Ok(ans)
@@ -331,7 +349,10 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 
     let base_sieve: [bool; MEM] = sieve();
 
-    let upper_sieve = sieve_segment(&base_sieve, upper_limit);
+    let upper_sieve = match sieve_segment(&base_sieve, upper_limit) {
+        Ok(res) => res,
+        Err(_) => panic!("this is already checked above"),
+    };
 
     let mut ans = [false; N];
     let mut i = 0;
@@ -401,8 +422,14 @@ mod test {
 
     #[test]
     fn test_consistency_of_sieve_segment() {
-        const P: [bool; 10] = sieve_segment(&sieve(), 10);
-        const PP: [bool; 10] = sieve_segment(&sieve(), 11);
+        const P: [bool; 10] = match sieve_segment(&sieve(), 10) {
+            Ok(s) => s,
+            Err(_) => panic!(),
+        };
+        const PP: [bool; 10] = match sieve_segment(&sieve(), 11) {
+            Ok(s) => s,
+            Err(_) => panic!(),
+        };
         assert_eq!(P, sieve());
         assert_eq!(PP, sieve::<11>()[1..]);
     }
