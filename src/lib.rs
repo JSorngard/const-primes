@@ -131,10 +131,10 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 #[cfg(feature = "const_assert")]
-/// Places the expression or body in an inline `const` block.
+/// Places the expression or body in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
 ///
 /// Since the stability of inline const is checked early in compilation,
-/// before it could be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
+/// before it can be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
 /// ```rust,ignore
 /// #[cfg(feature = "use_inline_const")]
 /// const { code }
@@ -148,6 +148,26 @@ macro_rules! inline_const {
     };
     ($body:block) => {
         const $body
+    };
+}
+#[cfg(not(feature = "const_assert"))]
+/// Places the expression or body in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
+///
+/// Since the stability of inline const is checked early in compilation,
+/// before it can be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
+/// ```rust,ignore
+/// #[cfg(feature = "use_inline_const")]
+/// const { code }
+/// #[cfg(not(feature = "use_inline_const"))]
+/// code
+/// ```
+/// This macro is expanded after the stability of inline `const` is checked, and thus enables the feature gating of its use.
+macro_rules! inline_const {
+    ($body:expr) => {{
+        $body
+    }};
+    ($body:block) => {
+        $body
     };
 }
 

@@ -162,12 +162,8 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    #[cfg(feature = "const_assert")]
     inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
-    #[cfg(not(feature = "const_assert"))]
-    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    #[cfg(feature = "const_assert")]
     let mem_sqr = inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -175,14 +171,6 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
             None => panic!("`MEM`^2 must fit in a u64"),
         }
     });
-    #[cfg(not(feature = "const_assert"))]
-    let mem_sqr = {
-        let mem64 = MEM as u64;
-        match mem64.checked_mul(mem64) {
-            Some(mem_sqr) => mem_sqr,
-            None => panic!("`MEM`^2 must fit in a u64"),
-        }
-    };
 
     if upper_limit <= 2 {
         return Err(GenerationError::TooSmallLimit);
@@ -343,12 +331,8 @@ macro_rules! primes_segment {
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    #[cfg(feature = "const_assert")]
     inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
-    #[cfg(not(feature = "const_assert"))]
-    assert!(MEM >= N, "`MEM` must be at least as large as `N`");
 
-    #[cfg(feature = "const_assert")]
     let (mem64, mem_sqr) = inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
@@ -356,14 +340,6 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
             None => panic!("`MEM`^2 must fit in a `u64`"),
         }
     });
-    #[cfg(not(feature = "const_assert"))]
-    let (mem64, mem_sqr) = {
-        let mem64 = MEM as u64;
-        match mem64.checked_mul(mem64) {
-            Some(mem_sqr) => (mem64, mem_sqr),
-            None => panic!("`MEM`^2 must fit in a `u64`"),
-        }
-    };
 
     if N == 0 {
         return Ok([0; N]);
