@@ -5,9 +5,7 @@ use core::fmt;
 use crate::isqrt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum SegmentedSieveError {
-    TooSmallLimit,
-}
+pub(crate) struct SegmentedSieveError;
 
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
@@ -24,7 +22,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
     let mut segment_sieve = [true; N];
 
     let lower_limit = if upper_limit < N as u64 {
-        return Err(SegmentedSieveError::TooSmallLimit);
+        return Err(SegmentedSieveError);
     } else {
         upper_limit - N as u64
     };
@@ -436,7 +434,7 @@ mod test {
         assert_eq!(PP, sieve::<11>()[1..]);
         assert_eq!(
             sieve_segment::<5>(&[false, false, true, true, false], 4),
-            Err(SegmentedSieveError::TooSmallLimit)
+            Err(SegmentedSieveError)
         );
     }
 }
