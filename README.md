@@ -26,7 +26,7 @@ assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 
 ## Example: use a cache of generated primes for related computations
 
-The struct `Primes` is a wrapper around an array of primes and can be used as a cache of primes for related computations:
+The struct `Primes` is a wrapper around an array of primes and can be used as a cache of prime numbers for related computations:
 ```rust
 // The first 100 primes
 const CACHE: Primes<100> = Primes::new();
