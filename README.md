@@ -26,30 +26,22 @@ assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
 
 ## Example: use a cache of generated primes for related computations
 
-The struct `Primes` is a wrapper around an array of primes:
+The struct `Primes` is a wrapper around an array of primes and can be used as a cache of primes for related computations:
 ```rust
-use const_primes::Primes;
-
-const PRIMES: Primes<10> = Primes::new();
-
-assert_eq!(PRIMES[5], 13);
-assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
-```
-and it can be used as a cache of primes for related computations:
-```rust
+// The first 100 primes
 const CACHE: Primes<100> = Primes::new();
 
-// For primality testing
+// Primality testing
 const CHECK_42: Option<bool> = CACHE.is_prime(42);
 const CHECK_541: Option<bool> = CACHE.is_prime(541);
 assert_eq!(CHECK_42, Some(false));
 assert_eq!(CHECK_541, Some(true));
 
-// Or for prime counting
+// Prime counting
 const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
 assert_eq!(PRIMES_LEQ_100, Some(25));
 
-// Or for prime factorization:
+// Prime factorization:
 assert_eq!(CACHE.prime_factorization(3072).collect(), &[(2, 10), (3, 1)])
 
 // If questions are asked about numbers
@@ -94,18 +86,6 @@ const N: usize = 3;
 const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_segment!(N; >= 5_000_000_031);
 
 assert_eq!(PRIMES_GEQ, Ok([5_000_000_039, 5_000_000_059, 5_000_000_063]));
-```
-
-## Example: determine the prime status of the three largest numbers less than 100005
-
-```rust
-use const_primes::{sieve_segment, SieveError};
-
-const N: usize = 3;
-const PRIME_STATUS_LT: Result<[bool; N], SieveError> = sieve_segment!(N; < 100_005);
-
-//                              100_102  100_103  100_104
-assert_eq!(PRIME_STATUS_LT, Ok([false,   true,    false]));
 ```
 
 ## Example: find the next or previous prime numbers
