@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.8.7
+
+ - Speed up `is_prime` by checking fewer witnesses in the Miller-Rabin test.
+
 # 0.8.6
 
  - Fix a bug where the crate would try to sieve numbers below zero for some inputs to `sieve_lt` and `primes_lt` and panic.
