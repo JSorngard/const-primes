@@ -45,7 +45,8 @@ pub const fn is_prime(n: u64) -> bool {
     // in order to make the test both fast and deterministic.
     // This list of witnesses was taken from
     // <https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Testing_against_small_sets_of_bases>.
-    const WITNESSES: [(u64, &[u64]); 11] = [
+    const NUM_BASES: usize = 11;
+    const WITNESSES: [(u64, &[u64]); NUM_BASES] = [
         (2_046, &[2]),
         (1_373_652, &[2, 3]),
         (9_080_190, &[31, 73]),
@@ -61,7 +62,7 @@ pub const fn is_prime(n: u64) -> bool {
 
     // Find the smallest basis that is large enough.
     let mut i = 0;
-    while WITNESSES[i].0 < n {
+    while WITNESSES[i].0 < n && i < NUM_BASES {
         i += 1;
     }
     let witnesses = WITNESSES[i].1;
