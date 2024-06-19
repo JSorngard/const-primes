@@ -65,10 +65,9 @@ pub const fn is_prime(n: u64) -> bool {
         i += 1;
     }
     let witnesses = WITNESSES[i].1;
-    let num_witnesses = witnesses.len();
 
     let mut i = 0;
-    while i < num_witnesses && witnesses[i] < n {
+    while i < witnesses.len() && witnesses[i] < n {
         if !miller_test(d, n, witnesses[i]) {
             return false;
         }
