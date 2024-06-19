@@ -60,7 +60,6 @@ pub const fn is_prime(n: u64) -> bool {
         (u64::MAX, &[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37]),
     ];
 
-    // Find the smallest basis that is large enough.
     let mut i = 0;
     while i < NUM_BASES && WITNESSES[i].0 < n {
         i += 1;
