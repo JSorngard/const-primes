@@ -45,7 +45,7 @@ pub const fn is_prime(n: u64) -> bool {
     // in order to make the test both fast and deterministic.
     // This list of witnesses was taken from
     // <https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Testing_against_small_sets_of_bases>.
-    const WITNESSES: &[(u64, &[u64])] = &[
+    const WITNESSES: [(u64, &[u64]); 11] = [
         (2_046, &[2]),
         (1_373_652, &[2, 3]),
         (9_080_190, &[31, 73]),
