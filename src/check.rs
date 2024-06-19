@@ -110,8 +110,19 @@ mod test {
         for (x, ans) in TEST_CASES.into_iter().enumerate() {
             assert_eq!(is_prime(x as u64), ans);
         }
-        assert!(is_prime(65521));
-        assert!(is_prime(4294967291));
-        assert!(is_prime(18446744073709551557));
+        assert!(is_prime(65_521));
+        assert!(is_prime(4_294_967_291));
+        assert!(is_prime(18_446_744_073_709_551_557));
+        assert!(is_prime(3_474_749_660_401));
+        assert!(is_prime(2_039));
+        assert!(is_prime(1_373_639));
+        assert!(is_prime(9_080_189));
+        assert!(is_prime(25_325_981));
+        assert!(is_prime(4_759_123_129));
+        assert!(is_prime(1_112_004_669_631));
+        assert!(is_prime(2_152_302_898_729));
+        assert!(is_prime(3_474_749_660_329));
+        assert!(is_prime(341_550_071_728_289));
+        assert!(is_prime(3_825_123_056_546_412_979));
     }
 }
