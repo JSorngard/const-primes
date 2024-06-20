@@ -2,15 +2,15 @@ This file contains the changes to the crate since version 0.4.8.
 
 # 0.8.7
 
- - Speed up `is_prime` by checking fewer witnesses in the Miller-Rabin test.
+ - Sped up `is_prime` by checking fewer witnesses in the Miller-Rabin test.
 
 # 0.8.6
 
- - Fix a bug where the crate would try to sieve numbers below zero for some inputs to `sieve_lt` and `primes_lt` and panic.
+ - Fixed a bug where the crate would try to sieve numbers below zero for some inputs to `sieve_lt` and `primes_lt` and panic.
 
 # 0.8.5
 
- - Add the `const_assert` feature that changes all panics that only involve const generics into compile errors.  
+ - Added the `const_assert` feature that promotes all panics that only involve const generics into compile errors.  
 
 # 0.8.4
 
@@ -19,13 +19,13 @@ This file contains the changes to the crate since version 0.4.8.
 
 # 0.8.3
 
- - Add the `totient` function to the `Primes` struct.
- - Derive `Serialize` and `Deserialize` for the error types.
- - Derive `Hash` for `SieveError`.
+ - Added the `totient` function to the `Primes` struct.
+ - Derived `Serialize` and `Deserialize` for the error types.
+ - Derived `Hash` for `SieveError`.
 
 # 0.8.2
 
- - Add the `serde` feature that derives the `Serialize` and `Deserialize` traits from `serde` for the `Primes` struct.
+ - Added the `serde` feature that derives the `Serialize` and `Deserialize` traits from `serde` for the `Primes` struct.
 
 # 0.8.1
 
@@ -36,23 +36,23 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## Breaking changes
 
- - Change `Primes<N>::binary_search` to have the same API as `slice::binary_search`.
+ - Changed `Primes<N>::binary_search` to have the same API as `slice::binary_search`.
 
 # 0.7.4
 
- - Correct wrong doclink to `remainder` in docstring of `Primes<N>::prime_factors`.
+ - Corrected wrong doclink to `remainder` in docstring of `Primes<N>::prime_factors`.
 
 # 0.7.3
 
- - Add `Primes<N>::prime_factors` function that returns an iterator over the prime factors of the given number (and not their multiplicities).
+ - Added `Primes<N>::prime_factors` function that returns an iterator over the prime factors of the given number (and not their multiplicities).
 
 # 0.7.2
 
- - Add `Primes<N>::prime_factorization` function that returns an iterator over the prime factors of the given number and their multiplicities.
+ - Added `Primes<N>::prime_factorization` function that returns an iterator over the prime factors of the given number and their multiplicities.
 
 # 0.7.1
 
- - Organize the examples in the readme and top level crate documentation in a clearer way.
+ - Organized the examples in the readme and top level crate documentation in a clearer way.
 
 # 0.7.0
 
@@ -72,15 +72,15 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## Breaking changes
 
- - Make the `Primes<N>::iter` function and the `IntoIterator` implementation for `Primes<N>` return custom iterator types. Allows less disruptive refactoring in the future.
+ - Made the `Primes<N>::iter` function and the `IntoIterator` implementation for `Primes<N>` return custom iterator types. Allows less disruptive refactoring in the future.
 
 ## Other changes
 
- - Remove panics in functions (like `primes`) when `N` is zero. It results in an empty array, but may be what you want.
+ - Removed panics in functions (like `primes`) when `N` is zero. It results in an empty array, but may be what you want.
 
 # 0.5.1
 
- - Implement `IntoIterator` for `&Primes<N>`.
+ - Implemented `IntoIterator` for `&Primes<N>`.
 
 # 0.5.0
 
@@ -89,19 +89,19 @@ It also shortens and clarifies some function names.
 
 ## Breaking changes
 
- - Rename `are_prime` to `sieve`.  
- - Rename `are_prime_below` to `sieve_lt`.  
- - Change function signature of `sieve_lt`.  
- - Rename `largest_prime_leq` to `previous_prime`.  
- - Rename `smallest_prime_lt` to `next_prime`.  
- - Rename `prime_counts` to `count_primes`.  
- - Remove `moebius`, as it is out of scope of this crate. If you want the source code for that function it can be found on [Rosettacode](https://rosettacode.org/wiki/M%C3%B6bius_function#Rust), or in older versions of this crate.
+ - Renamed `are_prime` to `sieve`.  
+ - Renamed `are_prime_below` to `sieve_lt`.  
+ - Changed function signature of `sieve_lt`.  
+ - Renamed `largest_prime_leq` to `previous_prime`.  
+ - Renamed `smallest_prime_lt` to `next_prime`.  
+ - Renamed `prime_counts` to `count_primes`.  
+ - Removed `moebius`, as it is out of scope of this crate. If you want the source code for that function it can be found on [Rosettacode](https://rosettacode.org/wiki/M%C3%B6bius_function#Rust), or in older versions of this crate.
 
 ## New features
 
- - Add `primes_geq`, `primes_lt`, and `sieve_geq` functions to work with arbitrary ranges. They take two const generics, the number of values to return and the size of the sieve used during evaluation.  
- - Add `primes_segment!` and `sieve_segment!` macros to simplify usage of the above functions. These macros compute the size of the sieve that the above functions need. Due to restrictions on const arithmetic this can not be done inside the functions.  
- - Add `isqrt` function. This can be useful if you wish to compute the size of the sieve yourself.  
+ - Added `primes_geq`, `primes_lt`, and `sieve_geq` functions to work with arbitrary ranges. They take two const generics, the number of values to return and the size of the sieve used during evaluation.  
+ - Added `primes_segment!` and `sieve_segment!` macros to simplify usage of the above functions. These macros compute the size of the sieve that the above functions need. Due to restrictions on const arithmetic this can not be done inside the functions.  
+ - Added `isqrt` function. This can be useful if you wish to compute the size of the sieve yourself.  
 
 ## Minor changes
 
