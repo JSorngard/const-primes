@@ -104,8 +104,10 @@ mod test {
 
     #[test]
     fn check_is_prime() {
+        // region: test data
         #[rustfmt::skip]
         const TEST_CASES: [bool; 100] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false];
+        // endregion: test data
         for (x, ans) in TEST_CASES.into_iter().enumerate() {
             assert_eq!(is_prime(x as u64), ans);
         }
