@@ -37,7 +37,7 @@ pub const fn is_prime(n: u64) -> bool {
     // Find r such that n = 2^d * r + 1 for some r >= 1
     let mut d = n - 1;
     while d % 2 == 0 {
-        d /= 2;
+        d >>= 1;
     }
 
     // Since we know the maximum size of the numbers we test against
