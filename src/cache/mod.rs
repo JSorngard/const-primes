@@ -1003,6 +1003,7 @@ mod test {
         let _: Primes<20> = P1.truncate();
     }
 
+    #[cfg(not(feature = "const_assert"))]
     #[test]
     #[should_panic]
     fn test_truncate_to_same_size() {
