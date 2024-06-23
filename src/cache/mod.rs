@@ -1000,6 +1000,7 @@ mod test {
     #[should_panic]
     fn test_trucate_to_larger_size() {
         const P1: Primes<10> = Primes::new();
+
         let _: Primes<20> = P1.truncate();
     }
 
@@ -1008,6 +1009,7 @@ mod test {
     #[should_panic]
     fn test_truncate_to_same_size() {
         const P1: Primes<10> = Primes::new();
+
         let _: Primes<10> = P1.truncate();
     }
 
@@ -1016,6 +1018,7 @@ mod test {
     #[should_panic]
     fn test_trucate_to_zero() {
         const P1: Primes<10> = Primes::new();
+
         let _: Primes<0> = P1.truncate();
     }
 }
