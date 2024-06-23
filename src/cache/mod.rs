@@ -994,6 +994,7 @@ mod test {
         assert_eq!([2, 3, 5], P1.truncate())
     }
 
+    #[cfg(not(feature = "const_assert"))]
     #[test]
     #[should_panic]
     fn test_trucate_to_larger_size() {
@@ -1001,6 +1002,7 @@ mod test {
         let _: Primes<20> = P1.truncate();
     }
 
+    #[cfg(not(feature = "const_assert"))]
     #[test]
     #[should_panic]
     fn test_trucate_to_zero() {
