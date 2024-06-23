@@ -108,8 +108,10 @@ and more!
 
 ## Feature flags
 
-`std`: implements the `Error` trait from the standard library for the error types.  
-`serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.  
+`std`: implements the `Error` trait from the standard library for the error types.
+
+`serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
+
 `const_assert`: promotes panics that involve only const generics into compile errors. Increases the MSRV of the crate to 1.79.0.
 
 ## License
