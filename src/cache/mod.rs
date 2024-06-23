@@ -534,9 +534,10 @@ impl<const N: usize> Primes<N> {
     ///
     /// ```
     /// # use const_primes::Primes;
-    /// const PRIMES: Primes<10> = Primes::new();
+    /// const PRIMES: Primes<5> = Primes::new();
     /// const SMALL_PRIMES: Primes<3> = PRIMES.truncate();
     ///
+    /// assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
     /// assert_eq!(SMALL_PRIMES, [2, 3, 5]);
     /// ```
     ///
