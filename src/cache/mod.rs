@@ -543,10 +543,10 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Panics
     ///
-    /// Panics if `M` is larger than `N`, or if `M` is 0.  
+    /// Panics if `M` is larger than or equal to `N`, or if `M` is 0.  
     /// If the `const_assert` feature flag is enabled this is always a compile error instead of a panic.
     pub const fn truncate<const M: usize>(self) -> Primes<M> {
-        inline_const!(assert!(N >= M && M > 0));
+        inline_const!(assert!(N > M && M > 0));
         let mut prime_subarray = [0; M];
         let mut i = 0;
         while i < M {
@@ -993,7 +993,6 @@ mod test {
         const P1: Primes<10> = Primes::new();
 
         assert_eq!([2, 3, 5], P1.truncate());
-        assert_eq!(P1.truncate::<10>(), P1);
     }
 
     #[cfg(not(feature = "const_assert"))]
@@ -1002,6 +1001,13 @@ mod test {
     fn test_trucate_to_larger_size() {
         const P1: Primes<10> = Primes::new();
         let _: Primes<20> = P1.truncate();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_truncate_to_same_size() {
+        const P1: Primes<10> = Primes::new();
+        let _: Primes<10> = P1.truncate();
     }
 
     #[cfg(not(feature = "const_assert"))]
