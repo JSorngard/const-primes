@@ -991,7 +991,8 @@ mod test {
     fn test_truncate() {
         const P1: Primes<10> = Primes::new();
 
-        assert_eq!([2, 3, 5], P1.truncate())
+        assert_eq!([2, 3, 5], P1.truncate());
+        assert_eq!(P1.truncate::<10>(), P1);
     }
 
     #[cfg(not(feature = "const_assert"))]
