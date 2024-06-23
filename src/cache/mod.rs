@@ -988,6 +988,13 @@ mod test {
         let _primes = Primes::<0>::new();
     }
 
+    #[cfg(not(feature = "const_assert"))]
+    #[test]
+    #[should_panic]
+    fn test_panic_on_empty_default() {
+        let _primes = Primes::<0>::default();
+    }
+
     #[test]
     fn test_truncate() {
         const P1: Primes<10> = Primes::new();
