@@ -38,6 +38,7 @@
 //!
 //! // Prime factorization
 //! assert_eq!(CACHE.prime_factorization(3072).collect::<Vec<_>>(), &[(2, 10), (3, 1)]);
+//! // and more!
 //!
 //! // If questions are asked about numbers outside the cache it returns None
 //! assert!(CACHE.is_prime(1000).is_none());
