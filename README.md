@@ -43,6 +43,7 @@ assert_eq!(PRIMES_LEQ_100, Some(25));
 
 // Prime factorization:
 assert_eq!(CACHE.prime_factorization(3072).collect(), &[(2, 10), (3, 1)])
+// and more!
 
 // If questions are asked about numbers
 // outside the cache it returns None
