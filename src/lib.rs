@@ -115,7 +115,7 @@
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 #[cfg(feature = "const_assert")]
-/// Places the expression or body in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
+/// Places the expression or block in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
 ///
 /// Since the stability of inline const is checked early in compilation,
 /// before it can be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
@@ -135,7 +135,7 @@ macro_rules! feature_gated_inline_const {
     };
 }
 #[cfg(not(feature = "const_assert"))]
-/// Places the expression or body in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
+/// Places the expression or block in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
 ///
 /// Since the stability of inline const is checked early in compilation,
 /// before it can be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
