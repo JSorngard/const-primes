@@ -126,7 +126,7 @@
 /// code
 /// ```
 /// This macro is expanded after the stability of inline `const` is checked, and thus enables the feature gating of its use.
-macro_rules! inline_const {
+macro_rules! feature_gated_inline_const {
     ($body:expr) => {
         const {$body}
     };
@@ -146,7 +146,7 @@ macro_rules! inline_const {
 /// code
 /// ```
 /// This macro is expanded after the stability of inline `const` is checked, and thus enables the feature gating of its use.
-macro_rules! inline_const {
+macro_rules! feature_gated_inline_const {
     ($body:expr) => {{
         $body
     }};

@@ -86,7 +86,7 @@ impl<const N: usize> Primes<N> {
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        inline_const!(assert!(N > 0, "`N` must be at least 1"));
+        feature_gated_inline_const!(assert!(N > 0, "`N` must be at least 1"));
         Self(primes())
     }
 
@@ -546,7 +546,7 @@ impl<const N: usize> Primes<N> {
     /// Panics if `M` is larger than or equal to `N`, or if `M` is 0.  
     /// If the `const_assert` feature flag is enabled this is always a compile error instead of a panic.
     pub const fn truncate<const M: usize>(self) -> Primes<M> {
-        inline_const!(assert!(N > M && M > 0));
+        feature_gated_inline_const!(assert!(N > M && M > 0));
         let mut prime_subarray = [0; M];
         let mut i = 0;
         while i < M {
@@ -571,7 +571,7 @@ impl<const N: usize> Default for Primes<N> {
     /// Panics if `N` is 0.  
     /// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
     fn default() -> Self {
-        inline_const!(assert!(N > 0, "`N` must be at least 1"));
+        feature_gated_inline_const!(assert!(N > 0, "`N` must be at least 1"));
         Self(primes())
     }
 }

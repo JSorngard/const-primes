@@ -138,9 +138,9 @@ pub(crate) const fn sieve_segment<const N: usize>(
 pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    feature_gated_inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
 
-    let mem_sqr = inline_const!({
+    let mem_sqr = feature_gated_inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => mem_sqr,
@@ -323,9 +323,9 @@ impl std::error::Error for SieveError {}
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    feature_gated_inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
 
-    let (mem64, mem_sqr) = inline_const!({
+    let (mem64, mem_sqr) = feature_gated_inline_const!({
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => (mem64, mem_sqr),
