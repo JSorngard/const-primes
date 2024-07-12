@@ -61,18 +61,6 @@ const CHECK: bool = is_prime(18_446_744_073_709_551_557);
 assert!(CHECK);
 ```
 
-## Example: sieving
-
-Sieve a range of numbers for their prime status with `sieve`:
-```rust
-use const_primes::sieve;
-
-const PRIME_STATUS: [bool; 10] = sieve();
-
-//                        0      1      2     3     4      5     6      7     8      9
-assert_eq!(PRIME_STATUS, [false, false, true, true, false, true, false, true, false, false]);
-```  
-
 ## Example: generate the three primes after 5000000031
 
 The crate also provides prime generation and sieving functions that can be used to work with ranges that don't start at zero, e.g. `primes_geq` and `sieve_lt`. These functions can use large sieves to compute large primes, but don't need to return the entire sieve, just the requested numbers.
