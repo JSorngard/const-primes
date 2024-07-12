@@ -477,8 +477,11 @@ impl<const N: usize> Primes<N> {
     /// that contains a [`PartialTotient`] struct that contains the result from using only the primes in `self`,
     /// as well as the product of the prime factors that are not included in `self`.
     ///
-    /// The number 2450 is equal to 2\*5\*5\*7\*7, but the cache does not contain 7.
-    /// This means that the function runs out of primes after 5, and can not finish the computation:
+    /// # Error example
+    ///
+    /// The number 2450 is equal to 2\*5\*5\*7\*7.
+    /// If the cache does not contain 7 the function runs out of primes after 5,
+    /// and can not finish the computation:
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
     /// // Contains the primes [2, 3, 5]
