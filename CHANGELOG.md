@@ -1,5 +1,9 @@
 This file contains the changes to the crate since version 0.4.8.
 
+# 0.9.0
+
+ - The `const_assert` feature is now enabled by default.
+
 # 0.8.7
 
  - Sped up `is_prime` by checking fewer witnesses in the Miller-Rabin test.
