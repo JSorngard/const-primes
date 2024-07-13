@@ -10,7 +10,7 @@ Generate and work with prime numbers in const contexts.
 This crate lets you for example pre-compute prime numbers at compile time, store them in the binary, and use them later for related computations,
 or check whether a number is prime in a const function.
 
-`#![no_std]` compatible, and currently supports Rust versions 1.67.1 or newer, though enabling feature flags may increase this.
+`#![no_std]` compatible, and currently supports Rust versions 1.79.0 or newer, though disabling the `const_assert` feature flag will lower this to 1.67.1.
 
 ## Example: generate primes at compile time and use them for related computations
 
