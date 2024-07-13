@@ -62,7 +62,7 @@ jobs:
       with:
         components: clippy
     - name: clippy_1.67.1
-      run: cargo +1.67.1 clippy --features std,serde -- -D warnings
+      run: cargo +1.67.1 clippy --no-default-features --features std,serde -- -D warnings
 
   coverage:
     runs-on: ubuntu-latest
