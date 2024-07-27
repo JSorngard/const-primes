@@ -149,6 +149,8 @@ type Underlying = u32;
 pub mod cache;
 mod check;
 mod count;
+#[cfg(feature = "std")]
+pub mod extending_cache;
 mod generate;
 mod integer_math;
 mod search;
@@ -157,6 +159,8 @@ mod sieve;
 pub use cache::Primes;
 pub use check::is_prime;
 pub use count::count_primes;
+#[cfg(feature = "std")]
+pub use extending_cache::ExtendingPrimes;
 pub use generate::{primes, primes_geq, primes_lt, GenerationError};
 pub use integer_math::isqrt;
 pub use search::{next_prime, previous_prime};
