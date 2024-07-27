@@ -530,34 +530,6 @@ impl<const N: usize> Primes<N> {
             })
         }
     }
-
-    /// Trucates the set of primes to a smaller size.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use const_primes::Primes;
-    /// const PRIMES: Primes<5> = Primes::new();
-    /// const SMALL_PRIMES: Primes<3> = PRIMES.truncate();
-    ///
-    /// assert_eq!(PRIMES, [2, 3, 5, 7, 11]);
-    /// assert_eq!(SMALL_PRIMES, [2, 3, 5]);
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if `M` is larger than or equal to `N`, or if `M` is 0.  
-    /// If the `const_assert` feature flag is enabled this is always a compile error instead of a panic.
-    pub const fn truncate<const M: usize>(self) -> Primes<M> {
-        feature_gated_inline_const!(assert!(N > M && M > 0));
-        let mut prime_subarray = [0; M];
-        let mut i = 0;
-        while i < M {
-            prime_subarray[i] = self.0[i];
-            i += 1;
-        }
-        Primes::<M>(prime_subarray)
-    }
 }
 
 /// Contains the result of a partially successful evaluation of the [`totient`](Primes::totient) function.
@@ -996,39 +968,5 @@ mod test {
     #[should_panic]
     fn test_panic_on_empty_default() {
         let _primes = Primes::<0>::default();
-    }
-
-    #[test]
-    fn test_truncate() {
-        const P1: Primes<10> = Primes::new();
-
-        assert_eq!([2, 3, 5], P1.truncate());
-    }
-
-    #[cfg(not(feature = "const_assert"))]
-    #[test]
-    #[should_panic]
-    fn test_trucate_to_larger_size() {
-        const P1: Primes<10> = Primes::new();
-
-        let _: Primes<20> = P1.truncate();
-    }
-
-    #[cfg(not(feature = "const_assert"))]
-    #[test]
-    #[should_panic]
-    fn test_truncate_to_same_size() {
-        const P1: Primes<10> = Primes::new();
-
-        let _: Primes<10> = P1.truncate();
-    }
-
-    #[cfg(not(feature = "const_assert"))]
-    #[test]
-    #[should_panic]
-    fn test_trucate_to_zero() {
-        const P1: Primes<10> = Primes::new();
-
-        let _: Primes<0> = P1.truncate();
     }
 }
