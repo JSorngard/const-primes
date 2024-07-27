@@ -10,7 +10,11 @@ pub enum ExtendingPrimes<const N: usize> {
 
 impl<const N: usize> ExtendingPrimes<N> {
     pub const fn new() -> Self {
-        Self::Stack(Primes::new())
+        if N > 0 {
+            Self::Stack(Primes::new())
+        } else {
+            Self::Heap(Vec::new())
+        }
     }
 
     pub fn as_slice(&self) -> &[Underlying] {
