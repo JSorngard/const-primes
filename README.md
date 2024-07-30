@@ -41,14 +41,17 @@ assert_eq!(CACHE.prime_factorization(3072).collect(), &[(2, 10), (3, 1)])
 assert!(CACHE.is_prime(1000).is_none());
 assert!(CACHE.count_primes_leq(1000).is_none());
 ```
-Want only the numbers? Use the `primes` function:
+Want only the numbers? Use the `primes` function, or convert the cache into an array:
 ```rust
-use const_primes::primes;
+use const_primes::{primes, Primes};
 
-const PRIMES: [u32; 10] = primes();
+const CACHE: Primes<10> = Primes::new();
 
-assert_eq!(PRIMES[5], 13);
-assert_eq!(PRIMES, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+const PRIMES_ARRAY1: [u32; 10] = primes();
+const PRIMES_ARRAY2: [i32; 10] = PRIMES.into_array();
+
+assert_eq!(PRIMES_ARRAY1, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
+assert_eq!(PRIMES_ARRAY1, PRIMES_ARRAY2);
 ```
 
 ## Example: primality checking
