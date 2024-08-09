@@ -26,12 +26,9 @@ const_assert = []
 # Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
 serde = ["dep:serde", "dep:serde_arrays"]
 
-# docs.rs-specific configuration. Taken from <https://stackoverflow.com/a/61417700/>.
 [package.metadata.docs.rs]
 # Document all features.
 all-features = true
-# Enable the docsrs configuration attribute on docs.rs
-rustdoc-args = ["--cfg", "docsrs"]
 
 [[bench]]
 name = "prime_benches"
