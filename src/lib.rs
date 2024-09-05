@@ -4,6 +4,8 @@
 //! or check whether a number is prime in a const function.
 //!
 //! `no_std` compatible when the `serde` feature is disabled.
+//! 
+//! This version supports Rust versions 1.81.0 and up, while previous versions support Rust versions 1.67.1 and up.
 //!
 //! # Example: generate primes at compile time and  reuse it for related computations
 //!
