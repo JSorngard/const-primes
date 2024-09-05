@@ -54,16 +54,6 @@ jobs:
     - name: document
       run: cargo +nightly doc --all-features
 
-  clippy_lowest_msrv:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: dtolnay/rust-toolchain@1.67.1
-      with:
-        components: clippy
-    - name: clippy_1.67.1
-      run: cargo +1.67.1 clippy --features std,serde -- -D warnings
-
   coverage:
     runs-on: ubuntu-latest
     steps:
