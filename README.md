@@ -12,7 +12,7 @@ This crate lets you for example pre-compute prime numbers at compile time, store
 them in the binary, and use them later for related computations,
 or check whether a number is prime in a const function.
 
-`#![no_std]` compatible.
+`no_std` compatible.
 
 ## Example: generate primes at compile time and use them for related computations
 
