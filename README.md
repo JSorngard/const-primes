@@ -112,9 +112,7 @@ assert_eq!(TOO_BIG, None);
 
 and more!
 
-## Feature flags
-
-`std`: implements the `Error` trait from the standard library for the error types.
+## Features
 
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde)
 for the `Primes` struct, as well as a few others.
