@@ -3,7 +3,7 @@
 //! This crate lets you for example pre-compute prime numbers at compile time, store them in the binary, and use them later for related computations,
 //! or check whether a number is prime in a const function.
 //!
-//! `#![no_std]` compatible, and currently supports Rust versions 1.67.1 or newer, though enabling feature flags may increase this.
+//! `#![no_std]` compatible.
 //!
 //! # Example: generate primes at compile time and  reuse it for related computations
 //!
@@ -96,53 +96,10 @@
 //! `std`: implements the [`Error`](std::error::Error) trait from the standard library for the error types.
 //!
 //! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct, as well as a few others.
-//!
-//! `const_assert`: promotes panics that involve only const generics into compile errors. Increases the MSRV of the crate to 1.79.0.
 
 #![forbid(unsafe_code)]
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
-
-#[cfg(feature = "const_assert")]
-/// Places the expression or block in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
-///
-/// Since the stability of inline const is checked early in compilation,
-/// before it can be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
-/// ```rust,ignore
-/// #[cfg(feature = "use_inline_const")]
-/// const { code }
-/// #[cfg(not(feature = "use_inline_const"))]
-/// code
-/// ```
-/// This macro is expanded after the stability of inline `const` is checked, and thus enables the feature gating of its use.
-macro_rules! feature_gated_inline_const {
-    ($body:expr) => {
-        const {$body}
-    };
-    ($body:block) => {
-        const $body
-    };
-}
-#[cfg(not(feature = "const_assert"))]
-/// Places the expression or block in an inline `const` block if the `const_assert` feature flag is enabled, otherwise does nothing.
-///
-/// Since the stability of inline const is checked early in compilation,
-/// before it can be `#[cfg]`ed away, Rust versions before 1.79.0 could not compile the following code:
-/// ```rust,ignore
-/// #[cfg(feature = "use_inline_const")]
-/// const { code }
-/// #[cfg(not(feature = "use_inline_const"))]
-/// code
-/// ```
-/// This macro is expanded after the stability of inline `const` is checked, and thus enables the feature gating of its use.
-macro_rules! feature_gated_inline_const {
-    ($body:expr) => {{
-        $body
-    }};
-    ($body:block) => {
-        $body
-    };
-}
 
 /// The type that `Primes<N>` stores, and `primes::<N>()` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.

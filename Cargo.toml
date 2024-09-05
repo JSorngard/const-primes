@@ -8,7 +8,6 @@ keywords = ["const", "primes", "no_std", "prime-numbers"]
 categories = ["mathematics", "no-std", "no-std::no-alloc", "algorithms"]
 description = "Work with prime numbers in const contexts. Prime generation, primality testing, prime counting, and more."
 repository = "https://github.com/JSorngard/const-primes/"
-rust-version = "1.67.1"
 
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
@@ -19,10 +18,6 @@ criterion = { version = "0.5", features = ["html_reports"] }
 rand = "0.8"
 
 [features]
-# Implements the `Error` trait from the standard library for the error types.
-std = []
-# Promotes panics that involve only const generics into compile errors. Increases the MSRV of the crate to 1.79.0.
-const_assert = []
 # Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
 serde = ["dep:serde", "dep:serde_arrays"]
 

@@ -102,7 +102,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// Returns the `N` largest primes less than `upper_limit`.
 ///
 /// This function uses a segmented sieve of size `MEM` for computation,
-/// but only returns the `N` requested primes in the output array.
+/// but only stores the `N` requested primes in the output array.
 ///
 /// Set `MEM` such that `MEM*MEM >= upper_limit`.
 ///
@@ -153,24 +153,28 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::TooSmallSieveSize));
 /// assert_eq!(TOO_SMALL_LIMIT, Err(GenerationError::TooSmallLimit));
 /// ```
-///
-/// # Panics
-///
-/// Panics if `MEM` is smaller than `N` or if `MEM`^2 does not fit in a u64.  
-/// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// ```compile_fail
+/// # use const_primes::{primes_lt, GenerationError};
+/// const TOO_SMALL_MEM: Result<[u64; 5], GenerationError> = primes_lt::<5, 2>(20);
+/// ```
+/// ```compile_fail
+/// # use const_primes::{primes_lt, GenerationError};
+/// const TOO_BIG_MEM: Result<[u64; 10], GenerationError> = primes_lt::<10, 1_000_000_000_000>(100);
+/// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_lt<const N: usize, const MEM: usize>(
     mut upper_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    feature_gated_inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    const { assert!(MEM >= N, "`MEM` must be at least as large as `N`") }
 
-    let mem_sqr = feature_gated_inline_const!({
+    let mem_sqr = const {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => mem_sqr,
             None => panic!("`MEM`^2 must fit in a u64"),
         }
-    });
+    };
 
     if upper_limit <= 2 {
         return Err(GenerationError::TooSmallLimit);
@@ -278,7 +282,7 @@ macro_rules! primes_segment {
 /// Returns the `N` smallest primes greater than or equal to `lower_limit`.
 ///
 /// This function uses a segmented sieve of size `MEM` for computation,
-/// but only returns the `N` requested primes in the output array.
+/// but only stores the `N` requested primes in the output array.
 ///
 /// Set `MEM` such that `MEM`^2 is larger than the largest prime you will encounter.
 ///
@@ -327,23 +331,28 @@ macro_rules! primes_segment {
 /// assert_eq!(PRIMES, Err(GenerationError::TooSmallSieveSize));
 /// ```
 ///
-/// # Panics
-///
-/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
-/// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// ```compile_fail
+/// # use const_primes::{primes_geq, GenerationError};
+/// const TOO_SMALL_MEM: Result<[u64; 5], GenerationError> = primes_geq::<5, 2>(20);
+/// ```
+/// ```compile_fail
+/// # use const_primes::{primes_geq, GenerationError};
+/// const TOO_BIG_MEM: Result<[u64; 10], GenerationError> = primes_geq::<10, 1_000_000_000_000>(100);
+/// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn primes_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[u64; N], GenerationError> {
-    feature_gated_inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    const { assert!(MEM >= N, "`MEM` must be at least as large as `N`") }
 
-    let (mem64, mem_sqr) = feature_gated_inline_const!({
+    let (mem64, mem_sqr) = const {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => (mem64, mem_sqr),
             None => panic!("`MEM`^2 must fit in a `u64`"),
         }
-    });
+    };
 
     if N == 0 {
         return Ok([0; N]);
@@ -444,8 +453,7 @@ impl fmt::Display for GenerationError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for GenerationError {}
+impl core::error::Error for GenerationError {}
 
 #[cfg(test)]
 mod test {

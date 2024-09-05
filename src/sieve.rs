@@ -13,8 +13,7 @@ impl fmt::Display for SegmentedSieveError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for SegmentedSieveError {}
+impl core::error::Error for SegmentedSieveError {}
 
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
@@ -130,23 +129,28 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// assert_eq!(PS, Err(SieveError::TooSmallLimit));
 /// ```
 ///
-/// # Panics
-///
-/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
-/// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// ```compile_fail
+/// # use const_primes::{sieve_lt, SieveError};
+/// const TOO_SMALL_MEM: Result<[bool; 5], SieveError> = sieve_lt::<5, 2>(20);
+/// ```
+/// ```compile_fail
+/// # use const_primes::{sieve_lt, SieveError};
+/// const TOO_LARGE_MEM: Result<[bool; 5], SieveError> = sieve_lt::<5, 1_000_000_000_000>(20);
+/// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_lt<const N: usize, const MEM: usize>(
     upper_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    feature_gated_inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    const { assert!(MEM >= N, "`MEM` must be at least as large as `N`") }
 
-    let mem_sqr = feature_gated_inline_const!({
+    let mem_sqr = const {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => mem_sqr,
             None => panic!("`MEM`^2 must fit in a `u64`"),
         }
-    });
+    };
 
     if upper_limit > mem_sqr {
         return Err(SieveError::TooSmallSieveSize);
@@ -263,8 +267,7 @@ impl fmt::Display for SieveError {
     }
 }
 
-#[cfg(feature = "std")]
-impl std::error::Error for SieveError {}
+impl core::error::Error for SieveError {}
 
 /// Returns an array of size `N` that indicates which of the `N` smallest integers greater than or equal to `lower_limit` are prime.
 ///
@@ -315,23 +318,29 @@ impl std::error::Error for SieveError {}
 /// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
 ///
-/// # Panics
 ///
-/// Panics if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.  
-/// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// ```compile_fail
+/// # use const_primes::{sieve_geq, SieveError};
+/// const TOO_SMALL_MEM: Result<[bool; 5], SieveError> = sieve_geq::<5, 2>(100);
+/// ```
+/// ```compile_fail
+/// # use const_primes::{sieve_geq, SieveError};
+/// const TOO_LARGE_MEM: Result<[bool; 5], SieveError> = sieve_geq::<5, 1_000_000_000_000>(100);
+/// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn sieve_geq<const N: usize, const MEM: usize>(
     lower_limit: u64,
 ) -> Result<[bool; N], SieveError> {
-    feature_gated_inline_const!(assert!(MEM >= N, "`MEM` must be at least as large as `N`"));
+    const { assert!(MEM >= N, "`MEM` must be at least as large as `N`") }
 
-    let (mem64, mem_sqr) = feature_gated_inline_const!({
+    let (mem64, mem_sqr) = const {
         let mem64 = MEM as u64;
         match mem64.checked_mul(mem64) {
             Some(mem_sqr) => (mem64, mem_sqr),
             None => panic!("`MEM`^2 must fit in a `u64`"),
         }
-    });
+    };
 
     let Some(upper_limit) = mem64.checked_add(lower_limit) else {
         return Err(SieveError::TotalDoesntFitU64);
