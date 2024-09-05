@@ -6,6 +6,7 @@
 /// # Examples
 ///
 /// Basic usage:
+///
 /// ```
 /// # use const_primes::isqrt;
 /// const ISQRT25: u64 = isqrt(25);
