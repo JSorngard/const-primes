@@ -6,7 +6,7 @@ This file contains the changes to the crate since version 0.4.8.
 
 ### Breaking changes
 
-- Removed the `const_assert` feature, it is now always enabled.
+- Removed the `const_assert` feature, its functionality is now always enabled.
 - Removed the `std` feature, the crate now uses the `Error` trait
  from `core`. The crate is thus always `no_std` compatible.
 
