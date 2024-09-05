@@ -113,6 +113,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// # Example
 ///
 /// Basic usage:
+///
 /// ```
 /// # use const_primes::{primes_lt, GenerationError};
 /// // Sieving up to 100 means the sieve needs to be of size ceil(sqrt(100)) = 10.
@@ -120,8 +121,10 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// const PRIMES: [u64;4] = match primes_lt::<4, 10>(100) {Ok(ps) => ps, Err(_) => panic!()};
 /// assert_eq!(PRIMES, [79, 83, 89, 97]);
 /// ```
+///
 /// Compute limited ranges of large primes. Functions provided by the crate can help you
 /// compute the needed sieve size:
+///
 /// ```
 /// # use const_primes::{primes_lt, GenerationError};
 /// use const_primes::isqrt;
@@ -138,6 +141,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// If the number of primes requested, `N`, is larger than
 /// the number of primes that exists below the `upper_limit` this function
 /// returns an error:
+///
 /// ```
 /// # use const_primes::{primes_lt, GenerationError};
 /// const N: usize = 9;
@@ -146,6 +150,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// ```
 ///
 /// It also returns an error if `upper_limit` is larger than `MEM`^2 or if `upper_limit` is smaller than or equal to 2:
+///
 /// ```
 /// # use const_primes::{primes_lt, GenerationError};
 /// const TOO_LARGE_LIMIT: Result<[u64; 3], GenerationError> = primes_lt::<3, 5>(26);
@@ -153,11 +158,14 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
 /// assert_eq!(TOO_LARGE_LIMIT, Err(GenerationError::TooSmallSieveSize));
 /// assert_eq!(TOO_SMALL_LIMIT, Err(GenerationError::TooSmallLimit));
 /// ```
-/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+///
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`:
+///
 /// ```compile_fail
 /// # use const_primes::{primes_lt, GenerationError};
 /// const TOO_SMALL_MEM: Result<[u64; 5], GenerationError> = primes_lt::<5, 2>(20);
 /// ```
+///
 /// ```compile_fail
 /// # use const_primes::{primes_lt, GenerationError};
 /// const TOO_BIG_MEM: Result<[u64; 10], GenerationError> = primes_lt::<10, 1_000_000_000_000>(100);
@@ -253,9 +261,9 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 /// assert_eq!(PRIMES_LT, Ok([4999999903, 4999999937, 5000000029]));
 /// ```
 ///
-/// # Errors and panics
+/// # Errors
 ///
-/// Has the same error and panic behaviour as [`primes_geq`] and [`primes_lt`], with the exception
+/// Has the same error behaviour as [`primes_geq`] and [`primes_lt`], with the exception
 /// that it sets `MEM` such that the sieve doesn't run out of memory.
 #[macro_export]
 macro_rules! primes_segment {
@@ -293,14 +301,17 @@ macro_rules! primes_segment {
 /// # Examples
 ///
 /// Basic usage:
+///
 /// ```
 /// use const_primes::primes_geq;
 /// // Compute 5 primes larger than 40. The largest will be 59, so `MEM` needs to be at least 8.
 /// const PRIMES: [u64; 5] = match primes_geq::<5, 8>(40) {Ok(ps) => ps, Err(_) => panic!()};
 /// assert_eq!(PRIMES, [41, 43, 47, 53, 59]);
 /// ```
+///
 /// Compute limited ranges of large primes. Functions provided by the crate can help you
 /// compute the needed sieve size:
+///
 /// ```
 /// # use const_primes::{primes_geq, GenerationError};
 /// use const_primes::isqrt;
@@ -316,6 +327,7 @@ macro_rules! primes_segment {
 ///
 /// Only primes smaller than `MEM^2` can be generated, so if the sieve
 /// encounters a number larger than that it results in an error:
+///
 /// ```
 /// # use const_primes::{primes_geq, GenerationError};
 /// const PRIMES: Result<[u64; 3], GenerationError> = primes_geq::<3, 3>(5);
@@ -325,17 +337,20 @@ macro_rules! primes_segment {
 /// ```
 ///
 /// Also returns an error if `lower_limit` is larger than or equal to `MEM^2`:
+///
 /// ```
 /// # use const_primes::{primes_geq, GenerationError};
 /// const PRIMES: Result<[u64; 5], GenerationError> = primes_geq::<5, 5>(26);
 /// assert_eq!(PRIMES, Err(GenerationError::TooSmallSieveSize));
 /// ```
 ///
-/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`:
+///
 /// ```compile_fail
 /// # use const_primes::{primes_geq, GenerationError};
 /// const TOO_SMALL_MEM: Result<[u64; 5], GenerationError> = primes_geq::<5, 2>(20);
 /// ```
+///
 /// ```compile_fail
 /// # use const_primes::{primes_geq, GenerationError};
 /// const TOO_BIG_MEM: Result<[u64; 10], GenerationError> = primes_geq::<10, 1_000_000_000_000>(100);

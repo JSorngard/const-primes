@@ -83,6 +83,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # Examples
 ///
 /// Basic usage
+///
 /// ```
 /// # use const_primes::sieve_lt;
 /// // The five largest numbers smaller than 30 are 25, 26, 27, 28 and 29.
@@ -98,8 +99,10 @@ pub(crate) const fn sieve_segment<const N: usize>(
 ///     [false, false, false, false, true],
 /// );
 /// ```
+///
 /// Sieve limited ranges of large values. Functions provided by the crate can help you
 /// compute the needed sieve size:
+///
 /// ```
 /// # use const_primes::{sieve_lt, SieveError};
 /// use const_primes::isqrt;
@@ -117,23 +120,28 @@ pub(crate) const fn sieve_segment<const N: usize>(
 /// # Errors
 ///
 /// Returns an error if `upper_limit` is larger than `MEM`^2:
+///
 /// ```
 /// # use const_primes::{sieve_lt, SieveError};
 /// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(26);
 /// assert_eq!(PS, Err(SieveError::TooSmallSieveSize));
 /// ```
+///
 /// or smaller than `N`:
+///
 /// ```
 /// # use const_primes::{sieve_lt, SieveError};
 /// const PS: Result<[bool; 5], SieveError> = sieve_lt::<5, 5>(4);
 /// assert_eq!(PS, Err(SieveError::TooSmallLimit));
 /// ```
 ///
-/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`:
+///
 /// ```compile_fail
 /// # use const_primes::{sieve_lt, SieveError};
 /// const TOO_SMALL_MEM: Result<[bool; 5], SieveError> = sieve_lt::<5, 2>(20);
 /// ```
+///
 /// ```compile_fail
 /// # use const_primes::{sieve_lt, SieveError};
 /// const TOO_LARGE_MEM: Result<[bool; 5], SieveError> = sieve_lt::<5, 1_000_000_000_000>(20);
@@ -282,7 +290,8 @@ impl core::error::Error for SieveError {}
 ///
 /// # Examples
 ///
-/// The size of the sieve, `MEM`, must be large enough for the largest sieved number to be smaller than `MEM`^2.
+/// The size of the sieve, `MEM`, must be large enough for the largest sieved number to be smaller than `MEM`^2:
+///
 /// ```
 /// # use const_primes::sieve_geq;
 /// // The three numbers larger than or equal to 9 are 9, 10 and 11.
@@ -294,8 +303,10 @@ impl core::error::Error for SieveError {}
 /// //                        9,     10,    11
 /// assert_eq!(PRIME_STATUS, [false, false, true]);
 /// ```
+///
 /// Sieve limited ranges of large values. Functions provided by the crate can help you
 /// compute the needed sieve size:
+///
 /// ```
 /// # use const_primes::{sieve_geq, SieveError};
 /// use const_primes::isqrt;
@@ -309,7 +320,8 @@ impl core::error::Error for SieveError {}
 ///
 /// # Errors
 ///
-/// Returns an error if `MEM + lower_limit` is larger than `MEM^2` or doesn't fit in a `u64`.
+/// Returns an error if `MEM + lower_limit` is larger than `MEM^2` or doesn't fit in a `u64`:
+///
 /// ```
 /// # use const_primes::{sieve_geq, SieveError};
 /// const P1: Result<[bool; 5], SieveError> = sieve_geq::<5, 5>(21);
@@ -318,12 +330,13 @@ impl core::error::Error for SieveError {}
 /// assert_eq!(P2, Err(SieveError::TotalDoesntFitU64));
 /// ```
 ///
+/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`:
 ///
-/// It is a compile error if `MEM` is smaller than `N`, or if `MEM`^2 does not fit in a `u64`.
 /// ```compile_fail
 /// # use const_primes::{sieve_geq, SieveError};
 /// const TOO_SMALL_MEM: Result<[bool; 5], SieveError> = sieve_geq::<5, 2>(100);
 /// ```
+///
 /// ```compile_fail
 /// # use const_primes::{sieve_geq, SieveError};
 /// const TOO_LARGE_MEM: Result<[bool; 5], SieveError> = sieve_geq::<5, 1_000_000_000_000>(100);
@@ -404,9 +417,9 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 /// );
 /// ```
 ///
-/// # Errors and panics
+/// # Errors
 ///
-/// Has the same error and panic behaviour as [`sieve_geq`] and [`sieve_lt`], with the exception
+/// Has the same error behaviour as [`sieve_geq`] and [`sieve_lt`], with the exception
 /// that it sets `MEM` such that the sieve doesn't run out of memory.
 #[macro_export]
 macro_rules! sieve_segment {
