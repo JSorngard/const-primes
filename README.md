@@ -73,9 +73,9 @@ assert!(CHECK);
 ## Example: generate the three primes after 5000000031
 
 The crate also provides prime generation and sieving functions that can be used
-to work with ranges that don't start at zero, e.g. `primes_geq` and `sieve_lt`.
-These functions can use large sieves to compute large primes, but don't need to
-return the entire sieve, just the requested numbers.
+to work with ranges of large numbers that don't start at zero, e.g.
+`primes_geq` and `sieve_lt`. These functions can use large sieves to compute
+large primes, but don't need to return the entire sieve, just the requested numbers.
 They are most conveniently used through the macros `primes_segment!` and
 `sieve_segment!` that automatically compute the size of the sieve that's needed
 for a certain computation.
