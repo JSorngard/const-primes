@@ -119,6 +119,8 @@ and more!
 
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde)
 for the `Primes` struct, as well as a few others.
+Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays)
+crate to do this, and that crate uses the standard library.
 
 ## License
 

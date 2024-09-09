@@ -106,6 +106,7 @@
 //! # Features
 //!
 //! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`](https://docs.rs/serde/latest/serde/) for the [`Primes`] struct, as well as a few others.
+//! Uses the [`serde_arrays`](https://docs.rs/serde_arrays/0.1.0) crate to do this, and that crate uses the standard library.
 
 #![forbid(unsafe_code)]
 #![no_std]
