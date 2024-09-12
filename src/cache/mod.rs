@@ -49,7 +49,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "zerocopy", derive(zerocopy::AsBytes))]
-#[cfg_attr(feature = "rkyv", derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 #[repr(transparent)]
 pub struct Primes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
