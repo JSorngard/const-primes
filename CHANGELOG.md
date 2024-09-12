@@ -11,6 +11,11 @@ This file contains the changes to the crate since version 0.4.8.
  from `core`. The crate is thus always `no_std` compatible.
  If the `serde` feature is enabled the crate uses the [`serde_arrays`](https://crates.io/crates/serde_arrays)
  crate to serialize the type, and that crate in turn uses the standard library.
+- Removed the implementations of `PartialEq`, `Eq`, `PartialOrd`, and `Ord` from
+ `Primes`. To perform comparisons of the numbers in the struct with arrays or
+ slices you can call `as_array` or `as_slice`. The reson for the removal is that
+ every instance of `Primes<N>` for a given `N` is the same, which means that
+ comparisons and orderings are pointless, since `N` is part of the type signature.
 
 These changes mean that the MSRV of the crate is increased from 1.67.1 to 1.81.0.
 
@@ -18,6 +23,9 @@ These changes mean that the MSRV of the crate is increased from 1.67.1 to 1.81.0
 
 - Added the `zerocopy` feature that derives the `AsBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy)
  crate for the `Primes<N>` struct.
+- Added the `rkyv` feature that derives the `Serialize`, `Deserialize`, and `Archive`
+ traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes<N>`
+ struct.
 
 ## 0.8.7
 

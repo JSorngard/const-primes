@@ -105,10 +105,12 @@
 //!
 //! # Features
 //!
-//! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from [`serde`] for the [`Primes`] struct, as well as a few others.
+//! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from the [`serde`] crte for the [`Primes`] struct, as well as a few others.
 //! Uses the [`serde_arrays`](https://docs.rs/serde_arrays/0.1.0) crate to do this, and that crate uses the standard library.
 //!
-//! `zerocopy`: derives the [`AsBytes`](zerocopy::AsBytes) trait from [`zerocopy`] for the [`Primes`] struct.
+//! `zerocopy`: derives the [`AsBytes`](zerocopy::AsBytes) trait from the [`zerocopy`] crate for the [`Primes`] struct.
+//!
+//! `rkyv`: derives the [`Serialize`](rkyv::Serialize), [`Deserialize`](rkyv::Deserialize), and [`Archive`](rkyv::Archive) traits from the [`rkyv`] crate for the [`Primes`] struct.
 
 #![forbid(unsafe_code)]
 #![no_std]
@@ -320,6 +322,14 @@ mod test {
         for &prime in &CACHE {
             assert_eq!(CACHE.totient(prime), Ok(prime - 1));
         }
+    }
+
+    #[cfg(feature = "zerocopy")]
+    #[test]
+    fn test_as_bytes() {
+        use zerocopy::AsBytes;
+        const P: Primes<3> = Primes::new();
+        assert_eq!(P.as_bytes(), &[2, 0, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0]);
     }
 
     // region: test data
