@@ -11,7 +11,7 @@ This file contains the changes to the crate since version 0.4.8.
  from `core`. The crate is thus always `no_std` compatible.
  If the `serde` feature is enabled the crate uses the [`serde_arrays`](https://crates.io/crates/serde_arrays)
  crate to serialize the type, and that crate in turn uses the standard library.
-- Replaced the implementations of `PartialEq`, `Eq`, `PartialOrd`, and `Ord` from
+- Replaced the implementations of `PartialEq`, `Eq`, `PartialOrd`, and `Ord` on
  `Primes` with just the default derives.
  To perform comparisons of the numbers in the struct with arrays or
  slices you can call `as_array` or `as_slice`.
