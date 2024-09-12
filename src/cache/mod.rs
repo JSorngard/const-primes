@@ -46,7 +46,7 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(CACHE.is_prime(1000), None);
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
-#[derive(Debug, Clone, Copy, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "zerocopy", derive(zerocopy::AsBytes))]
 #[cfg_attr(
