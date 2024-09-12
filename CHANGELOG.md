@@ -21,9 +21,9 @@ These changes mean that the MSRV of the crate is increased from 1.67.1 to 1.81.0
 ### Other changes
 
 - Added the `zerocopy` feature that derives the `AsBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy)
- crate for the `Primes<N>` struct.
+ crate for the `Primes` struct.
 - Added the `rkyv` feature that derives the `Serialize`, `Deserialize`, and `Archive`
- traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes<N>`
+ traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes`
  struct.
 
 ## 0.8.7
