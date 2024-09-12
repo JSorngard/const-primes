@@ -13,7 +13,7 @@ This file contains the changes to the crate since version 0.4.8.
  crate to serialize the type, and that crate in turn uses the standard library.
 - Removed the implementations of `PartialEq`, `Eq`, `PartialOrd`, and `Ord` from
  `Primes`. To perform comparisons of the numbers in the struct with arrays or
- slices you can call `as_array` or `as_slice`. The reson for the removal is that
+ slices you can call `as_array` or `as_slice`. The reason for the removal is that
  every instance of `Primes<N>` for a given `N` is the same, which means that
  comparisons and orderings are pointless, since `N` is part of the type signature.
 
