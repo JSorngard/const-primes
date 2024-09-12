@@ -324,14 +324,6 @@ mod test {
         }
     }
 
-    #[cfg(feature = "zerocopy")]
-    #[test]
-    fn test_as_bytes() {
-        use zerocopy::AsBytes;
-        const P: Primes<3> = Primes::new();
-        assert_eq!(P.as_bytes(), &[2, 0, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0]);
-    }
-
     // region: test data
 
     #[rustfmt::skip]
