@@ -109,7 +109,7 @@
 //! Uses the [`serde_arrays`](https://docs.rs/serde_arrays/0.1.0) crate to do this, and that crate uses the standard library.
 //!
 //! `zerocopy`: derives the [`AsBytes`](zerocopy::AsBytes) trait from the [`zerocopy`] crate for the [`Primes`] struct.
-//! 
+//!
 //! `rkyv`: derives the [`Serialize`](rkyv::Serialize), [`Deserialize`](rkyv::Deserialize), and [`Archive`](rkyv::Archive) traits from the [`rkyv`] crate for the [`Primes`] struct.
 
 #![forbid(unsafe_code)]
