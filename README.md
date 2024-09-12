@@ -122,6 +122,9 @@ for the `Primes` struct, as well as a few others.
 Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays)
 crate to do this, and that crate uses the standard library.
 
+`zerocopy`: derives the `AsBytes` trait from [`zerocopy`](https://crates.io/crates/zerocopy)
+for the `Primes` struct.
+
 ## License
 
 Licensed under either of

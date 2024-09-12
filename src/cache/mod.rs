@@ -45,6 +45,8 @@ use serde::{Deserialize, Serialize};
 /// ```
 #[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "zerocopy", derive(zerocopy::AsBytes))]
+#[repr(transparent)]
 pub struct Primes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );

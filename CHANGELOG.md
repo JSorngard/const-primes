@@ -14,6 +14,11 @@ This file contains the changes to the crate since version 0.4.8.
 
 These changes mean that the MSRV of the crate is increased from 1.67.1 to 1.81.0.
 
+### Other changes
+
+- Added the `zerocopy` feature that derives the `AsBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy)
+ crate for the `Primes<N>` struct.
+
 ## 0.8.7
 
 - Sped up `is_prime` by checking fewer witnesses in the Miller-Rabin test.

@@ -12,6 +12,7 @@ repository = "https://github.com/JSorngard/const-primes/"
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_arrays = { version = "0.1.0", optional = true }
+zerocopy = { version = "0.7", default-features = false, features = ["derive"], optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
@@ -21,6 +22,9 @@ rand = { version = "0.8", default-features = false, features = ["small_rng"] }
 # Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
 # Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays) crate to do this, and that crate uses the standard library.
 serde = ["dep:serde", "dep:serde_arrays"]
+
+# Derives the `AsBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy) crate for the `Primes` struct.
+zerocopy = ["dep:zerocopy"]
 
 [package.metadata.docs.rs]
 # Document all features.
