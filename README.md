@@ -126,7 +126,7 @@ crate to do this, and that crate uses the standard library.
 for the `Primes` struct.
 
 `rkyv`: derives the `Serialize`, `Deserialize`, and `Archive` traits from the
-[`rkyv`](https://crates.io/crates/rkyv) crate for the [`Primes`] struct.
+[`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
 
 ## License
 
