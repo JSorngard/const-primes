@@ -284,9 +284,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.19.0"
+version = "1.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
+checksum = "33ea5043e58958ee56f3e15a90aee535795cd7dfd319846288d93c5b57d85cbe"
 
 [[package]]
 name = "oorandom"
@@ -435,15 +435,15 @@ checksum = "7a66a03ae7c801facd77a29370b4faec201768915ac14a721ba36f20bc9c209b"
 
 [[package]]
 name = "rend"
-version = "0.5.0"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc8d57aa48e8477046d7d6296d920a1f50bbbaf45047ec46c52f6d6cccea7ef7"
+checksum = "a31c1f1959e4db12c985c0283656be0925f1539549db1e47c4bd0b8b599e1ef7"
 
 [[package]]
 name = "rkyv"
-version = "0.8.1"
+version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a1dfb7c03271e31aad881e521cfe25bda0206ee94b1af152957f4f49e25ee23"
+checksum = "de7db7bb8862f86323f415d8f8bbe97502b3a8303bffd0bb782dff76a01c7e14"
 dependencies = [
  "munge",
  "ptr_meta",
@@ -454,9 +454,9 @@ dependencies = [
 
 [[package]]
 name = "rkyv_derive"
-version = "0.8.1"
+version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa3ca4a30c576aeb76aea84370da286f74d12d32029da8caec3d53b5a36a7539"
+checksum = "a50ce6e994a2f8a682fd75ecd13ddcc26447ad50b5dc13d2a41c88064d24041c"
 dependencies = [
  "proc-macro2",
  "quote",
