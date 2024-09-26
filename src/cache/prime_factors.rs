@@ -7,6 +7,10 @@ use core::iter::FusedIterator;
 /// Created by the [`prime_factorization`](super::Primes::prime_factorization) function on [`Primes`](super::Primes),
 /// see it for more information.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
 pub struct PrimeFactorization<'a> {
     primes_cache: &'a [Underlying],

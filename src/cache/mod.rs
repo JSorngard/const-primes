@@ -11,9 +11,6 @@ pub use primes_iter::PrimesIter;
 
 use crate::{primes, Underlying};
 
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-
 // region: Primes<N>
 
 /// A wrapper around an array that consists of the first `N` primes. Can use those primes for related computations.
@@ -47,7 +44,7 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "zerocopy", derive(zerocopy::AsBytes))]
 #[cfg_attr(
     feature = "rkyv",
@@ -567,7 +564,11 @@ impl<const N: usize> Primes<N> {
 
 /// Contains the result of a partially successful evaluation of the [`totient`](Primes::totient) function.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub struct PartialTotient {
     /// The result of computing the totient function with only the primes in the related [`Primes`] struct.
     pub totient_using_known_primes: Underlying,

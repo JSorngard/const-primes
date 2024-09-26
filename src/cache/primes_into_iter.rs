@@ -6,7 +6,13 @@ use super::Underlying;
 ///
 /// Created by the [`IntoIterator`] implementation on [`Primes`](super::Primes).
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
+#[cfg_attr(feature = "zerocopy", derive(zerocopy::AsBytes))]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
+#[repr(transparent)]
 pub struct PrimesIntoIter<const N: usize>(core::array::IntoIter<Underlying, N>);
 
 impl<const N: usize> PrimesIntoIter<N> {
