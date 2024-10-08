@@ -24,7 +24,7 @@ rand = { version = "0.8", default-features = false, features = ["small_rng"] }
 # Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays) crate to do this, and that crate uses the standard library.
 serde = ["dep:serde", "dep:serde_arrays"]
 
-# Derives the `AsBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy) crate for the `Primes` struct.
+# Derives the `IntoBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy) crate for the `Primes` struct.
 zerocopy = ["dep:zerocopy"]
 
 # Derives the `Serialize`, `Deserialize`, and `Archive` traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
