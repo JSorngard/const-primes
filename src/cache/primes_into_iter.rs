@@ -15,7 +15,7 @@ use super::Underlying;
     derive(zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout)
 )]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
-#[repr(transparent)]
+#[cfg_attr(feature = "zerocopy", repr(transparent))]
 pub struct PrimesIntoIter<const N: usize>(core::array::IntoIter<Underlying, N>);
 
 impl<const N: usize> PrimesIntoIter<N> {

@@ -53,7 +53,7 @@ use crate::{primes, Underlying};
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
 )]
-#[repr(transparent)]
+#[cfg_attr(feature = "zerocopy", repr(transparent))]
 pub struct Primes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );

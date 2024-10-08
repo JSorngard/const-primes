@@ -15,7 +15,7 @@ use core::iter::FusedIterator;
     derive(zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout)
 )]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
-#[repr(transparent)]
+#[cfg_attr(feature = "zerocopy", repr(transparent))]
 pub struct PrimesIter<'a>(core::slice::Iter<'a, Underlying>);
 
 impl<'a> PrimesIter<'a> {
