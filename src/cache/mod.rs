@@ -45,7 +45,10 @@ use crate::{primes, Underlying};
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "zerocopy", derive(zerocopy::AsBytes))]
+#[cfg_attr(
+    feature = "zerocopy",
+    derive(zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout)
+)]
 #[cfg_attr(
     feature = "rkyv",
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
@@ -916,7 +919,7 @@ mod test {
     #[cfg(feature = "zerocopy")]
     #[test]
     fn test_as_bytes() {
-        use zerocopy::AsBytes;
+        use zerocopy::IntoBytes;
         const P: Primes<3> = Primes::new();
         assert_eq!(P.as_bytes(), &[2, 0, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0]);
     }
