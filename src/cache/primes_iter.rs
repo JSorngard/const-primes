@@ -6,7 +6,16 @@ use core::iter::FusedIterator;
 /// Created by the [`iter`](super::Primes::iter) function on [`Primes`](super::Primes),
 /// see it for more information.
 #[derive(Debug, Clone)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
+#[cfg_attr(
+    feature = "zerocopy",
+    derive(zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout)
+)]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
+#[cfg_attr(feature = "zerocopy", repr(transparent))]
 pub struct PrimesIter<'a>(core::slice::Iter<'a, Underlying>);
 
 impl<'a> PrimesIter<'a> {

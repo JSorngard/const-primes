@@ -1,37 +1,38 @@
 [package]
 name = "const-primes"
 authors = ["Johanna Sörngård <jsorngard@gmail.com>"]
-version = "0.8.7"
+version = "0.9.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 keywords = ["const", "primes", "no_std", "prime-numbers"]
 categories = ["mathematics", "no-std", "no-std::no-alloc", "algorithms"]
 description = "Work with prime numbers in const contexts. Prime generation, primality testing, prime counting, and more."
 repository = "https://github.com/JSorngard/const-primes/"
-rust-version = "1.67.1"
 
 [dependencies]
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_arrays = { version = "0.1.0", optional = true }
+zerocopy = { version = "0.8", default-features = false, features = ["derive"], optional = true }
+rkyv = { version = "0.8", default-features = false, optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
-rand = "0.8"
+rand = { version = "0.8", default-features = false, features = ["small_rng"] }
 
 [features]
-# Implements the `Error` trait from the standard library for the error types.
-std = []
-# Promotes panics that involve only const generics into compile errors. Increases the MSRV of the crate to 1.79.0.
-const_assert = []
-# Derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde) for the `Primes` struct, as well as a few others.
+# Derives the `Serialize` and `Deserialize` traits from the [`serde`](https://crates.io/crates/serde) crate for the `Primes` struct, as well as a few others.
+# Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays) crate to do this, and that crate uses the standard library.
 serde = ["dep:serde", "dep:serde_arrays"]
 
-# docs.rs-specific configuration. Taken from <https://stackoverflow.com/a/61417700/>.
+# Derives the `IntoBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy) crate for the `Primes` struct.
+zerocopy = ["dep:zerocopy"]
+
+# Derives the `Serialize`, `Deserialize`, and `Archive` traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
+rkyv = ["dep:rkyv"]
+
 [package.metadata.docs.rs]
 # Document all features.
 all-features = true
-# Enable the docsrs configuration attribute on docs.rs
-rustdoc-args = ["--cfg", "docsrs"]
 
 [[bench]]
 name = "prime_benches"

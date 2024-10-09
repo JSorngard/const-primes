@@ -11,9 +11,6 @@ pub use primes_iter::PrimesIter;
 
 use crate::{primes, Underlying};
 
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-
 // region: Primes<N>
 
 /// A wrapper around an array that consists of the first `N` primes. Can use those primes for related computations.
@@ -22,14 +19,17 @@ use serde::{Deserialize, Serialize};
 ///
 /// # Examples
 ///
-/// Basic usage
+/// Basic usage:
+///
 /// ```
 /// # use const_primes::Primes;
 /// const PRIMES: Primes<3> = Primes::new();
 /// assert_eq!(PRIMES[2], 5);
-/// assert_eq!(PRIMES, [2, 3, 5]);
+/// assert_eq!(PRIMES.as_array(), &[2, 3, 5]);
 /// ```
-/// Reuse sieved primes for other computations
+///
+/// Reuse sieved primes for other computations:
+///
 /// ```
 /// # use const_primes::Primes;
 /// const CACHE: Primes<100> = Primes::new();
@@ -43,8 +43,17 @@ use serde::{Deserialize, Serialize};
 /// assert_eq!(CACHE.is_prime(1000), None);
 /// assert_eq!(CACHE.count_primes_leq(1000), None);
 /// ```
-#[derive(Debug, Clone, Copy, Eq, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "zerocopy",
+    derive(zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout)
+)]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
+#[cfg_attr(feature = "zerocopy", repr(transparent))]
 pub struct Primes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );
@@ -56,37 +65,44 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Examples
     ///
-    /// Basic usage
+    /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<3> = Primes::new();
-    /// assert_eq!(PRIMES, [2, 3, 5]);
+    /// assert_eq!(PRIMES.as_array(), &[2, 3, 5]);
     /// ```
+    ///
     /// Determine `N` through type inference
+    ///
     /// ```
     /// # use const_primes::Primes;
-    /// assert_eq!(Primes::new(), [2, 3, 5, 7, 11]);
+    /// assert_eq!(Primes::new().as_array(), &[2, 3, 5, 7, 11]);
     /// ```
+    ///
     /// Specify `N` manually
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// let primes = Primes::<5>::new();
-    /// assert_eq!(primes, [2, 3, 5, 7, 11]);
+    /// assert_eq!(primes.as_array(), &[2, 3, 5, 7, 11]);
     /// ```
     ///
     /// # Panics
     ///
     /// Panics if `N` is 0, which is a compile error in const contexts:
+    ///
     /// ```compile_fail
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
+    ///
     /// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
     ///
     /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
-        feature_gated_inline_const!(assert!(N > 0, "`N` must be at least 1"));
+        const { assert!(N > 0, "`N` must be at least 1") }
         Self(primes())
     }
 
@@ -96,7 +112,8 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Example
     ///
-    /// Basic usage
+    /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<100> = Primes::new();
@@ -129,6 +146,7 @@ impl<const N: usize> Primes<N> {
     /// # Example
     ///
     /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
@@ -167,6 +185,7 @@ impl<const N: usize> Primes<N> {
     /// # Examples
     ///
     /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// // Contains the primes [2, 3, 5]
@@ -174,14 +193,18 @@ impl<const N: usize> Primes<N> {
     ///
     /// assert_eq!(CACHE.prime_factorization(15).collect::<Vec<_>>(), &[(3, 1), (5, 1)]);
     /// ```
+    ///
     /// The second element of the returned tuples is the multiplicity of the prime in the number:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
     /// // 1024 = 2^10
     /// assert_eq!(CACHE.prime_factorization(1024).next(), Some((2, 10)));
     /// ```
+    ///
     /// 294 has 7 as a prime factor, but 7 is not in the cache:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
@@ -218,7 +241,9 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(CACHE.prime_factors(3*5).collect::<Vec<_>>(), &[3, 5]);
     /// assert_eq!(CACHE.prime_factors(2*2*2*2*3).collect::<Vec<_>>(), &[2, 3]);
     /// ```
+    ///
     /// 294 has 7 as a prime factor, but 7 is not in the cache:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// # const CACHE: Primes<3> = Primes::new();
@@ -312,6 +337,7 @@ impl<const N: usize> Primes<N> {
     /// # Example
     ///
     /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// // [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
@@ -351,7 +377,8 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Example
     ///
-    /// Basic usage
+    /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: [u32; 5] = Primes::new().into_array();
@@ -382,6 +409,7 @@ impl<const N: usize> Primes<N> {
     /// # Example
     ///
     /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<10> = Primes::new();
@@ -403,7 +431,8 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Example
     ///
-    /// Basic usage
+    /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<5> = Primes::new();
@@ -424,7 +453,8 @@ impl<const N: usize> Primes<N> {
     ///
     /// # Example
     ///
-    /// Basic usage
+    /// Basic usage:
+    ///
     /// ```
     /// # use const_primes::Primes;
     /// const PRIMES: Primes<5> = Primes::new();
@@ -442,6 +472,8 @@ impl<const N: usize> Primes<N> {
     /// Returns the number of primes in `self`.
     ///
     /// # Example
+    ///
+    /// Basic usage:
     ///
     /// ```
     /// # use const_primes::Primes;
@@ -482,6 +514,7 @@ impl<const N: usize> Primes<N> {
     /// The number 2450 is equal to 2\*5\*5\*7\*7.
     /// If the cache does not contain 7 the function runs out of primes after 5,
     /// and can not finish the computation:
+    ///
     /// ```
     /// # use const_primes::{Primes, cache::PartialTotient};
     /// // Contains the primes [2, 3, 5]
@@ -534,7 +567,11 @@ impl<const N: usize> Primes<N> {
 
 /// Contains the result of a partially successful evaluation of the [`totient`](Primes::totient) function.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(
+    feature = "rkyv",
+    derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
+)]
 pub struct PartialTotient {
     /// The result of computing the totient function with only the primes in the related [`Primes`] struct.
     pub totient_using_known_primes: Underlying,
@@ -546,7 +583,7 @@ impl<const N: usize> Default for Primes<N> {
     /// Panics if `N` is 0.  
     /// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
     fn default() -> Self {
-        feature_gated_inline_const!(assert!(N > 0, "`N` must be at least 1"));
+        const { assert!(N > 0, "`N` must be at least 1") }
         Self(primes())
     }
 }
@@ -608,64 +645,6 @@ impl<'a, const N: usize> IntoIterator for &'a Primes<N> {
 
 // endregion: IntoIterator
 
-// region: PartialEq
-
-impl<const N: usize, T: PartialEq<[Underlying; N]>> PartialEq<T> for Primes<N> {
-    #[inline]
-    fn eq(&self, other: &T) -> bool {
-        other == &self.0
-    }
-}
-
-impl<const N: usize> PartialEq<Primes<N>> for [Underlying; N] {
-    #[inline]
-    fn eq(&self, other: &Primes<N>) -> bool {
-        self == &other.0
-    }
-}
-
-impl<const N: usize> PartialEq<Primes<N>> for &[Underlying] {
-    #[inline]
-    fn eq(&self, other: &Primes<N>) -> bool {
-        self == &other.0
-    }
-}
-
-impl<const N: usize> PartialEq<[Underlying]> for Primes<N> {
-    #[inline]
-    fn eq(&self, other: &[Underlying]) -> bool {
-        self.0 == other
-    }
-}
-
-// endregion: PartialEq
-
-// region: PartialOrd
-
-use core::cmp::Ordering;
-impl<const N: usize, T: PartialOrd<[Underlying; N]>> PartialOrd<T> for Primes<N> {
-    #[inline]
-    fn partial_cmp(&self, other: &T) -> Option<Ordering> {
-        other.partial_cmp(&self.0)
-    }
-}
-
-impl<const N: usize> PartialOrd<Primes<N>> for [Underlying; N] {
-    #[inline]
-    fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
-        other.0.partial_cmp(self)
-    }
-}
-
-impl<const N: usize> PartialOrd<Primes<N>> for &[Underlying] {
-    #[inline]
-    fn partial_cmp(&self, other: &Primes<N>) -> Option<Ordering> {
-        other.0.as_slice().partial_cmp(self)
-    }
-}
-
-// endregion: PartialOrd
-
 // endregion: Primes<N>
 
 #[cfg(test)]
@@ -677,29 +656,10 @@ mod test {
     // region: TraitImpls
 
     #[test]
-    fn partial_eq_impl() {
-        const P1: Primes<3> = Primes::new();
-        macro_rules! partial_eq_check {
-            ($($t:ident),+) => {
-                $(
-                    assert_eq!(P1, $t);
-                    assert_eq!(&P1, &$t);
-                    assert_eq!(&$t, &P1);
-                    assert_eq!($t, P1);
-                )+
-            };
-        }
-        let v = [2, 3, 5];
-        let s = v.as_slice();
-        partial_eq_check!(v, s);
-    }
-
-    #[test]
     fn verify_impl_from_primes_traits() {
         const N: usize = 10;
         const P: Primes<N> = Primes::new();
         let p: [Underlying; N] = P.into();
-        assert_eq!(P, p);
         assert_eq!(p, P.as_ref());
         assert_eq!(
             P.as_array(),
@@ -956,17 +916,11 @@ mod test {
         }
     }
 
-    #[cfg(not(feature = "const_assert"))]
+    #[cfg(feature = "zerocopy")]
     #[test]
-    #[should_panic]
-    fn check_panic_on_empty_new() {
-        let _primes = Primes::<0>::new();
-    }
-
-    #[cfg(not(feature = "const_assert"))]
-    #[test]
-    #[should_panic]
-    fn test_panic_on_empty_default() {
-        let _primes = Primes::<0>::default();
+    fn test_as_bytes() {
+        use zerocopy::IntoBytes;
+        const P: Primes<3> = Primes::new();
+        assert_eq!(P.as_bytes(), &[2, 0, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0]);
     }
 }
