@@ -71,3 +71,9 @@ impl<const N: usize> Default for ExtendingPrimes<N> {
         Self::new()
     }
 }
+
+impl<const N: usize> AsRef<[Underlying]> for ExtendingPrimes<N> {
+    fn as_ref(&self) -> &[Underlying] {
+        self.as_slice()
+    }
+}
