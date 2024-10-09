@@ -57,6 +57,26 @@ impl<const N: usize> ExtendingPrimes<N> {
     pub fn is_empty(&self) -> bool {
         self.as_slice().is_empty()
     }
+
+    pub fn last(&self) -> Option<u32> {
+        self.as_slice().last().copied()
+    }
+
+    /// Extends the cache such that it includes the prime status of the given number.
+    ///
+    /// If the number is prime the cache is extended to the number,
+    /// if it is not prime it is extended to the next prime.
+    pub fn extend_to(&mut self, number: Underlying) {
+        let largest = self.last().unwrap_or(0);
+
+        if largest >= number {
+            // If we already include the prime status of the given number in the cahce
+            // we do not have to do anything.
+            return;
+        }
+
+        todo!("sieve ever growing ranges for primes")
+    }
 }
 
 impl<const N: usize, I: SliceIndex<[Underlying]>> Index<I> for ExtendingPrimes<N> {
