@@ -117,6 +117,8 @@ and more!
 
 ## Features
 
+`alloc`: depends on the `alloc` crate. Enables the automatically extending cache.
+
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde)
 for the `Primes` struct, as well as a few others.
 Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays)

@@ -1,6 +1,10 @@
+extern crate alloc;
+
 use crate::{Primes, Underlying};
 
 use core::{ops::Index, slice::SliceIndex};
+
+use alloc::vec::Vec;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum ExtendingPrimes<const N: usize> {

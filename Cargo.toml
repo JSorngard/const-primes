@@ -20,6 +20,9 @@ criterion = { version = "0.5", features = ["html_reports"] }
 rand = { version = "0.8", default-features = false, features = ["small_rng"] }
 
 [features]
+# Depends on the `alloc` crate. Enables the automatically extending cache.
+alloc = []
+
 # Derives the `Serialize` and `Deserialize` traits from the [`serde`](https://crates.io/crates/serde) crate for the `Primes` struct, as well as a few others.
 # Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays) crate to do this, and that crate uses the standard library.
 serde = ["dep:serde", "dep:serde_arrays"]

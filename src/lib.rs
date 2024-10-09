@@ -105,6 +105,8 @@
 //!
 //! # Features
 //!
+//! `alloc`: depends on the [`alloc`] crate. Enables [`ExtendingPrimes`].
+//!
 //! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from the [`serde`] crte for the [`Primes`] struct, as well as a few others.
 //! Uses the [`serde_arrays`](https://docs.rs/serde_arrays/0.1.0) crate to do this, and that crate uses the standard library.
 //!
@@ -124,7 +126,7 @@ type Underlying = u32;
 pub mod cache;
 mod check;
 mod count;
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 pub mod extending_cache;
 mod generate;
 mod integer_math;
@@ -134,7 +136,7 @@ mod sieve;
 pub use cache::Primes;
 pub use check::is_prime;
 pub use count::count_primes;
-#[cfg(feature = "std")]
+#[cfg(feature = "alloc")]
 pub use extending_cache::ExtendingPrimes;
 pub use generate::{primes, primes_geq, primes_lt, GenerationError};
 pub use integer_math::isqrt;
