@@ -11,7 +11,9 @@ pub struct ExtendingPrimes<const N: usize>(Inner<N>);
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 enum Inner<const N: usize> {
+    /// The primes are stored in an array on the stack.
     Stack(Primes<N>),
+    /// The primes are stored in a `Vec` on the heap.
     Heap(Vec<Underlying>),
 }
 
@@ -46,6 +48,14 @@ impl<const N: usize> ExtendingPrimes<N> {
                 }
             }
         }
+    }
+
+    pub fn len(&self) -> usize {
+        self.as_slice().len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.as_slice().is_empty()
     }
 }
 
