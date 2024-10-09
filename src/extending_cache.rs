@@ -7,7 +7,10 @@ use core::{ops::Index, slice::SliceIndex};
 use alloc::vec::Vec;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub enum ExtendingPrimes<const N: usize> {
+pub struct ExtendingPrimes<const N: usize>(Inner<N>);
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+enum Inner<const N: usize> {
     Stack(Primes<N>),
     Heap(Vec<Underlying>),
 }
@@ -15,16 +18,16 @@ pub enum ExtendingPrimes<const N: usize> {
 impl<const N: usize> ExtendingPrimes<N> {
     pub const fn new() -> Self {
         if N > 0 {
-            Self::Stack(Primes::new())
+            Self(Inner::Stack(Primes::new()))
         } else {
-            Self::Heap(Vec::new())
+            Self(Inner::Heap(Vec::new()))
         }
     }
 
     pub fn as_slice(&self) -> &[Underlying] {
-        match self {
-            Self::Stack(a) => a.as_slice(),
-            Self::Heap(v) => v.as_slice(),
+        match self.0 {
+            Inner::Stack(ref a) => a.as_slice(),
+            Inner::Heap(ref v) => v.as_slice(),
         }
     }
 
