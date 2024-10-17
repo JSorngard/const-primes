@@ -8,12 +8,12 @@ use crate::sieve;
 ///
 /// Basic usage
 /// ```
-/// # use const_primes::count_primes;
-/// const COUNTS: [usize; 10] = count_primes();
+/// # use const_primes::prime_pi;
+/// const COUNTS: [usize; 10] = prime_pi();
 /// assert_eq!(COUNTS, [0, 0, 1, 2, 2, 3, 3, 4, 4, 4]);
 /// ```
 #[must_use = "the function only returns a new value"]
-pub const fn count_primes<const N: usize>() -> [usize; N] {
+pub const fn prime_pi<const N: usize>() -> [usize; N] {
     let mut counts = [0; N];
     if N <= 2 {
         return counts;

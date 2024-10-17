@@ -25,7 +25,7 @@
 //! assert_eq!(CHECK_541, Some(true));
 //!
 //! // Prime counting
-//! const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
+//! const PRIMES_LEQ_100: Option<usize> = CACHE.prime_pi(100);
 //! assert_eq!(PRIMES_LEQ_100, Some(25));
 //!
 //! // Prime factorization
@@ -34,7 +34,7 @@
 //!
 //! // If questions are asked about numbers outside the cache it returns None
 //! assert!(CACHE.is_prime(1000).is_none());
-//! assert!(CACHE.count_primes_leq(1000).is_none());
+//! assert!(CACHE.prime_pi(1000).is_none());
 //! ```
 //!
 //! Want only the numbers? Use the function [`primes`], or convert the cache into an array:
@@ -135,7 +135,7 @@ mod sieve;
 
 pub use cache::Primes;
 pub use check::is_prime;
-pub use count::count_primes;
+pub use count::prime_pi;
 #[cfg(feature = "alloc")]
 pub use extending_cache::ExtendingPrimes;
 pub use generate::{primes, primes_geq, primes_lt, GenerationError};
@@ -198,7 +198,7 @@ mod test {
                 $(
                     {
                         const N: usize = $n;
-                        const PRIME_COUNTS: [usize; N] = count_primes();
+                        const PRIME_COUNTS: [usize; N] = prime_pi();
                         let mut counts = [0; N];
                         for n in 0..N {
                             let mut i = 0;
@@ -208,7 +208,7 @@ mod test {
                             }
                         }
                         assert_eq!(PRIME_COUNTS, counts);
-                        assert_eq!(counts, count_primes());
+                        assert_eq!(counts, prime_pi());
                     }
                 )+
             };

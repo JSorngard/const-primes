@@ -15,6 +15,7 @@ This file contains the changes to the crate since version 0.4.8.
  `Primes` with just the default derives.
  To perform comparisons of the numbers in the struct with arrays or
  slices you can call `as_array` or `as_slice`.
+- Renamed the `count_primes_leq` function to the more expected name `prime_pi`
 
 These changes mean that the MSRV of the crate is increased from 1.67.1 to 1.81.0.
 
