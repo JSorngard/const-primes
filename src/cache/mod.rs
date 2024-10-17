@@ -34,14 +34,14 @@ use crate::{primes, Underlying};
 /// # use const_primes::Primes;
 /// const CACHE: Primes<100> = Primes::new();
 /// const PRIME_CHECK: Option<bool> = CACHE.is_prime(541);
-/// const PRIME_COUNT: Option<usize> = CACHE.count_primes_leq(200);
+/// const PRIME_COUNT: Option<usize> = CACHE.prime_pi(200);
 ///
 /// assert_eq!(PRIME_CHECK, Some(true));
 /// assert_eq!(PRIME_COUNT, Some(46));
 ///
 /// // If questions are asked about numbers outside the cache it returns None
 /// assert_eq!(CACHE.is_prime(1000), None);
-/// assert_eq!(CACHE.count_primes_leq(1000), None);
+/// assert_eq!(CACHE.prime_pi(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -150,16 +150,16 @@ impl<const N: usize> Primes<N> {
     /// ```
     /// # use const_primes::Primes;
     /// const CACHE: Primes<100> = Primes::new();
-    /// const COUNT1: Option<usize> = CACHE.count_primes_leq(500);
-    /// const COUNT2: Option<usize> = CACHE.count_primes_leq(11);
-    /// const OUT_OF_BOUNDS: Option<usize> = CACHE.count_primes_leq(1_000);
+    /// const COUNT1: Option<usize> = CACHE.prime_pi(500);
+    /// const COUNT2: Option<usize> = CACHE.prime_pi(11);
+    /// const OUT_OF_BOUNDS: Option<usize> = CACHE.prime_pi(1_000);
     ///
     /// assert_eq!(COUNT1, Some(95));
     /// assert_eq!(COUNT2, Some(5));
     /// assert_eq!(OUT_OF_BOUNDS, None);
     /// ```
     #[must_use = "the method only returns a new value and does not modify `self`"]
-    pub const fn count_primes_leq(&self, n: Underlying) -> Option<usize> {
+    pub const fn prime_pi(&self, n: Underlying) -> Option<usize> {
         match self.binary_search(n) {
             Ok(i) => Some(i + 1),
             Err(maybe_i) => {
@@ -860,11 +860,11 @@ mod test {
         const P: Primes<N> = Primes::new();
 
         for (n, count) in PRIME_COUNTS.iter().enumerate().take(N) {
-            assert_eq!(P.count_primes_leq(n as u32), Some(*count));
+            assert_eq!(P.prime_pi(n as u32), Some(*count));
         }
 
         for n in *P.last() + 1..*P.last() * 2 {
-            assert!(P.count_primes_leq(n).is_none());
+            assert!(P.prime_pi(n).is_none());
         }
     }
 
