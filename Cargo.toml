@@ -18,6 +18,7 @@ rkyv = { version = "0.8", default-features = false, optional = true }
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
 rand = { version = "0.8", default-features = false, features = ["small_rng"] }
+serde_json = "1.0"
 
 [features]
 # Derives the `Serialize` and `Deserialize` traits from the [`serde`](https://crates.io/crates/serde) crate for the `Primes` struct, as well as a few others.
