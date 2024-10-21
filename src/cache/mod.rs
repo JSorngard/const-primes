@@ -923,4 +923,13 @@ mod test {
         const P: Primes<3> = Primes::new();
         assert_eq!(P.as_bytes(), &[2, 0, 0, 0, 3, 0, 0, 0, 5, 0, 0, 0]);
     }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn test_serde() {
+        const P: Primes<3> = Primes::new();
+        const STRING_VERSION: &str = "[2,3,5]";
+        assert_eq!(serde_json::to_string(&P).unwrap(), STRING_VERSION);
+        assert_eq!(P, serde_json::from_str(STRING_VERSION).unwrap());
+    }
 }
