@@ -128,21 +128,19 @@ for the `Primes` struct.
 `rkyv`: derives the `Serialize`, `Deserialize`, and `Archive` traits from the
 [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
 
-## License
+<br>
 
-Licensed under either of
+### License
 
-- Apache License, Version 2.0 ([LICENSE-APACHE](https://github.com/JSorngard/const-primes/blob/main/LICENSE-APACHE)
- or <http://www.apache.org/licenses/LICENSE-2.0>).
-- MIT license ([LICENSE-MIT](https://github.com/JSorngard/const-primes/blob/main/LICENSE-MIT)
- or <http://opensource.org/licenses/MIT>).
+<sup>
+Licensed under either of <a href="LICENSE-APACHE">Apache License, Version
+2.0</a> or <a href="LICENSE-MIT">MIT license</a> at your option.
+</sup>
 
-at your option.
+<br>
 
-## Contribution
-
-Contributions are welcome!
-
+<sub>
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
 dual licensed as above, without any additional terms or conditions.
+</sub>
