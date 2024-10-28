@@ -125,8 +125,8 @@ crate to do this, and that crate uses the standard library.
 `zerocopy`: derives the `IntoBytes` trait from [`zerocopy`](https://crates.io/crates/zerocopy)
 for the `Primes` struct.
 
-`rkyv`: derives the `Serialize`, `Deserialize`, and `Archive` traits from the
-[`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
+`rkyv`: derives the `Serialize`, `Deserialize`, and `Archive` traits from
+[`rkyv`](https://crates.io/crates/rkyv) for the `Primes` struct.
 
 <br>
 
