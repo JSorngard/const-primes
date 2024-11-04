@@ -34,7 +34,7 @@ assert_eq!(CHECK_42, Some(false));
 assert_eq!(CHECK_541, Some(true));
 
 // Prime counting
-const PRIMES_LEQ_100: Option<usize> = CACHE.count_primes_leq(100);
+const PRIMES_LEQ_100: Option<usize> = CACHE.prime_pi(100);
 assert_eq!(PRIMES_LEQ_100, Some(25));
 
 // Prime factorization:
