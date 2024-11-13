@@ -88,6 +88,8 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(primes.as_array(), &[2, 3, 5, 7, 11]);
     /// ```
     ///
+    /// # Errors
+    /// 
     /// It is a compile error to use an `N` of 0.
     ///
     /// ```compile_fail
