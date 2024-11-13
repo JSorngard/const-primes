@@ -89,7 +89,7 @@ impl<const N: usize> Primes<N> {
     /// ```
     ///
     /// # Errors
-    /// 
+    ///
     /// It is a compile error to use an `N` of 0.
     ///
     /// ```compile_fail
