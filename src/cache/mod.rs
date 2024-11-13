@@ -580,8 +580,7 @@ pub struct PartialTotient {
 }
 
 impl<const N: usize> Default for Primes<N> {
-    /// Panics if `N` is 0.  
-    /// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
+    /// It is a compile error if `N` is 0.
     fn default() -> Self {
         const { assert!(N > 0, "`N` must be at least 1") }
         Self(primes())
