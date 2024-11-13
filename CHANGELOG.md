@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.3
+
+- Clarify which crate versions have which MSRVs.
+
 ## 0.9.2
 
 - Correct docstring of `Primes<N>`.
