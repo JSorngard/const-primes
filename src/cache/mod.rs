@@ -13,9 +13,9 @@ use crate::{primes, Underlying};
 
 // region: Primes<N>
 
-/// A wrapper around an array that consists of the first `N` primes. Can use those primes for related computations.
-///
-/// Can be created and used in const contexts, and if so it ensures that `N` is non-zero at compile time.
+/// A wrapper around an array that consists of the first `N` primes.
+/// Can use those primes for related computations.
+/// Ensures that `N` is non-zero at compile time.
 ///
 /// # Examples
 ///
