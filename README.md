@@ -14,8 +14,8 @@ or check whether a number is prime in a const function.
 
 `no_std` compatible when the `serde` feature is disabled.
 
-This version supports Rust versions 1.81.0 and up, while previous versions
-support Rust versions 1.67.1 and up.
+This version of the crate supports Rust versions 1.81.0 and up, 
+while versions 0.8.7 and older support Rust versions 1.67.1 and up.
 
 ## Example: generate primes at compile time and use them for related computations
 
