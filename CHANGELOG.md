@@ -5,6 +5,7 @@ This file contains the changes to the crate since version 0.4.8.
 ## 0.9.1
 
 - Correct docstring of `Primes<N>::default`.
+- COrrect docstring of `Primes<N>::new`.
 
 ## 0.9.0
 

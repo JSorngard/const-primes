@@ -88,18 +88,12 @@ impl<const N: usize> Primes<N> {
     /// assert_eq!(primes.as_array(), &[2, 3, 5, 7, 11]);
     /// ```
     ///
-    /// # Panics
-    ///
-    /// Panics if `N` is 0, which is a compile error in const contexts:
+    /// It is a compile error to use an `N` of 0.
     ///
     /// ```compile_fail
     /// # use const_primes::Primes;
     /// const NO_PRIMES: Primes<0> = Primes::new();
     /// ```
-    ///
-    /// This is always a compile error instead of a panic if the `const_assert` feature is enabled.
-    ///
-    /// If any of the primes overflow a `u32` it will panic in const contexts or debug mode.
     #[must_use = "the associated method only returns a new value"]
     pub const fn new() -> Self {
         const { assert!(N > 0, "`N` must be at least 1") }
