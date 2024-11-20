@@ -391,7 +391,10 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
     Ok(ans)
 }
 
-/// Call [`sieve_geq`] or [`sieve_lt`], and automatically compute the memory requirement of the sieve.
+/// Generate arrays of the prime status of large numbers without having to store the prime status
+/// of every single integer smaller than the target in the result, and thus potentially the binary.
+///
+/// Calls [`sieve_geq`] or [`sieve_lt`], and automatically computes the memory requirement of the sieve.
 ///
 /// Sieve the `N` smallest numbers larger than or equal to some limit as `sieve_segment!(N; >= LIMIT)`,
 /// and the `N` largest numbers smaller than some limit as `sieve_segment!(N; < LIMIT)`.

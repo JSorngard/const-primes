@@ -236,7 +236,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     Ok(primes)
 }
 
-/// Call [`primes_geq`] or [`primes_lt`], and automatically compute the memory requirement of the sieve.
+/// Generate arrays of large prime numbers without having to store all primes
+/// from 2 and up in the result, and thus potentially the binary.
+///
+/// Calls [`primes_geq`] or [`primes_lt`], and automatically computes the memory requirement of the sieve.
 ///
 /// Compute `N` primes larger than or equal to some limit as `primes_segment!(N; >= LIMIT)`,
 /// and `N` primes less than some limit as `primes_segment!(N; < LIMIT)`.
@@ -251,8 +254,10 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 /// # use const_primes::{primes_segment, GenerationError};
 /// const N: usize = 3;
 /// const LIMIT: u64 = 5_000_000_031;
+///
 /// const PRIMES_GEQ: Result<[u64; N], GenerationError> = primes_segment!(N; >= LIMIT);
 /// const PRIMES_LT: Result<[u64; N], GenerationError> = primes_segment!(N; < LIMIT);
+///
 /// // Can also be used at runtime:
 /// let primes_geq = primes_segment!(N; >= LIMIT);
 ///
