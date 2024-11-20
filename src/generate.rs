@@ -237,7 +237,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
 }
 
 /// Generate arrays of large prime numbers without having to store all primes
-/// from 2 and up in the constant, and thus the binary.
+/// from 2 and up in the result, and thus potentially the binary.
 /// 
 /// Calls [`primes_geq`] or [`primes_lt`], and automatically computes the memory requirement of the sieve.
 ///
