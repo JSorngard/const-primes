@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## Unreleased
+
+- Documentation improvements for the macros.
+
 ## 0.9.3
 
 - Clarify which crate versions have which MSRVs.
