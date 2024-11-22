@@ -53,7 +53,7 @@
 //!
 //! The crate also provides prime generation and sieving functionality for computing arrays of large
 //! prime numbers above or below some limit, without having to also include every single prime number from 2 and up in the
-//! resulting constant, and thus potentially the binary.
+//! resulting constant, and thus potentially the binary.  
 //! This functionality is most conveniently accessed through the macros [`primes_segment!`] and
 //! [`sieve_segment!`] that automatically compute the size of the prime sieve that is needed
 //! for a certain computation.
