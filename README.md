@@ -47,20 +47,6 @@ assert!(CACHE.is_prime(1000).is_none());
 assert!(CACHE.count_primes_leq(1000).is_none());
 ```
 
-Want only the numbers? Use the `primes` function, or convert the cache into an array:
-
-```rust
-use const_primes::{primes, Primes};
-
-const CACHE: Primes<10> = Primes::new();
-
-const PRIMES_ARRAY1: [u32; 10] = primes();
-const PRIMES_ARRAY2: [i32; 10] = PRIMES.into_array();
-
-assert_eq!(PRIMES_ARRAY1, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
-assert_eq!(PRIMES_ARRAY1, PRIMES_ARRAY2);
-```
-
 ## Example: primality checking
 
 Use `is_prime` to test whether a given number is prime:
