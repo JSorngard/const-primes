@@ -37,20 +37,6 @@
 //! assert!(CACHE.prime_pi(1000).is_none());
 //! ```
 //!
-//! Want only the numbers? Use the function [`primes`], or convert the cache into an array:
-//!
-//! ```
-//! use const_primes::{primes, Primes};
-//!
-//! const CACHE: Primes<10> = Primes::new();
-//!
-//! const PRIMES_ARRAY1: [u32; 10] = primes();
-//! const PRIMES_ARRAY2: [u32; 10] = CACHE.into_array();
-//!
-//! assert_eq!(PRIMES_ARRAY1, [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]);
-//! assert_eq!(PRIMES_ARRAY1, PRIMES_ARRAY2);
-//! ```
-//!
 //! # Example: primality checking
 //!
 //! Use [`is_prime`] to test whether a given number is prime:
@@ -65,14 +51,14 @@
 //!
 //! # Example: generate the three primes after 5000000031
 //!
-//! The crate also provides prime generation and sieving functions that can be used to work
-//! with ranges of large numbers that don't start at zero, e.g. `primes_geq` and `sieve_lt`.
-//! These functions can use large sieves to compute large primes,
-//! but don't need to return the entire sieve, just the requested numbers.
-//! They are most conveniently used through the macros `primes_segment!` and `sieve_segment!`
-//! that automatically compute the size of the sieve that's needed for a certain computation.
+//! The crate also provides prime generation and sieving functionality for computing arrays of large
+//! prime numbers above some limit, without having to also include every single prime number from 2 and up in the
+//! resulting constant, and thus potentially the binary.
+//! This functionality is most conveniently accessed through the macros [`primes_segment!`] and
+//! [`sieve_segment!`] that automatically compute the size of the prime sieve that is needed
+//! for a certain computation.
 //!
-//! Compute 3 primes greater than or equal to 5000000031:
+//! Compute the three primes greater than or equal to 5000000031:
 //!
 //! ```
 //! use const_primes::{primes_segment, GenerationError};
