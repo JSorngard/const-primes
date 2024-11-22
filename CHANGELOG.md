@@ -2,7 +2,7 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
-## Unreleased
+## 0.9.4
 
 - Documentation improvements for the macros.
 
