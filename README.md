@@ -14,7 +14,7 @@ or check whether a number is prime in a const function.
 
 `no_std` compatible when the `serde` feature is disabled.
 
-This version of the crate supports Rust versions 1.81.0 and up, 
+This version of the crate supports Rust versions 1.81.0 and up,
 while versions 0.8.7 and older support Rust versions 1.67.1 and up.
 
 ## Example: generate primes at compile time and use them for related computations
@@ -61,11 +61,13 @@ assert!(CHECK);
 
 ## Example: generate the three primes after 5000000031
 
-The crate also provides prime generation and sieving functionality for computing arrays of
-large prime numbers above or below some limit, without having to also include every single prime number from 2 and up in the
-resulting constant, and thus potentially the binary.  
-This functionality is most conveniently accessed through the macros `primes_segment!` and
-`sieve_segment!` that automatically compute the size of the prime sieve that is needed for a certain computation.
+The crate also provides prime generation and sieving functionality for computing
+arrays of large prime numbers above or below some limit, without having to also
+include every single prime number from 2 and up in the resulting constant,
+and thus potentially the binary.  
+This functionality is most conveniently accessed through the macros `primes_segment!`
+and `sieve_segment!` that automatically compute the size of the prime sieve that
+is needed for a certain computation.
 
 Compute 3 primes greater than or equal to 5000000031:
 

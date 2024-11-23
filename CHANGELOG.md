@@ -2,22 +2,28 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.5
+
+- Set `rust-version` to 1.81.0 since crates.io now auto sets it to the first
+ version on the given edition if you do not set anything.
+ For this crate that would be 1.56.0, which is too old to compile it.
+
 ## 0.9.4
 
 - Documentation improvements for the macros.
 
 ## 0.9.3
 
-- Clarify which crate versions have which MSRVs.
+- Clarified which crate versions have which MSRVs.
 
 ## 0.9.2
 
-- Correct docstring of `Primes<N>`.
+- Corrected docstring of `Primes<N>`.
 
 ## 0.9.1
 
-- Correct docstring of `Primes<N>::default`.
-- Correct docstring of `Primes<N>::new`.
+- Corrected docstring of `Primes<N>::default`.
+- Corrected docstring of `Primes<N>::new`.
 
 ## 0.9.0
 
