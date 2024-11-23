@@ -4,7 +4,8 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## 0.9.5
 
-- Set `rust-version` to 1.81.0 since crates.io now auto sets it to the first
+- Set `rust-version` to 1.81.0. It is not an MSRV guarantee for the future.
+ It is done because crates.io now auto sets it to the first
  version on the given edition if you do not set anything.
  For this crate that would be 1.56.0, which is too old to compile it.
 
