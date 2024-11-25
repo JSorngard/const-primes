@@ -223,9 +223,9 @@ dependencies = [
 
 [[package]]
 name = "itoa"
-version = "1.0.13"
+version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "540654e97a3f4470a492cd30ff187bc95d89557a903a2bbf112e2fae98104ef2"
+checksum = "d75a2a4b1b190afb6f5425f10f6a8f959d2ea0b9c2b1d79553551850539e4674"
 
 [[package]]
 name = "js-sys"
@@ -442,9 +442,9 @@ checksum = "a35e8a6bf28cd121053a66aa2e6a2e3eaffad4a60012179f0e864aa5ffeff215"
 
 [[package]]
 name = "rkyv"
-version = "0.8.8"
+version = "0.8.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "395027076c569819ea6035ee62e664f5e03d74e281744f55261dd1afd939212b"
+checksum = "b11a153aec4a6ab60795f8ebe2923c597b16b05bb1504377451e705ef1a45323"
 dependencies = [
  "munge",
  "ptr_meta",
@@ -455,9 +455,9 @@ dependencies = [
 
 [[package]]
 name = "rkyv_derive"
-version = "0.8.8"
+version = "0.8.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09cb82b74b4810f07e460852c32f522e979787691b0b7b7439fe473e49d49b2f"
+checksum = "beb382a4d9f53bd5c0be86b10d8179c3f8a14c30bf774ff77096ed6581e35981"
 dependencies = [
  "proc-macro2",
  "quote",

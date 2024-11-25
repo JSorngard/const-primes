@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.6
+
+- Correct function name in README.
+
 ## 0.9.5
 
 - Set `rust-version` to 1.81.0. It is not an MSRV guarantee for the future.
