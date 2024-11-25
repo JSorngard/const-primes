@@ -44,7 +44,7 @@ assert_eq!(CACHE.prime_factorization(3072).collect(), &[(2, 10), (3, 1)])
 // If questions are asked about numbers
 // outside the cache it returns None
 assert!(CACHE.is_prime(1000).is_none());
-assert!(CACHE.count_primes_leq(1000).is_none());
+assert!(CACHE.prime_pi(1000).is_none());
 ```
 
 ## Example: primality checking
