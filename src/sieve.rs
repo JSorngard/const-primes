@@ -1,6 +1,6 @@
 //! This module contains implementations of prime sieves.
 
-use core::fmt;
+use core::{fmt, ops::Index, slice::SliceIndex};
 
 use crate::isqrt;
 
@@ -15,6 +15,38 @@ impl fmt::Display for SegmentedSieveError {
 
 impl core::error::Error for SegmentedSieveError {}
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) struct Sieve<const N: usize>([bool; N]);
+
+impl<const N: usize> Sieve<N> {
+    pub(crate) const fn new() -> Self {
+        Self(sieve())
+    }
+
+    pub(crate) const fn as_array(&self) -> &[bool; N] {
+        &self.0
+    }
+
+    pub(crate) const fn into_array(self) -> [bool; N] {
+        self.0
+    }
+
+    pub(crate) const fn get(&self, index: usize) -> Option<bool> {
+        if index < self.0.len() {
+            Some(self.0[index])
+        } else {
+            None
+        }
+    }
+}
+
+impl<I: SliceIndex<[bool]>, const N: usize> Index<I> for Sieve<N> {
+    type Output = <I as SliceIndex<[bool]>>::Output;
+    fn index(&self, index: I) -> &Self::Output {
+        self.0.index(index)
+    }
+}
+
 /// Uses the primalities of the first `N` integers in `base_sieve` to sieve the numbers in the range `[upper_limit - N, upper_limit)`.
 /// Assumes that the base sieve contains the prime status of the `N` fist integers. The output is only meaningful
 /// for the numbers below `N^2`.
@@ -24,7 +56,7 @@ impl core::error::Error for SegmentedSieveError {}
 /// Returns an error if `upper_limit` < `N`
 #[must_use = "the function only returns a new value and does not modify its inputs"]
 pub(crate) const fn sieve_segment<const N: usize>(
-    base_sieve: &[bool; N],
+    base_sieve: &Sieve<N>,
     upper_limit: u64,
 ) -> Result<[bool; N], SegmentedSieveError> {
     let mut segment_sieve = [true; N];
@@ -36,7 +68,7 @@ pub(crate) const fn sieve_segment<const N: usize>(
 
     if lower_limit == 0 && N > 1 {
         // If the lower limit is 0 we can just return the base sieve.
-        return Ok(*base_sieve);
+        return Ok(*base_sieve.as_array());
     } else if lower_limit == 1 && N > 0 {
         // In case 1 is included in the upper sieve we need to treat it as a special case
         // since it's not a multiple of any prime in `base_sieve` even though it's not prime.
@@ -44,8 +76,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
     }
 
     let mut i = 0;
-    while i < N {
-        if base_sieve[i] {
+    while let Some(prime_status) = base_sieve.get(i) {
+        if prime_status {
             let prime = i as u64;
 
             // Find the smallest multiple of the prime larger than or equal to `lower_limit`.
@@ -180,13 +212,13 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
     }
 
     // Use a normal sieve of Eratosthenes for the first N numbers.
-    let base_sieve: [bool; MEM] = sieve();
+    let base_sieve: Sieve<MEM> = Sieve::new();
 
     // Use the result to sieve the higher range.
     let (offset, upper_sieve) = match sieve_segment(&base_sieve, upper_limit) {
         Ok(res) => (0, res),
         // The sieve contained more entries than there are non-negative numbers below the upper limit, just use the base sieve.
-        Err(_) => ((MEM as u64 - upper_limit) as usize, base_sieve),
+        Err(_) => ((MEM as u64 - upper_limit) as usize, base_sieve.into_array()),
     };
 
     let mut i = 0;
@@ -375,7 +407,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
         return Ok(sieve());
     }
 
-    let base_sieve: [bool; MEM] = sieve();
+    let base_sieve: Sieve<MEM> = Sieve::new();
 
     let upper_sieve = match sieve_segment(&base_sieve, upper_limit) {
         Ok(res) => res,
@@ -451,25 +483,26 @@ macro_rules! sieve_segment {
 mod test {
     use crate::SieveError;
 
-    use super::{sieve, sieve_geq, sieve_lt, sieve_segment, SegmentedSieveError};
+    use super::{sieve, sieve_geq, sieve_lt, sieve_segment, SegmentedSieveError, Sieve};
 
     #[test]
     fn test_consistency_of_sieve_segment() {
-        const P: [bool; 10] = match sieve_segment(&sieve(), 10) {
+        const SIEVE: Sieve<10> = Sieve::new();
+        const P: [bool; 10] = match sieve_segment(&SIEVE, 10) {
             Ok(s) => s,
             Err(_) => panic!(),
         };
-        const PP: [bool; 10] = match sieve_segment(&sieve(), 11) {
+        const PP: [bool; 10] = match sieve_segment(&SIEVE, 11) {
             Ok(s) => s,
             Err(_) => panic!(),
         };
-        assert_eq!(P, sieve());
-        assert_eq!(PP, sieve::<11>()[1..]);
+        assert_eq!(P, *SIEVE.as_array());
+        assert_eq!(PP, Sieve::<11>::new().as_array()[1..]);
         assert_eq!(
-            sieve_segment::<5>(&[false, false, true, true, false], 4),
+            sieve_segment::<5>(&Sieve::<5>::new(), 4),
             Err(SegmentedSieveError)
         );
-        assert_eq!(sieve_segment(&sieve::<5>(), 5), Ok(sieve()));
+        assert_eq!(sieve_segment(&Sieve::<5>::new(), 5), Ok(sieve()));
     }
 
     #[test]

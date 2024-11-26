@@ -2,7 +2,7 @@
 
 use core::fmt;
 
-use crate::{sieve, sieve::sieve_segment, Underlying};
+use crate::{sieve::{self, sieve_segment, Sieve}, Underlying};
 
 /// Returns the `N` first prime numbers.
 ///
@@ -36,7 +36,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     let mut prime_count = 0;
 
     // Sieve the first primes below N
-    let mut sieve: [bool; N] = sieve();
+    let mut sieve: [bool; N] = sieve::sieve();
 
     // Count how many primes we found
     // and store them in the final array
@@ -199,7 +199,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
     }
 
     // This will be used to sieve all upper ranges.
-    let base_sieve: [bool; MEM] = sieve();
+    let base_sieve: Sieve<MEM> = Sieve::new();
 
     let mut total_primes_found: usize = 0;
     'generate: while total_primes_found < N {
@@ -209,7 +209,7 @@ pub const fn primes_lt<const N: usize, const MEM: usize>(
         let (offset, upper_sieve) = match sieve_segment(&base_sieve, upper_limit) {
             Ok(res) => (0, res),
             // The segment was larger than there are numbers left to sieve, just use the base sieve
-            Err(_) => ((MEM as u64 - upper_limit) as usize, base_sieve),
+            Err(_) => ((MEM as u64 - upper_limit) as usize, base_sieve.into_array()),
         };
 
         let mut i: usize = 0;
@@ -398,7 +398,7 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     let mut primes = [0; N];
     let mut total_found_primes = 0;
     let mut largest_found_prime = 0;
-    let base_sieve: [bool; MEM] = sieve();
+    let base_sieve: Sieve<MEM> = Sieve::new();
     let mut sieve_limit = lower_limit;
     'generate: while total_found_primes < N {
         let upper_sieve = match sieve_segment(&base_sieve, sieve_limit + mem64) {
