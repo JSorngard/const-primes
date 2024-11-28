@@ -40,7 +40,7 @@ impl<'a> PrimeFactorization<'a> {
     }
 }
 
-impl<'a> Iterator for PrimeFactorization<'a> {
+impl Iterator for PrimeFactorization<'_> {
     type Item = (Underlying, u8);
     fn next(&mut self) -> Option<Self::Item> {
         if self.number == 1 {
@@ -70,7 +70,7 @@ impl<'a> Iterator for PrimeFactorization<'a> {
     }
 }
 
-impl<'a> FusedIterator for PrimeFactorization<'a> {}
+impl FusedIterator for PrimeFactorization<'_> {}
 
 /// An iterator over the prime factors of a given number.
 ///
@@ -109,7 +109,7 @@ impl<'a> PrimeFactors<'a> {
     }
 }
 
-impl<'a> Iterator for PrimeFactors<'a> {
+impl Iterator for PrimeFactors<'_> {
     type Item = Underlying;
     fn next(&mut self) -> Option<Self::Item> {
         while let Some(prime) = self.primes_cache.get(self.cache_index) {
@@ -128,4 +128,4 @@ impl<'a> Iterator for PrimeFactors<'a> {
     }
 }
 
-impl<'a> FusedIterator for PrimeFactors<'a> {}
+impl FusedIterator for PrimeFactors<'_> {}

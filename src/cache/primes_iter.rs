@@ -58,16 +58,16 @@ impl<'a> Iterator for PrimesIter<'a> {
     }
 }
 
-impl<'a> ExactSizeIterator for PrimesIter<'a> {
+impl ExactSizeIterator for PrimesIter<'_> {
     #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
 
-impl<'a> FusedIterator for PrimesIter<'a> {}
+impl FusedIterator for PrimesIter<'_> {}
 
-impl<'a> DoubleEndedIterator for PrimesIter<'a> {
+impl DoubleEndedIterator for PrimesIter<'_> {
     #[inline]
     fn next_back(&mut self) -> Option<Self::Item> {
         self.0.next_back()
