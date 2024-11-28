@@ -1,4 +1,4 @@
-use crate::sieve;
+use crate::Sieve;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.
 ///
@@ -19,7 +19,7 @@ pub const fn prime_pi<const N: usize>() -> [usize; N] {
         return counts;
     }
     counts[2] = 1;
-    let prime_status: [bool; N] = sieve();
+    let prime_status: [bool; N] = Sieve::new().into_array();
     let mut count = 1;
     let mut i = 3;
     while i < N {

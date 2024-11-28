@@ -121,7 +121,7 @@ pub use count::prime_pi;
 pub use generate::{primes, primes_geq, primes_lt, GenerationError};
 pub use integer_math::isqrt;
 pub use search::{next_prime, previous_prime};
-pub use sieve::{sieve, sieve_geq, sieve_lt, SieveError};
+pub use sieve::{sieve_geq, sieve_lt, Sieve, SieveError};
 
 #[cfg(test)]
 mod test {
@@ -155,9 +155,9 @@ mod test {
             ($($n:expr),+) => {
                 $(
                     {
-                        const P: [bool; $n] = sieve();
+                        const P: [bool; $n] = Sieve::new().into_array();
                         assert_eq!(&PRIMALITIES[..$n], P);
-                        assert_eq!(&PRIMALITIES[..$n], sieve::<$n>());
+                        assert_eq!(&PRIMALITIES[..$n], Sieve::<$n>::new().into_array());
                     }
                 )+
             };

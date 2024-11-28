@@ -2,7 +2,10 @@
 
 use core::fmt;
 
-use crate::{sieve::{self, sieve_segment, Sieve}, Underlying};
+use crate::{
+    sieve::{sieve_segment, Sieve},
+    Underlying,
+};
 
 /// Returns the `N` first prime numbers.
 ///
@@ -36,7 +39,7 @@ pub const fn primes<const N: usize>() -> [Underlying; N] {
     let mut prime_count = 0;
 
     // Sieve the first primes below N
-    let mut sieve: [bool; N] = sieve::sieve();
+    let mut sieve: [bool; N] = Sieve::new().into_array();
 
     // Count how many primes we found
     // and store them in the final array

@@ -16,22 +16,66 @@ impl fmt::Display for SegmentedSieveError {
 impl core::error::Error for SegmentedSieveError {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) struct Sieve<const N: usize>([bool; N]);
+pub struct Sieve<const N: usize>([bool; N]);
 
 impl<const N: usize> Sieve<N> {
-    pub(crate) const fn new() -> Self {
-        Self(sieve())
+    /// Returns an struct that wraps an array of size `N` where the value at a given index indicates whether the index is prime.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use const_primes::Sieve;
+    /// const PRIMALITY: [bool; 10] = Sieve::new().into_array();
+    /// //                     0      1      2     3     4      5     6      7     8      9
+    /// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
+    /// ```
+    pub const fn new() -> Self {
+        let mut sieve = [true; N];
+        if N == 0 {
+            return Self(sieve);
+        }
+        if N > 0 {
+            sieve[0] = false;
+        }
+        if N > 1 {
+            sieve[1] = false;
+        }
+
+        let mut number: usize = 2;
+        let bound = isqrt(N as u64);
+        // For all numbers up to and including sqrt(n):
+        while (number as u64) <= bound {
+            if sieve[number] {
+                // If a number is prime we enumerate all multiples of it
+                // starting from its square,
+                let Some(mut composite) = number.checked_mul(number) else {
+                    break;
+                };
+
+                // and mark them as not prime.
+                while composite < N {
+                    sieve[composite] = false;
+                    composite = match composite.checked_add(number) {
+                        Some(sum) => sum,
+                        None => break,
+                    };
+                }
+            }
+            number += 1;
+        }
+
+        Self(sieve)
     }
 
-    pub(crate) const fn as_array(&self) -> &[bool; N] {
+    pub const fn as_array(&self) -> &[bool; N] {
         &self.0
     }
 
-    pub(crate) const fn into_array(self) -> [bool; N] {
+    pub const fn into_array(self) -> [bool; N] {
         self.0
     }
 
-    pub(crate) const fn get(&self, index: usize) -> Option<bool> {
+    pub const fn get(&self, index: usize) -> Option<bool> {
         if index < self.0.len() {
             Some(self.0[index])
         } else {
@@ -208,7 +252,7 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
 
     if upper_limit == n64 {
         // If we are not interested in sieving a larger range we can just return early.
-        return Ok(sieve());
+        return Ok(Sieve::new().into_array());
     }
 
     // Use a normal sieve of Eratosthenes for the first N numbers.
@@ -228,55 +272,6 @@ pub const fn sieve_lt<const N: usize, const MEM: usize>(
         i += 1;
     }
     Ok(ans)
-}
-
-/// Returns an array of size `N` where the value at a given index indicates whether the index is prime.
-///
-/// # Example
-///
-/// ```
-/// # use const_primes::sieve;
-/// const PRIMALITY: [bool; 10] = sieve();
-/// //                     0      1      2     3     4      5     6      7     8      9
-/// assert_eq!(PRIMALITY, [false, false, true, true, false, true, false, true, false, false]);
-/// ```
-#[must_use = "the function only returns a new value"]
-pub const fn sieve<const N: usize>() -> [bool; N] {
-    let mut sieve = [true; N];
-    if N == 0 {
-        return sieve;
-    }
-    if N > 0 {
-        sieve[0] = false;
-    }
-    if N > 1 {
-        sieve[1] = false;
-    }
-
-    let mut number: usize = 2;
-    let bound = isqrt(N as u64);
-    // For all numbers up to and including sqrt(n):
-    while (number as u64) <= bound {
-        if sieve[number] {
-            // If a number is prime we enumerate all multiples of it
-            // starting from its square,
-            let Some(mut composite) = number.checked_mul(number) else {
-                break;
-            };
-
-            // and mark them as not prime.
-            while composite < N {
-                sieve[composite] = false;
-                composite = match composite.checked_add(number) {
-                    Some(sum) => sum,
-                    None => break,
-                };
-            }
-        }
-        number += 1;
-    }
-
-    sieve
 }
 
 /// The error returned by [`sieve_lt`] and [`sieve_geq`] if the input
@@ -404,7 +399,7 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
     if lower_limit == 0 {
         // We do not merge it with the computation of `base_sieve` below, since here we only
         // compute `N` values instead of `MEM`.
-        return Ok(sieve());
+        return Ok(Sieve::new().into_array());
     }
 
     let base_sieve: Sieve<MEM> = Sieve::new();
@@ -483,7 +478,7 @@ macro_rules! sieve_segment {
 mod test {
     use crate::SieveError;
 
-    use super::{sieve, sieve_geq, sieve_lt, sieve_segment, SegmentedSieveError, Sieve};
+    use super::{sieve_geq, sieve_lt, sieve_segment, SegmentedSieveError, Sieve};
 
     #[test]
     fn test_consistency_of_sieve_segment() {
@@ -502,20 +497,23 @@ mod test {
             sieve_segment::<5>(&Sieve::<5>::new(), 4),
             Err(SegmentedSieveError)
         );
-        assert_eq!(sieve_segment(&Sieve::<5>::new(), 5), Ok(sieve()));
+        assert_eq!(
+            sieve_segment(&Sieve::<5>::new(), 5),
+            Ok(Sieve::new().into_array())
+        );
     }
 
     #[test]
     fn test_sieve_lt() {
         assert_eq!(sieve_lt::<5, 5>(30), Err(SieveError::TooSmallSieveSize));
         assert_eq!(sieve_lt::<5, 5>(4), Err(SieveError::TooSmallLimit));
-        assert_eq!(sieve_lt::<5, 5>(5), Ok(sieve()));
+        assert_eq!(sieve_lt::<5, 5>(5), Ok(Sieve::new().into_array()));
         assert_eq!(sieve_lt::<2, 5>(20), Ok([false, true]));
     }
 
     #[test]
     fn test_sieve() {
-        assert_eq!(sieve(), [false; 0]);
+        assert_eq!(Sieve::new().into_array(), [false; 0]);
     }
 
     #[test]

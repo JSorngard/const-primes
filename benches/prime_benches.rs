@@ -1,4 +1,4 @@
-use const_primes::{is_prime, primes, primes_geq, primes_lt, sieve, sieve_geq, sieve_lt};
+use const_primes::{is_prime, primes, primes_geq, primes_lt, sieve_geq, sieve_lt, Sieve};
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
 use rand::{rngs::SmallRng, Rng, SeedableRng};
 use std::hint::black_box;
@@ -40,7 +40,7 @@ fn benchmarks(c: &mut Criterion) {
         const N: usize = 10_000;
         let mut sieving = c.benchmark_group("prime sieving");
         sieving.bench_function(format!("first {N} integers"), |b| {
-            b.iter(|| black_box(sieve::<N>()))
+            b.iter(|| black_box(Sieve::<N>::new()))
         });
         sieving.bench_function(format!("{N} integers < 100000000"), |b| {
             b.iter(|| black_box(sieve_lt::<N, N>(100000000)))
