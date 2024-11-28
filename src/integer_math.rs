@@ -34,6 +34,7 @@ pub const fn isqrt(n: u64) -> u64 {
 
 /// Calculates (`base` ^ `exp`) mod `modulo` without overflow.
 #[must_use]
+#[cfg(not(feature="fastprime"))]
 pub const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
     let mut res = 1;
 
@@ -52,6 +53,7 @@ pub const fn mod_pow(mut base: u64, mut exp: u64, modulo: u64) -> u64 {
 
 /// Calculates (`a` * `b`) mod `modulo` without overflow.
 #[must_use]
+#[cfg(not(feature="fastprime"))]
 pub const fn mod_mul(a: u64, b: u64, modulo: u64) -> u64 {
     ((a as u128 * b as u128) % modulo as u128) as u64
 }

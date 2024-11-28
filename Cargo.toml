@@ -16,6 +16,8 @@ serde = { version = "1.0", default-features = false, features = ["derive"], opti
 serde_arrays = { version = "0.1.0", optional = true }
 zerocopy = { version = "0.8", default-features = false, features = ["derive"], optional = true }
 rkyv = { version = "0.8", default-features = false, optional = true }
+# no-std constant time primality testing, low memory variant
+machine-prime = { version="1.3.*", features = ["small"], optional = true}
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
@@ -32,6 +34,10 @@ zerocopy = ["dep:zerocopy"]
 
 # Derives the `Serialize`, `Deserialize`, and `Archive` traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
 rkyv = ["dep:rkyv"]
+
+# Calls the Machine-Prime library for much faster primality testing
+fastprime = ["dep:machine-prime"]
+
 
 [package.metadata.docs.rs]
 # Document all features.
