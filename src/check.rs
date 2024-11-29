@@ -12,7 +12,7 @@ use crate::integer_math::{mod_mul, mod_pow};
 /// # Example
 ///
 /// Basic usage:
-/// 
+///
 /// ```
 /// # use const_primes::is_prime;
 /// const CHECK: bool = is_prime(18_446_744_073_709_551_557);
