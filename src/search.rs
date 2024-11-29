@@ -72,24 +72,4 @@ pub const fn previous_prime(n: u64) -> Option<u64> {
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn next_prime(n: u64) -> Option<u64> {
     bounded_search(n, 1)
-    /*
-    // The largest prime smaller than u64::MAX
-    if n >= 18_446_744_073_709_551_557 {
-        None
-    } else if n <= 1 {
-        Some(2)
-    } else {
-        n += 1;
-
-        if n % 2 == 0 {
-            n += 1;
-        }
-
-        while !is_prime(n) {
-            n += 2;
-        }
-
-        Some(n)
-    }
-    */
 }
