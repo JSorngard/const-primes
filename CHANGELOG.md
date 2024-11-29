@@ -2,6 +2,11 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.7
+
+- Added the `fast_test` feature that makes `is_prime` call out to the [`machine-prime`](https://crates.io/crates/machine_prime)
+ crate for a significant speedup.
+
 ## 0.9.6
 
 - Correct function name in README.
