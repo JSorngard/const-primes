@@ -2,6 +2,27 @@
 
 use crate::is_prime;
 
+/// Generalised function for nearest search by incrementing/decrementing by 1
+/// Any attempt at optimising this would be largely pointless since the largest prime gap under 2^64 is only 1550
+/// And is_prime's trial division already eliminates most of those
+const fn bounded_search(mut n: u64, stride: Stride) -> Option<u64> {
+    let stride = stride.into_u64();
+
+    loop {
+        // Addition over Z/2^64, aka regular addition under optimisation flags
+        n = n.wrapping_add(stride);
+
+        // If either condition is met then we started either below or above the smallest or largest prime respectively
+        // Any two values from 2^64-58 to 1 would also work
+        if n == 0u64 || n == u64::MAX {
+            return None;
+        }
+
+        if is_prime(n) {
+            return Some(n);
+        }
+    }
+}
 /// Returns the largest prime smaller than `n` if there is one.
 ///
 /// Scans for primes downwards from the input with [`is_prime`].
@@ -17,31 +38,15 @@ use crate::is_prime;
 /// ```
 ///
 /// There's no prime smaller than two:
-/// ```
 ///
+/// ```
 /// # use const_primes::previous_prime;
 /// const NO_SUCH: Option<u64> = previous_prime(2);
 /// assert_eq!(NO_SUCH, None);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn previous_prime(mut n: u64) -> Option<u64> {
-    if n <= 2 {
-        None
-    } else if n == 3 {
-        Some(2)
-    } else {
-        n -= 1;
-
-        if n % 2 == 0 {
-            n -= 1;
-        }
-
-        while !is_prime(n) {
-            n -= 2;
-        }
-
-        Some(n)
-    }
+pub const fn previous_prime(n: u64) -> Option<u64> {
+    bounded_search(n, Stride::Down)
 }
 
 /// Returns the smallest prime greater than `n` if there is one that
@@ -60,30 +65,28 @@ pub const fn previous_prime(mut n: u64) -> Option<u64> {
 /// ```
 ///
 /// Primes larger than 18446744073709551557 can not be represented by a `u64`:
-/// ```
 ///
+/// ```
 /// # use const_primes::next_prime;
 /// const NO_SUCH: Option<u64> = next_prime(18_446_744_073_709_551_557);
 /// assert_eq!(NO_SUCH, None);
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
-pub const fn next_prime(mut n: u64) -> Option<u64> {
-    // The largest prime smaller than u64::MAX
-    if n >= 18_446_744_073_709_551_557 {
-        None
-    } else if n <= 1 {
-        Some(2)
-    } else {
-        n += 1;
+pub const fn next_prime(n: u64) -> Option<u64> {
+    bounded_search(n, Stride::Up)
+}
 
-        if n % 2 == 0 {
-            n += 1;
+enum Stride {
+    Up,
+    Down,
+}
+
+impl Stride {
+    const fn into_u64(self) -> u64 {
+        match self {
+            Self::Up => 1,
+            // Adding by 2^64-1 over Z/2^64 is equivalent to subtracting by 1
+            Self::Down => u64::MAX,
         }
-
-        while !is_prime(n) {
-            n += 2;
-        }
-
-        Some(n)
     }
 }
