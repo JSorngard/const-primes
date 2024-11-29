@@ -5,9 +5,7 @@ use crate::is_prime;
 /// Generalised function for nearest search by incrementing/decrementing by 1
 /// Any attempt at optimising this would be largely pointless since the largest prime gap under 2^64 is only 1550
 /// And is_prime's trial division already eliminates most of those
-const fn bounded_search(mut n: u64, stride: Stride) -> Option<u64> {
-    let stride = stride.into_u64();
-
+const fn bounded_search(mut n: u64, stride: u64) -> Option<u64> {
     loop {
         // Addition over Z/2^64, aka regular addition under optimisation flags
         n = n.wrapping_add(stride);
@@ -46,7 +44,8 @@ const fn bounded_search(mut n: u64, stride: Stride) -> Option<u64> {
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn previous_prime(n: u64) -> Option<u64> {
-    bounded_search(n, Stride::Down)
+    // Adding by 2^64-1 over Z/2^64 is equivalent to subtracting by 1
+    bounded_search(n, u64::MAX)
 }
 
 /// Returns the smallest prime greater than `n` if there is one that
@@ -73,20 +72,5 @@ pub const fn previous_prime(n: u64) -> Option<u64> {
 /// ```
 #[must_use = "the function only returns a new value and does not modify its input"]
 pub const fn next_prime(n: u64) -> Option<u64> {
-    bounded_search(n, Stride::Up)
-}
-
-enum Stride {
-    Up,
-    Down,
-}
-
-impl Stride {
-    const fn into_u64(self) -> u64 {
-        match self {
-            Self::Up => 1,
-            // Adding by 2^64-1 over Z/2^64 is equivalent to subtracting by 1
-            Self::Down => u64::MAX,
-        }
-    }
+    bounded_search(n, 1)
 }
