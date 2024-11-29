@@ -35,7 +35,7 @@ zerocopy = ["dep:zerocopy"]
 # Derives the `Serialize`, `Deserialize`, and `Archive` traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
 rkyv = ["dep:rkyv"]
 
-# Calls the Machine-Prime library for much faster primality testing
+# speeds up primality testing significantly by using the [`machine-prime`](https://crates.io/crates/machine-prime) crate.
 fast_test = ["dep:machine-prime"]
 
 
