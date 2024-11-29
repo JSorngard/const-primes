@@ -26,7 +26,7 @@ jobs:
     - uses: dtolnay/rust-toolchain@stable
     - name: check
       run: cargo check --all-features --verbose
-
+      
   clippy:
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +42,14 @@ jobs:
     - uses: dtolnay/rust-toolchain@stable
     - name: test
       run: cargo test --all-features --verbose
+
+  cargo-all-features:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+    - name: test-all-features
+      run: cargo install cargo-all-features && cargo check-all-features && cargo test-all-features
 
   doc:
     runs-on: ubuntu-latest
