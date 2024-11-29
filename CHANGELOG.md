@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.8
+
+- Make links to crates in the docs on docs.rs link to the docs of those crates on docs.rs.
+
 ## 0.9.7
 
 - Added the `fast_test` feature that makes `is_prime` call out to the [`machine-prime`](https://crates.io/crates/machine_prime)
