@@ -7,6 +7,7 @@ use crate::sieve;
 /// # Example
 ///
 /// Basic usage
+/// 
 /// ```
 /// # use const_primes::prime_pi;
 /// const COUNTS: [usize; 10] = prime_pi();
