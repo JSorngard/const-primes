@@ -1,5 +1,5 @@
 //! This module contains an implementation of a deterministic Miller-Rabin primality test
-#[cfg(not(feature = "fastprime"))]
+#[cfg(not(feature = "fast_test"))]
 use crate::integer_math::{mod_mul, mod_pow};
 
 /// Returns whether `n` is prime.
@@ -17,12 +17,12 @@ use crate::integer_math::{mod_mul, mod_pow};
 /// ```
 #[must_use]
 pub const fn is_prime(n: u64) -> bool {
-    #[cfg(feature = "fastprime")]
+    #[cfg(feature = "fast_test")]
     {
         machine_prime::is_prime(n)
     }
 
-    #[cfg(not(feature = "fastprime"))]
+    #[cfg(not(feature = "fast_test"))]
     {
         // Since we know the maximum size of the numbers we test against
         // we can use the fact that there are known perfect bases
@@ -86,7 +86,7 @@ pub const fn is_prime(n: u64) -> bool {
 }
 
 /// Performs a Miller-Rabin test with the witness k.
-#[cfg(not(feature = "fastprime"))]
+#[cfg(not(feature = "fast_test"))]
 const fn miller_test(mut d: u64, n: u64, k: u64) -> bool {
     let mut x = mod_pow(k, d, n);
     if x == 1 || x == n - 1 {
