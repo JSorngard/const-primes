@@ -35,8 +35,8 @@ const fn bounded_search(mut n: u64, stride: u64) -> Option<u64> {
 /// ```
 ///
 /// There's no prime smaller than two:
+/// 
 /// ```
-///
 /// # use const_primes::previous_prime;
 /// const NO_SUCH: Option<u64> = previous_prime(2);
 /// assert_eq!(NO_SUCH, None);
@@ -63,8 +63,8 @@ pub const fn previous_prime(n: u64) -> Option<u64> {
 /// ```
 ///
 /// Primes larger than 18446744073709551557 can not be represented by a `u64`:
+/// 
 /// ```
-///
 /// # use const_primes::next_prime;
 /// const NO_SUCH: Option<u64> = next_prime(18_446_744_073_709_551_557);
 /// assert_eq!(NO_SUCH, None);
