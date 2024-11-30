@@ -4,11 +4,12 @@ use const_primes::{is_prime, sieve_geq};
 use criterion::{criterion_group, criterion_main, Criterion};
 
 fn find_crossover(c: &mut Criterion) {
-    const N: usize = 100000;
+    // An N larger than this results in a stack overflow in sieve_geq
+    const N: usize = 250000;
 
     let mut group = c.benchmark_group("crossover");
 
-    for lower_limit in [1000000, 100000000, (N * N - N - 1) as u64] {
+    for lower_limit in [1000000, 100000000, (N * N - N) as u64] {
         // sieve_geq always takes the same ammount of time for a given MEM.
         group.bench_function(format!("sieve_geq({lower_limit})"), |b| {
             b.iter(|| {
