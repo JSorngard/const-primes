@@ -46,3 +46,7 @@ all-features = true
 [[bench]]
 name = "prime_benches"
 harness = false
+
+[[bench]]
+name = "find_crossover"
+harness = false
