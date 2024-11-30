@@ -9,6 +9,7 @@ fn find_crossover(c: &mut Criterion) {
     let mut group = c.benchmark_group("crossover");
 
     for lower_limit in [1000000, 100000000, (N * N - N - 1) as u64] {
+        // sieve_geq always takes the same ammount of time for a given MEM.
         group.bench_function(format!("sieve_geq({lower_limit})"), |b| {
             b.iter(|| {
                 black_box(sieve_geq::<N, N>(lower_limit)).unwrap();
