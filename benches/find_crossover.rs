@@ -5,7 +5,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 
 fn find_crossover(c: &mut Criterion) {
     // An N larger than this results in a stack overflow in sieve_geq
-    const N: usize = 250000;
+    const N: usize = 253099;
 
     let mut group = c.benchmark_group("crossover");
 
