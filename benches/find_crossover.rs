@@ -13,6 +13,8 @@ fn find_crossover(c: &mut Criterion) {
     // As large as possible for the given MEM.
     const N_SLOW: usize = MEM;
 
+    // The idea is now to do a binary search over N until we find the point where the fastest method switches for various values of MEM.
+    
     // Start as high up as possible
     let lower_limit = (MEM * MEM - MEM) as u64;
 
