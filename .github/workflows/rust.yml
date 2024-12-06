@@ -48,8 +48,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@stable
-    - name: test-all-features
-      run: cargo install cargo-all-features && cargo check-all-features && cargo test-all-features
+    - name: install
+      run: cargo install cargo-all-features
+    - name: check all features
+      run: cargo check-all-features 
+    - name: test all features
+      run: cargo test-all-features
 
   doc:
     runs-on: ubuntu-latest
