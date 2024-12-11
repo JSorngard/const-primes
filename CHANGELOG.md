@@ -2,6 +2,12 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.11
+
+- Add back the `fast_test` feature, but make it do nothing.
+ This fixes any breaking changes from the feature removal,
+ in case someone had time to start using it and runs `cargo-update`.
+
 ## 0.9.10
 
 - Correct feature information in docs and readme.

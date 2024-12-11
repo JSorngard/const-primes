@@ -33,6 +33,8 @@ zerocopy = ["dep:zerocopy"]
 # Derives the `Serialize`, `Deserialize`, and `Archive` traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
 rkyv = ["dep:rkyv"]
 
+fast_test = []
+
 
 [package.metadata.docs.rs]
 # Document all features.
