@@ -2,14 +2,18 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.10.1
+
+- Removed reference to no longer existing feature from docstring of `is_prime`.
+
 ## 0.10.0
 
-- Remove the `fast_test` feature, as that needed a dependency that has
+- Removed the `fast_test` feature, as that needed a dependency that has
  non-additive features.
 
 ## 0.9.11
 
-- Add back the `fast_test` feature, but make it do nothing.
+- Added back the `fast_test` feature, but made it do nothing.
  This fixes any breaking changes from the feature removal,
  in case someone had time to start using it and runs `cargo-update`.
 
@@ -18,16 +22,16 @@ but running `cargo update` will never break anything, only slow things down.
 
 ## 🗑️ ~~0.9.10~~ Yanked because removing a feature is a breaking change
 
-- Correct feature information in docs and readme.
+- Corrected feature information in docs and readme.
 
 ## 🗑️ ~~0.9.9~~ Yanked because removing a feature is a breaking change
 
-- Publish a version that doesn't have the `fast_test` feature to enable
+- Published a version that doesn't have the `fast_test` feature to enable
  downstream users to just run `cargo update` after versions 0.9.7 and 0.9.8 are yanked.
 
 ## 🗑️ ~~0.9.8~~ Yanked because the dependency has non-additive features
 
-- Make links to crates in the docs on docs.rs link to the docs of those crates
+- Made links to crates in the docs on docs.rs link to the docs of those crates
  on docs.rs.
 
 ## 🗑️ ~~0.9.7~~ Yanked because the dependency has non-additive features
