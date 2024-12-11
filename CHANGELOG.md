@@ -4,6 +4,9 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## 0.10.0
 
+- Remove the `fast_test` feature, for reasons described in the section for version
+ 0.9.9.
+
 ## 0.9.11
 
 - Add back the `fast_test` feature, but make it do nothing.
