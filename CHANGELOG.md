@@ -10,8 +10,8 @@ This file contains the changes to the crate since version 0.4.8.
 
 - Publish a version that doesn't have the `fast_test` feature to enable
  downstream users to just run `cargo update` after versions 0.9.7 and 0.9.8 are yanked.
-- The feature will be added again if the issue described in
- [machine-prime/#4](https://github.com/JASory/machine-prime/issues/4) is fixed.
+- The feature will be added again if the situation described in
+ [machine-prime/#4](https://github.com/JASory/machine-prime/issues/4) is changed.
 
 ## 🗑️ ~~0.9.8~~ Yanked because the dependency has incompatible features
 
