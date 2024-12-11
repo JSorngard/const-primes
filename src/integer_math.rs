@@ -9,17 +9,17 @@
 ///
 /// ```
 /// # use const_primes::isqrt;
-/// const ISQRT25: u64 = isqrt(25);
-/// const ISQRT35: u64 = isqrt(35);
-/// const ISQRT36: u64 = isqrt(36);
+/// const ISQRT25: u32 = isqrt(25);
+/// const ISQRT35: u32 = isqrt(35);
+/// const ISQRT36: u32 = isqrt(36);
 ///
 /// assert_eq!(ISQRT25, 5);
 /// assert_eq!(ISQRT35, 5);
 /// assert_eq!(ISQRT36, 6);
 /// ```
 #[must_use]
-pub const fn isqrt(n: u64) -> u64 {
-    if n <= 1 {
+pub const fn isqrt(n: u64) -> u32 {
+    (if n <= 1 {
         n
     } else {
         let mut x0 = u64::pow(2, n.ilog2() / 2 + 1);
@@ -29,7 +29,7 @@ pub const fn isqrt(n: u64) -> u64 {
             x1 = (x0 + n / x0) / 2;
         }
         x0
-    }
+    }) as u32
 }
 
 /// Calculates (`base` ^ `exp`) mod `modulo` without overflow.
@@ -63,10 +63,10 @@ mod test {
     #[test]
     fn check_isqrt() {
         for x in 0..1_000_000 {
-            assert_eq!(isqrt(x), (x as f64).sqrt().floor() as u64);
+            assert_eq!(isqrt(x), (x as f64).sqrt().floor() as u32);
         }
         assert_eq!(
-            f64::from(u32::MAX).sqrt().floor() as u64,
+            f64::from(u32::MAX).sqrt().floor() as u32,
             isqrt(u64::from(u32::MAX))
         );
         assert_eq!(isqrt(u64::MAX - 1), 4294967295);

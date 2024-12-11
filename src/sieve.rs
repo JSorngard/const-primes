@@ -222,7 +222,7 @@ pub const fn sieve<const N: usize>() -> [bool; N] {
     }
 
     let mut number: usize = 2;
-    let bound = isqrt(N as u64);
+    let bound = isqrt(N as u64) as u64;
     // For all numbers up to and including sqrt(n):
     while (number as u64) <= bound {
         if sieve[number] {
