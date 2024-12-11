@@ -13,12 +13,12 @@ This file contains the changes to the crate since version 0.4.8.
 - The feature will be added again if the situation described in
  [machine-prime/#4](https://github.com/JASory/machine-prime/issues/4) is changed.
 
-## 🗑️ ~~0.9.8~~ Yanked because the dependency has incompatible features
+## 🗑️ ~~0.9.8~~ Yanked because the dependency has non-additive features
 
 - Make links to crates in the docs on docs.rs link to the docs of those crates
  on docs.rs.
 
-## 🗑️ ~~0.9.7~~ Yanked because the dependency has incompatible features
+## 🗑️ ~~0.9.7~~ Yanked because the dependency has non-additive features
 
 - Added the `fast_test` feature that makes `is_prime` call out to the [`machine-prime`](https://crates.io/crates/machine_prime)
  crate for a significant speedup.
