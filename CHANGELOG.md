@@ -2,17 +2,22 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.10.0
+
 ## 0.9.11
 
 - Add back the `fast_test` feature, but make it do nothing.
  This fixes any breaking changes from the feature removal,
  in case someone had time to start using it and runs `cargo-update`.
 
-## 0.9.10
+The effect of all the yanked versions is that the dependency has been removed,
+but running `cargo update` will never break anything.
+
+## 🗑️ ~~0.9.10~~ Yanked because removing a feature is a breaking change
 
 - Correct feature information in docs and readme.
 
-## 0.9.9
+## 🗑️ ~~0.9.9~~ Yanked because removing a feature is a breaking change
 
 - Publish a version that doesn't have the `fast_test` feature to enable
  downstream users to just run `cargo update` after versions 0.9.7 and 0.9.8 are yanked.
