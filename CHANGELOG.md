@@ -2,6 +2,11 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.9
+
+- Publish a version that doesn't have the `fast_test` feature to enable
+ downstream users to just run `cargo update` after versions 0.9.7 and 0.9.8 are yanked.
+
 ## 0.9.8
 
 - Make links to crates in the docs on docs.rs link to the docs of those crates
