@@ -114,9 +114,6 @@ for the `Primes` struct.
 `rkyv`: derives the `Serialize`, `Deserialize`, and `Archive` traits from
 [`rkyv`](https://crates.io/crates/rkyv) for the `Primes` struct.
 
-`fast_test`: speeds up primality testing significantly by using the
-[`machine-prime`](https://crates.io/crates/machine-prime) crate.
-
 <br>
 
 ### License

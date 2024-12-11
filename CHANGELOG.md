@@ -2,17 +2,23 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.9.10
+
+- Correct feature information in docs and readme.
+
 ## 0.9.9
 
 - Publish a version that doesn't have the `fast_test` feature to enable
  downstream users to just run `cargo update` after versions 0.9.7 and 0.9.8 are yanked.
+- The feature will be added again if the issue described in
+ [machine-prime/#4](https://github.com/JASory/machine-prime/issues/4) is fixed.
 
-## 0.9.8
+## 🗑️ ~~0.9.8~~ Yanked because the dependency has incompatible features
 
 - Make links to crates in the docs on docs.rs link to the docs of those crates
  on docs.rs.
 
-## 0.9.7
+## 🗑️ ~~0.9.7~~ Yanked because the dependency has incompatible features
 
 - Added the `fast_test` feature that makes `is_prime` call out to the [`machine-prime`](https://crates.io/crates/machine_prime)
  crate for a significant speedup.

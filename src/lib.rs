@@ -97,8 +97,6 @@
 //! `zerocopy`: derives the [`IntoBytes`](zerocopy::IntoBytes) trait from the [`zerocopy`] crate for the [`Primes`] struct.
 //!
 //! `rkyv`: derives the [`Serialize`](rkyv::Serialize), [`Deserialize`](rkyv::Deserialize), and [`Archive`](rkyv::Archive) traits from the [`rkyv`] crate for the [`Primes`] struct.
-//!
-//! `fast_test`: speeds up primality testing significantly by using the [`machine_prime`] crate.
 
 #![forbid(unsafe_code)]
 #![no_std]
