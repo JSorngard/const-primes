@@ -14,7 +14,7 @@ This file contains the changes to the crate since version 0.4.8.
  in case someone had time to start using it and runs `cargo-update`.
 
 The effect of all the yanked versions is that the dependency has been removed,
-but running `cargo update` will never break anything, olny ever slow things down.
+but running `cargo update` will never break anything, only slow things down.
 
 ## 🗑️ ~~0.9.10~~ Yanked because removing a feature is a breaking change
 
