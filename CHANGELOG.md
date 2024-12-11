@@ -4,8 +4,9 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## 0.10.0
 
-- Remove the `fast_test` feature, for reasons described in the section for version
- 0.9.9.
+- Remove the `fast_test` feature, as that needed a dependency that has
+ non-additive features. For more information see the [machine-prime/#4](https://github.com/JASory/machine-prime/issues/4)
+ issue.
 
 ## 0.9.11
 
