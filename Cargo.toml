@@ -12,6 +12,7 @@ documentation = "https://docs.rs/const-primes"
 rust-version = "1.81.0"
 
 [dependencies]
+machine-prime = { version = "1.3", optional = true, default-features = false, features = ["tiny"] }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_arrays = { version = "0.1.0", optional = true }
 zerocopy = { version = "0.8", default-features = false, features = ["derive"], optional = true }
@@ -23,6 +24,10 @@ rand = { version = "0.8", default-features = false, features = ["small_rng"] }
 serde_json = "1.0"
 
 [features]
+
+# Significantly speed up primality testing by depending on the [`machine-prime`](https://crates.io/crates/machine_prime) crate.
+fast_test = ["dep:machine-prime"]
+
 # Derives the `Serialize` and `Deserialize` traits from the [`serde`](https://crates.io/crates/serde) crate for the `Primes` struct, as well as a few others.
 # Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays) crate to do this, and that crate uses the standard library.
 serde = ["dep:serde", "dep:serde_arrays"]
