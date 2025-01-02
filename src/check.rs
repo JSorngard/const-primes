@@ -8,6 +8,8 @@ use crate::integer_math::{mod_mul, mod_pow};
 /// Does trial division with a small wheel up to `log2(n)` and then uses a
 /// deterministic Miller-Rabin primality test.
 ///
+/// If the `fast_test` feature is enabled this function calls the [`machine_prime::is_prime`] function with the `lucas` feature instead.
+///
 /// # Example
 ///
 /// Basic usage:
