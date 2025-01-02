@@ -101,9 +101,10 @@ checksum = "afb84c814227b90d6895e01398aee0d8033c00e7466aca416fb6a8e0eb19d8a7"
 
 [[package]]
 name = "const-primes"
-version = "0.10.1"
+version = "0.10.2"
 dependencies = [
  "criterion",
+ "machine-prime",
  "rand",
  "rkyv",
  "serde",
@@ -247,6 +248,12 @@ name = "log"
 version = "0.4.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
+
+[[package]]
+name = "machine-prime"
+version = "1.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f62ebabb004f1a0d8cb02e21ed2456828d4a65b44b0f0b7de29847cee5d7c3a3"
 
 [[package]]
 name = "memchr"
