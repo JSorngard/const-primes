@@ -91,7 +91,9 @@
 //!
 //! # Features
 //!
-//! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from the [`serde`] crte for the [`Primes`] struct, as well as a few others.
+//! `fast_test`: Significantly speed up the [`is_prime`] function by depending on the [`machine_prime`] crate.
+//! 
+//! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from the [`serde`] crate for the [`Primes`] struct, as well as a few others.
 //! Uses the [`serde_arrays`](https://docs.rs/serde_arrays/0.1.0) crate to do this, and that crate uses the standard library.
 //!
 //! `zerocopy`: derives the [`IntoBytes`](zerocopy::IntoBytes) trait from the [`zerocopy`] crate for the [`Primes`] struct.

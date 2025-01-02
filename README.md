@@ -103,6 +103,8 @@ and more!
 
 ## Features
 
+`fast_test`: significantly speed up primality testing by depending on [`machine-prime`](https://crates.io/crates/machine_prime).
+
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde)
 for the `Primes` struct, as well as a few others.
 Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays)
