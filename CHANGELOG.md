@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.10.2
+
+- Re-added the `fast_test` feature, as the feature issue has been resolved.
+
 ## 0.10.1
 
 - Removed reference to no longer existing feature from docstring of `is_prime`.
