@@ -4,7 +4,7 @@ use crate::is_prime;
 
 /// Generalised function for nearest search by incrementing/decrementing by 1
 /// Any attempt at optimising this would be largely pointless since the largest prime gap under 2^64 is only 1550
-/// And is_prime's trial division already eliminates most of those
+/// And `is_prime`'s trial division already eliminates most of those
 const fn bounded_search(mut n: u64, stride: u64) -> Option<u64> {
     debug_assert!(stride == 1 || stride == u64::MAX);
 
