@@ -401,9 +401,8 @@ pub const fn primes_geq<const N: usize, const MEM: usize>(
     let base_sieve: [bool; MEM] = sieve();
     let mut sieve_limit = lower_limit;
     'generate: while total_found_primes < N {
-        let upper_sieve = match sieve_segment(&base_sieve, sieve_limit + mem64) {
-            Ok(res) => res,
-            Err(_) => panic!("can not happen since we set upper limit to mem + nonzero stuff"),
+        let Ok(upper_sieve) = sieve_segment(&base_sieve, sieve_limit + mem64) else {
+            panic!("can not happen since we set upper limit to mem + nonzero stuff")
         };
 
         let mut i = 0;

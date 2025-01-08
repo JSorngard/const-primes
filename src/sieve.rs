@@ -29,9 +29,8 @@ pub(crate) const fn sieve_segment<const N: usize>(
 ) -> Result<[bool; N], SegmentedSieveError> {
     let mut segment_sieve = [true; N];
 
-    let lower_limit = match upper_limit.checked_sub(N as u64) {
-        Some(diff) => diff,
-        None => return Err(SegmentedSieveError),
+    let Some(lower_limit) = upper_limit.checked_sub(N as u64) else {
+        return Err(SegmentedSieveError);
     };
 
     if lower_limit == 0 && N > 1 {
@@ -377,9 +376,8 @@ pub const fn sieve_geq<const N: usize, const MEM: usize>(
 
     let base_sieve: [bool; MEM] = sieve();
 
-    let upper_sieve = match sieve_segment(&base_sieve, upper_limit) {
-        Ok(res) => res,
-        Err(_) => panic!("this is already checked above"),
+    let Ok(upper_sieve) = sieve_segment(&base_sieve, upper_limit) else {
+        panic!("this is already checked above")
     };
 
     let mut ans = [false; N];
