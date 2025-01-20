@@ -27,7 +27,7 @@ jobs:
     - uses: taiki-e/install-action@v2
       with:
         tool: cargo-all-features
-    - name: Check
+    - name: Check all feature combinations
       run: cargo check-all-features
       
   clippy:
@@ -35,7 +35,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@stable
-    - name: Clippy
+    - name: Run clippy
       run: cargo clippy --all-features -- -D warnings
       
   test:
@@ -46,7 +46,7 @@ jobs:
     - uses: taiki-e/install-action@v2
       with:
         tool: cargo-all-features
-    - name: Test
+    - name: Test all feature combinations
       run: cargo test-all-features
 
   doc:
@@ -57,7 +57,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@nightly
-    - name: Document
+    - name: Generate documentation
       run: cargo +nightly doc --all-features
 
   coverage:
