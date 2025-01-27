@@ -252,9 +252,9 @@ checksum = "04cbf5b083de1c7e0222a7a51dbfdba1cbe1c6ab0b15e29fff3f6c077fd9cd9f"
 
 [[package]]
 name = "machine-prime"
-version = "1.5.2"
+version = "1.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f62ebabb004f1a0d8cb02e21ed2456828d4a65b44b0f0b7de29847cee5d7c3a3"
+checksum = "3d580791adec54651e29b735f95e864d3ff1da1b024c0e17b2a6b0c28b6bda79"
 
 [[package]]
 name = "memchr"
