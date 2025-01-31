@@ -99,7 +99,7 @@ jobs:
       - name: Check semver compatibility
         uses: obi1kenobi/cargo-semver-checks-action@v2
 
-beta_test:
+  beta_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
