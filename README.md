@@ -103,7 +103,8 @@ and more!
 
 ## Features
 
-`fast_test`: significantly speed up primality testing by depending on [`machine-prime`](https://crates.io/crates/machine_prime). Raises the MSRV to 1.84.0.
+`fast_test`: significantly speed up primality testing by depending on [`machine-prime`](https://crates.io/crates/machine_prime).
+Raises the MSRV to 1.84.0.
 
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde)
 for the `Primes` struct, as well as a few others.
