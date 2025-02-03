@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.10.3 (unreleased)
+
+- Added information about MSRV bump when enabling the `fast_test` feature.
+
 ## 0.10.2
 
 - Re-added the `fast_test` feature, as the feature issue has been resolved.
