@@ -71,7 +71,7 @@ jobs:
     - name: Verify MSRV
       run: cargo msrv --output-format minimal verify
     - name: Verify raised MSRV
-      run: cargo msrv --output-format minimal verify --features fast_test
+      run: cargo msrv --output-format minimal verify --features fast_test --rust-version 1.84.0
 
   coverage:
     runs-on: ubuntu-latest
