@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.10.4 (unreleased)
+
+- Removed the "no_std" keyword from the crate.
+
 ## 0.10.3
 
 - Added information about MSRV bump when enabling the `fast_test` feature.
