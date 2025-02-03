@@ -109,3 +109,11 @@ jobs:
         tool: cargo-all-features 
     - name: Test the crate on rust beta
       run: cargo test-all-features
+
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+    - name: Compile benchmarks
+      run: cargo bench nothing
