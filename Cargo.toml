@@ -12,7 +12,7 @@ documentation = "https://docs.rs/const-primes"
 rust-version = "1.81.0"
 
 [dependencies]
-machine-prime = { version = "1.5.4", optional = true, default-features = false, features = ["lucas"] }
+machine-prime = { version = "1.5.5", optional = true, default-features = false, features = ["lucas"] }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_arrays = { version = "0.1.0", optional = true }
 zerocopy = { version = "0.8", default-features = false, features = ["derive"], optional = true }
