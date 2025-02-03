@@ -25,7 +25,7 @@ fn benchmarks(c: &mut Criterion) {
         primality_testing.throughput(Throughput::Elements(N));
         primality_testing.bench_function(format!("is_prime on {N} random numbers"), |b| {
             b.iter_batched(
-                || (0..N).map(|_| rng.gen()).collect::<Vec<u64>>(),
+                || (0..N).map(|_| rng.random()).collect::<Vec<u64>>(),
                 |data| {
                     for &number in &data {
                         black_box(is_prime(number));
