@@ -84,6 +84,7 @@ impl<const N: usize> TryFrom<MaybePrimes<N>> for Primes<N> {
     }
 }
 
+/// The error returned when a `MaybePrimes` can not be converted into a `Primes`.
 #[derive(Debug)]
 struct NotAllPrimesError {
     index: usize,
