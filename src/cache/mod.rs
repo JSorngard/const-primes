@@ -5,8 +5,6 @@ mod prime_factors;
 mod primes_into_iter;
 mod primes_iter;
 
-use core::fmt;
-
 pub use prime_factors::{PrimeFactorization, PrimeFactors};
 pub use primes_into_iter::PrimesIntoIter;
 pub use primes_iter::PrimesIter;
@@ -46,11 +44,7 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.prime_pi(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// It is most likely not worth it to deserialize a `Primes`,
-// as all numbers must be checked for primality during deserialization to uphold the relevant invariant.
-// But now the option exists and is correct!
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "MaybePrimes<N>"))]
 #[cfg_attr(
     feature = "zerocopy",
     derive(zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout)
@@ -63,48 +57,6 @@ use crate::{primes, Underlying};
 pub struct Primes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );
-
-/// Contains a list of numbers deserialized by `serde`.
-/// They may or may not be prime.
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-struct MaybePrimes<const N: usize>(
-    #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
-);
-
-impl<const N: usize> TryFrom<MaybePrimes<N>> for Primes<N> {
-    type Error = NotAllPrimesError;
-    fn try_from(value: MaybePrimes<N>) -> Result<Self, Self::Error> {
-        value
-            .0
-            .iter()
-            .position(|&val| !crate::is_prime(val.into()))
-            .map_or(Ok(Self(value.0)), |index| {
-                Err(NotAllPrimesError {
-                    index,
-                    non_prime: value.0[index],
-                })
-            })
-    }
-}
-
-/// The error returned when a `MaybePrimes` can not be converted into a `Primes`.
-#[derive(Debug)]
-struct NotAllPrimesError {
-    index: usize,
-    non_prime: Underlying,
-}
-
-impl fmt::Display for NotAllPrimesError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "the input contained the non-prime {} at index {}",
-            self.non_prime, self.index
-        )
-    }
-}
-
-impl core::error::Error for NotAllPrimesError {}
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
@@ -972,9 +924,7 @@ mod test {
     fn test_serde() {
         const P: Primes<3> = Primes::new();
         const STRING_VERSION: &str = "[2,3,5]";
-        const INVALID_STRING: &str = "[2,3,4]";
         assert_eq!(serde_json::to_string(&P).unwrap(), STRING_VERSION);
         assert_eq!(P, serde_json::from_str(STRING_VERSION).unwrap());
-        assert!(serde_json::from_str::<Primes<3>>(INVALID_STRING).is_err());
     }
 }
