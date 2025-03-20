@@ -984,5 +984,6 @@ mod test {
         assert!(
             serde_json::from_str::<Primes<3>>("340282366920938463463374607431768211455").is_err()
         );
+        assert!(serde_json::from_str::<Primes<3>>("banana").is_err());
     }
 }
