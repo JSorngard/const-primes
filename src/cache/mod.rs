@@ -61,6 +61,8 @@ pub struct Primes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );
 
+/// Contains a list of numbers deserialized by `serde`.
+/// They may or may not be prime.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 struct MaybePrimes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
@@ -92,7 +94,7 @@ impl fmt::Display for NotAllPrimesError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Not all elements are prime. The first non-prime is {} at index {}",
+            "the input contained the non-prime {} at index {}",
             self.non_prime, self.index
         )
     }
