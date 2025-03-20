@@ -72,87 +72,19 @@ struct UsizeVisitor;
 impl serde::de::Visitor<'_> for UsizeVisitor {
     type Value = usize;
 
-    fn expecting(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        write!(f, "an integer between 0 and {}", usize::MAX)
+    fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        write!(formatter, "an integer between 0 and {}", usize::MAX)
     }
 
-    fn visit_u8<E>(self, v: u8) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(usize::from(v))
-    }
-
-    fn visit_u16<E>(self, v: u16) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        Ok(usize::from(v))
-    }
-
-    fn visit_u32<E>(self, v: u32) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        self.visit_u128(u128::from(v))
-    }
-
-    fn visit_u64<E>(self, v: u64) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        self.visit_u128(u128::from(v))
-    }
-
+    // A `u128` should be big enough to contain a `usize`.
     fn visit_u128<E>(self, v: u128) -> Result<Self::Value, E>
     where
         E: serde::de::Error,
     {
         if v > usize::MAX as u128 {
-            Err(serde::de::Error::custom("value too large"))
+            Err(serde::de::Error::custom("value too large for a usize"))
         } else {
             Ok(v as usize)
-        }
-    }
-
-    fn visit_i8<E>(self, v: i8) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        self.visit_i128(i128::from(v))
-    }
-
-    fn visit_i16<E>(self, v: i16) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        self.visit_i128(i128::from(v))
-    }
-
-    fn visit_i32<E>(self, v: i32) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        self.visit_i128(i128::from(v))
-    }
-
-    fn visit_i64<E>(self, v: i64) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        self.visit_i128(i128::from(v))
-    }
-
-    fn visit_i128<E>(self, v: i128) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        if v < 0 {
-            Err(serde::de::Error::custom("value must be positive"))
-        } else if v > usize::MAX as i128 {
-            Err(serde::de::Error::custom("value too large"))
-        } else {
-            self.visit_u128(v as u128)
         }
     }
 }
@@ -164,13 +96,16 @@ impl<'de, const N: usize> serde::Deserialize<'de> for Primes<N> {
         D: serde::Deserializer<'de>,
     {
         let n = deserializer.deserialize_u128(UsizeVisitor)?;
-        assert_eq!(
-            N, n,
-            "expected to deserialize a `Primes<N = {N}>`, but found N = {n}"
-        );
-        // We just sieve a new one instead of validating all the serialized data
-        // with `crate::is_prime`.
-        Ok(Self::new())
+        if n == N {
+            // We just sieve a new one instead of validating all the serialized data
+            // with `crate::is_prime`.
+            Ok(Self::new())
+        } else {
+            Err(serde::de::Error::invalid_length(
+                n,
+                &"the deserialized value to match the expected length",
+            ))
+        }
     }
 }
 
@@ -1041,6 +976,11 @@ mod test {
         const P: Primes<3> = Primes::new();
         const STRING_VERSION: &str = "3";
         assert_eq!(serde_json::to_string(&P).unwrap(), STRING_VERSION);
+
         assert_eq!(P, serde_json::from_str(STRING_VERSION).unwrap());
+        assert!(serde_json::from_str::<Primes<3>>("4").is_err());
+        assert!(serde_json::from_str::<Primes<3>>("").is_err());
+        //                                         u128::MAX
+        assert!(serde_json::from_str::<Primes<3>>("340282366920938463463374607431768211455").is_err());
     }
 }
