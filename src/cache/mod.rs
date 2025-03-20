@@ -69,7 +69,7 @@ impl<const N: usize> serde::Serialize for Primes<N> {
 struct UsizeVisitor;
 
 #[cfg(feature = "serde")]
-impl<'de> serde::de::Visitor<'de> for UsizeVisitor {
+impl serde::de::Visitor<'_> for UsizeVisitor {
     type Value = usize;
 
     fn expecting(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
