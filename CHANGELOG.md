@@ -4,12 +4,10 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## 0.10.4 (unreleased)
 
-- Fixed bug that made it possible to deserialize a `Primes` that contained non-primes.
-  - Made serialization of `Primes` just serialize the length.
-  - Made deserialization of `Primes` just create a new instance from scratch.
-    This is faster since we then do not have to validate that
-    every single deserialized integer is prime, which we know to be true due to
-    type invariants.
+- Make deserialization of `Primes` fail if not all deserialized numbers are prime.
+ It is most likely not worth it to deserialize a `Primes` due to this
+ compared to making a new one,
+ but this option exists and is now correct!
 - Removed the "no_std" keyword from the crate.
 
 ## 0.10.3
