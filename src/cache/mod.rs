@@ -5,8 +5,6 @@ mod prime_factors;
 mod primes_into_iter;
 mod primes_iter;
 
-use core::fmt;
-
 pub use prime_factors::{PrimeFactorization, PrimeFactors};
 pub use primes_into_iter::PrimesIntoIter;
 pub use primes_iter::PrimesIter;
@@ -46,11 +44,6 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.prime_pi(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// It is most likely not worth it to deserialize a `Primes`,
-// as all numbers must be checked for primality during deserialization to uphold the relevant invariant.
-// But now the option exists and is correct!
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "serde", serde(try_from = "MaybePrimes<N>"))]
 #[cfg_attr(
     feature = "zerocopy",
     derive(zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout)
@@ -60,51 +53,61 @@ use crate::{primes, Underlying};
     derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize)
 )]
 #[cfg_attr(feature = "zerocopy", repr(transparent))]
-pub struct Primes<const N: usize>(
-    #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
-);
+pub struct Primes<const N: usize>([Underlying; N]);
 
-/// Contains a list of numbers deserialized by `serde`.
-/// They may or may not be prime.
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-struct MaybePrimes<const N: usize>(
-    #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
-);
-
-impl<const N: usize> TryFrom<MaybePrimes<N>> for Primes<N> {
-    type Error = NotAllPrimesError;
-    fn try_from(value: MaybePrimes<N>) -> Result<Self, Self::Error> {
-        value
-            .0
-            .iter()
-            .position(|&val| !crate::is_prime(val.into()))
-            .map_or(Ok(Self(value.0)), |index| {
-                Err(NotAllPrimesError {
-                    index,
-                    non_prime: value.0[index],
-                })
-            })
+#[cfg(feature = "serde")]
+impl<const N: usize> serde::Serialize for Primes<N> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_u128(N as u128)
     }
 }
 
-/// The error returned when a `MaybePrimes` can not be converted into a `Primes`.
-#[derive(Debug)]
-struct NotAllPrimesError {
-    index: usize,
-    non_prime: Underlying,
-}
+#[cfg(feature = "serde")]
+struct UsizeVisitor;
 
-impl fmt::Display for NotAllPrimesError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "the input contained the non-prime {} at index {}",
-            self.non_prime, self.index
-        )
+#[cfg(feature = "serde")]
+impl serde::de::Visitor<'_> for UsizeVisitor {
+    type Value = usize;
+
+    fn expecting(&self, formatter: &mut core::fmt::Formatter) -> core::fmt::Result {
+        write!(formatter, "an integer between 0 and {}", usize::MAX)
+    }
+
+    // A `u128` should be big enough to contain a `usize`.
+    fn visit_u128<E>(self, v: u128) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        if v > usize::MAX as u128 {
+            Err(serde::de::Error::custom("value too large for a usize"))
+        } else {
+            Ok(v as usize)
+        }
     }
 }
 
-impl core::error::Error for NotAllPrimesError {}
+#[cfg(feature = "serde")]
+impl<'de, const N: usize> serde::Deserialize<'de> for Primes<N> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let n = deserializer.deserialize_u128(UsizeVisitor)?;
+        if n == N {
+            // We just sieve a new one instead of validating all the serialized data
+            // with `crate::is_prime`.
+            Ok(Self::new())
+        } else {
+            Err(serde::de::Error::invalid_length(
+                n,
+                &"the deserialized value to match the expected length",
+            ))
+        }
+    }
+}
 
 impl<const N: usize> Primes<N> {
     /// Generates a new instance that contains the first `N` primes.
@@ -971,10 +974,16 @@ mod test {
     #[test]
     fn test_serde() {
         const P: Primes<3> = Primes::new();
-        const STRING_VERSION: &str = "[2,3,5]";
-        const INVALID_STRING: &str = "[2,3,4]";
+        const STRING_VERSION: &str = "3";
         assert_eq!(serde_json::to_string(&P).unwrap(), STRING_VERSION);
+
         assert_eq!(P, serde_json::from_str(STRING_VERSION).unwrap());
-        assert!(serde_json::from_str::<Primes<3>>(INVALID_STRING).is_err());
+        assert!(serde_json::from_str::<Primes<3>>("4").is_err());
+        assert!(serde_json::from_str::<Primes<3>>("").is_err());
+        //                                         u128::MAX
+        assert!(
+            serde_json::from_str::<Primes<3>>("340282366920938463463374607431768211455").is_err()
+        );
+        assert!(serde_json::from_str::<Primes<3>>("banana").is_err());
     }
 }
