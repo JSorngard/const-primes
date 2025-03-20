@@ -4,10 +4,10 @@ This file contains the changes to the crate since version 0.4.8.
 
 ## 0.10.4 (unreleased)
 
-- Make deserialization of `Primes` fail if not all deserialized numbers are prime.
- It is most likely not worth it to deserialize a `Primes` due to this
- compared to making a new one,
- but this option exists and is now correct!
+- Make serialization of `Primes` just serialize the length.
+- Make deserialization of `Primes` just create a new instance from scratch.
+ This is faster since we then do not have to validate that
+ every single deserialized integer is prime.
 - Removed the "no_std" keyword from the crate.
 
 ## 0.10.3
