@@ -46,6 +46,9 @@ use crate::{primes, Underlying};
 /// assert_eq!(CACHE.prime_pi(1000), None);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+// It is most likely not worth it to deserialize a `Primes`,
+// as all numbers must be checked for primality during deserialization to uphold the relevant invariant.
+// But now the option exists and is correct!
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "MaybePrimes<N>"))]
 #[cfg_attr(
