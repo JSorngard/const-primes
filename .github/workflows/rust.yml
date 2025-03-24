@@ -137,6 +137,6 @@ jobs:
         target: ${{ matrix.target }}
     - uses: taiki-e/install-action@v2
       with:
-        tools: cargo-all-features
+        tool: cargo-all-features
     - name: Check
       run: cargo check-all-features --target ${{ matrix.target }}
