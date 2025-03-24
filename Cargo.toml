@@ -29,7 +29,6 @@ serde_json = "1.0"
 fast_test = ["dep:machine-prime"]
 
 # Derives the `Serialize` and `Deserialize` traits from the [`serde`](https://crates.io/crates/serde) crate for the `Primes` struct, as well as a few others.
-# Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays) crate to do this, and that crate uses the standard library.
 serde = ["dep:serde", "dep:serde_arrays"]
 
 # Derives the `IntoBytes` trait from the [`zerocopy`](https://crates.io/crates/zerocopy) crate for the `Primes` struct.
