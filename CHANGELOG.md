@@ -11,6 +11,7 @@ This file contains the changes to the crate since version 0.4.8.
     every single deserialized integer is prime, which we know to be true due to
     type invariants.
 - Removed the "no_std" keyword from the crate.
+- The `serde` feature no longer needs the standard library.
 
 ## 0.10.3
 
