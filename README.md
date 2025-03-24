@@ -12,7 +12,7 @@ This crate lets you for example pre-compute prime numbers at compile time, store
 them in the binary, and use them later for related computations,
 or check whether a number is prime in a const function.
 
-`no_std` compatible when the `serde` feature is disabled.
+`no_std` compatible.
 
 This version of the crate supports Rust versions 1.81.0 and up,
 while versions 0.8.7 and older support Rust versions 1.67.1 and up.
@@ -108,8 +108,6 @@ Raises the MSRV to 1.84.0.
 
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde)
 for the `Primes` struct, as well as a few others.
-Uses the [`serde_arrays`](https://crates.io/crates/serde_arrays)
-crate to do this, and that crate uses the standard library.
 
 `zerocopy`: derives the `IntoBytes` trait from [`zerocopy`](https://crates.io/crates/zerocopy)
 for the `Primes` struct.
