@@ -12,6 +12,7 @@ This file contains the changes to the crate since version 0.4.8.
     type invariants.
 - Removed the "no_std" keyword from the crate.
 - The `serde` feature no longer needs the standard library.
+- Added a CI job that checks the crate on targets without a standard library.
 
 ## 0.10.3
 
