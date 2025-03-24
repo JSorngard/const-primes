@@ -139,4 +139,4 @@ jobs:
       with:
         tools: cargo-all-features
     - name: Check
-      run: cargo check-all-features--target ${{ matrix.target }}
+      run: cargo check-all-features --target ${{ matrix.target }}
