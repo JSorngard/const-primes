@@ -7,6 +7,7 @@ This file contains the changes to the crate since version 0.4.8.
 - Fixed bug that made it possible to deserialize a `Primes` that contained non-primes.
 - Removed the "no_std" keyword from the crate.
 - Added a CI job that checks the crate on targets without a standard library.
+- The test CI job now runs on Ubuntu, macOS and Windows.
 
 ## 0.10.3
 
