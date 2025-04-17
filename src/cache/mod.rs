@@ -67,6 +67,7 @@ pub struct Primes<const N: usize>(
 );
 
 #[cfg(feature = "rkyv")]
+// SAFETY: `Primes<N>` has no invariants that are relied upon by unsafe code.
 unsafe impl<const N: usize, C> Verify<C> for Primes<N>
 where
     C: Fallible + ?Sized,
