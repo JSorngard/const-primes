@@ -101,7 +101,6 @@
 //!
 //! `rkyv`: derives the [`Serialize`](rkyv::Serialize), [`Deserialize`](rkyv::Deserialize), and [`Archive`](rkyv::Archive) traits from the [`rkyv`] crate for the [`Primes`] struct.
 
-#![forbid(unsafe_code)]
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 

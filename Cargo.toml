@@ -16,7 +16,8 @@ machine-prime = { version = "1.5.5", optional = true, default-features = false, 
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
 serde_arrays = { version = "0.2.0", optional = true }
 zerocopy = { version = "0.8", default-features = false, features = ["derive"], optional = true }
-rkyv = { version = "0.8", default-features = false, optional = true }
+rkyv = { version = "0.8", default-features = false, features = ["bytecheck"], optional = true }
+bytecheck = { version = "0.8", default-features = false, optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports"] }
@@ -35,7 +36,7 @@ serde = ["dep:serde", "dep:serde_arrays"]
 zerocopy = ["dep:zerocopy"]
 
 # Derives the `Serialize`, `Deserialize`, and `Archive` traits from the [`rkyv`](https://crates.io/crates/rkyv) crate for the `Primes` struct.
-rkyv = ["dep:rkyv"]
+rkyv = ["dep:rkyv", "dep:bytecheck"]
 
 [package.metadata.docs.rs]
 # Document all features.
