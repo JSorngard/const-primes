@@ -72,7 +72,6 @@ where
     C: Fallible + ?Sized,
     C::Error: Source,
 {
-    #[inline]
     fn verify(&self, _context: &mut C) -> Result<(), C::Error> {
         if self.0 == primes() {
             Ok(())
@@ -84,7 +83,7 @@ where
 
 #[cfg(any(feature = "serde", feature = "rkyv"))]
 #[derive(Debug)]
-pub struct NotPrimesError;
+struct NotPrimesError;
 
 #[cfg(any(feature = "serde", feature = "rkyv"))]
 impl core::fmt::Display for NotPrimesError {
@@ -96,13 +95,13 @@ impl core::fmt::Display for NotPrimesError {
 #[cfg(any(feature = "serde", feature = "rkyv"))]
 impl core::error::Error for NotPrimesError {}
 
-#[cfg(any(feature = "serde", feature = "rkyv"))]
+#[cfg(feature = "serde")]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct MaybePrimes<const N: usize>(
+struct MaybePrimes<const N: usize>(
     #[cfg_attr(feature = "serde", serde(with = "serde_arrays"))] [Underlying; N],
 );
 
-#[cfg(any(feature = "serde", feature = "rkyv"))]
+#[cfg(feature = "serde")]
 impl<const N: usize> TryFrom<MaybePrimes<N>> for Primes<N> {
     type Error = NotPrimesError;
     fn try_from(value: MaybePrimes<N>) -> Result<Self, Self::Error> {
