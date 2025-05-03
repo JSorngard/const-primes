@@ -10,6 +10,7 @@ description = "Work with prime numbers in const contexts. Prime generation, prim
 repository = "https://github.com/JSorngard/const-primes/"
 documentation = "https://docs.rs/const-primes"
 rust-version = "1.81.0"
+exclude = ["CHANGELOG.md", ".github/"]
 
 [dependencies]
 machine-prime = { version = "1.5.5", optional = true, default-features = false, features = ["lucas"] }
