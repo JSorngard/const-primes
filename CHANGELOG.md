@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## 0.10.5
+
+- Excluded unneeded files from being published to crates.io.
+
 ## 0.10.4
 
 - Fixed bug that made it possible to deserialize a `Primes` that contained non-primes.
