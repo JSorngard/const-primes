@@ -634,8 +634,7 @@ pub struct PartialTotient {
 impl<const N: usize> Default for Primes<N> {
     /// It is a compile error if `N` is 0.
     fn default() -> Self {
-        const { assert!(N > 0, "`N` must be at least 1") }
-        Self(primes())
+        Self::new()
     }
 }
 
