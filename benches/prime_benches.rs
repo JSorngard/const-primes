@@ -1,3 +1,6 @@
+// Copyright 2025 Johanna Sörngård
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 use const_primes::{is_prime, primes, primes_geq, primes_lt, sieve, sieve_geq, sieve_lt};
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
 use rand::{rngs::SmallRng, Rng, SeedableRng};
