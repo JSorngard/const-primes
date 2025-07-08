@@ -1,3 +1,6 @@
+// Copyright 2025 Johanna Sörngård
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 //! This module contains the implementation of the type [`Primes`] (and related iterators),
 //! which functions as a cache of prime numbers for related computations.
 
