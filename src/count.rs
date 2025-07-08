@@ -1,3 +1,6 @@
+// Copyright 2025 Johanna Sörngård
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 use crate::sieve;
 
 /// Returns an array of size `N` where the value at a given index is how many primes are less than or equal to the index.

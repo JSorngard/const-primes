@@ -1,3 +1,6 @@
+// Copyright 2025 Johanna Sörngård
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 //! This module contains const math operations on integers that are used by the other
 //! functions in the crate.
 
