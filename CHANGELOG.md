@@ -5,6 +5,7 @@ This file contains the changes to the crate since version 0.4.8.
 ## 0.10.5 (unreleased)
 
 - Excluded unneeded files from being published to crates.io.
+- Use caching to speed up CI.
 
 ## 0.10.4
 
