@@ -19,6 +19,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@stable
+      with:
+        components: rustfmt
     - name: Cache
       uses: Swatinem/rust-cache@v2.8.0
     - name: Format
@@ -42,6 +44,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy
     - name: Cache
       uses: Swatinem/rust-cache@v2.8.0
     - name: Run clippy
@@ -136,8 +140,7 @@ jobs:
     - name: Cache
       uses: Swatinem/rust-cache@v2.8.0
     - name: Compile benchmarks
-      # There are no benchmarks with "nothing" in their name, hence this command only compiles the benchmarks but does not run them.
-      run: cargo bench nothing
+      run: cargo bench --no-run
 
   no_std:
     runs-on: ubuntu-latest
