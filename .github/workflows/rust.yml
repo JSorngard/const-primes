@@ -136,8 +136,7 @@ jobs:
     - name: Cache
       uses: Swatinem/rust-cache@v2.8.0
     - name: Compile benchmarks
-      # There are no benchmarks with "nothing" in their name, hence this command only compiles the benchmarks but does not run them.
-      run: cargo bench nothing
+      run: cargo bench --no-run
 
   no_std:
     runs-on: ubuntu-latest
