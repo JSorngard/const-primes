@@ -6,6 +6,7 @@ This file contains the changes to the crate since version 0.4.8.
 
 - Excluded unneeded files from being published to crates.io.
 - Use caching to speed up CI.
+- Update dependencies.
 
 ## 0.10.4
 
