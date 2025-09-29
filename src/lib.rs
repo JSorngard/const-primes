@@ -104,7 +104,7 @@
 //! `rkyv`: derives the [`Serialize`](rkyv::Serialize), [`Deserialize`](rkyv::Deserialize), and [`Archive`](rkyv::Archive) traits from the [`rkyv`] crate for the [`Primes`] struct.
 
 #![no_std]
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 /// The type that `Primes<N>` stores, and `primes::<N>()` returns. Currently `u32`.
 // Just change this to whatever unsigned primitive integer type you want and it should work as long as it has enough bits for your purposes.
