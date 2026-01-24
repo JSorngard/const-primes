@@ -1,4 +1,4 @@
-// Copyright 2025 Johanna Sörngård
+// Copyright 2023-2025 Johanna Sörngård
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 //! This module contains implementations of functions that search for primes that neighbour a given number.
