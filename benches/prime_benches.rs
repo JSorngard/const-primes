@@ -1,4 +1,4 @@
-// Copyright 2024-2025 Johanna Sörngård
+// Copyright 2023-2025 Johanna Sörngård
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use const_primes::{is_prime, primes, primes_geq, primes_lt, sieve, sieve_geq, sieve_lt};
