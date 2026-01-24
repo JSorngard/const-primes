@@ -1,4 +1,4 @@
-// Copyright 2025 Johanna Sörngård
+// Copyright 2024-2025 Johanna Sörngård
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 //! Generate and work with prime numbers in const contexts.
