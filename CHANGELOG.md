@@ -2,6 +2,10 @@
 
 This file contains the changes to the crate since version 0.4.8.
 
+## Unreleased
+
+- Set read-only permissions for the CI jobs.
+
 ## 0.10.5
 
 - Excluded unneeded files from being published to crates.io.
