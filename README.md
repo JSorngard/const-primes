@@ -109,7 +109,7 @@ Raises the MSRV to 1.84.0.
 `serde`: derives the `Serialize` and `Deserialize` traits from [`serde`](https://crates.io/crates/serde)
 for the `Primes` struct, as well as a few others.
 
-`zerocopy`: derives the `IntoBytes` trait from [`zerocopy`](https://crates.io/crates/zerocopy)
+`zerocopy`: derives the `IntoBytes`, `KnownLayout` abd `Immutable` traits from [`zerocopy`](https://crates.io/crates/zerocopy)
 for the `Primes` struct.
 
 `rkyv`: derives the `Serialize`, `Deserialize`, and `Archive` traits from

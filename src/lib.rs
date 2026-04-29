@@ -99,7 +99,7 @@
 //!
 //! `serde`: derives the [`Serialize`](serde::Serialize) and [`Deserialize`](serde::Deserialize) traits from the [`serde`] crate for the [`Primes`] struct, as well as a few others.
 //!
-//! `zerocopy`: derives the [`IntoBytes`](zerocopy::IntoBytes) trait from the [`zerocopy`] crate for the [`Primes`] struct.
+//! `zerocopy`: derives the [`IntoBytes`](zerocopy::IntoBytes), [`KnownLayout`](zerocopy::KnownLayout) abd [`Immutable`](zerocopy::Immutable) traits from the [`zerocopy`] crate for the [`Primes`] struct.
 //!
 //! `rkyv`: derives the [`Serialize`](rkyv::Serialize), [`Deserialize`](rkyv::Deserialize), and [`Archive`](rkyv::Archive) traits from the [`rkyv`] crate for the [`Primes`] struct.
 
