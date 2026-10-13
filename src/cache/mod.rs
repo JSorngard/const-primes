@@ -80,7 +80,7 @@ where
         if self.0 == primes() {
             Ok(())
         } else {
-            return fail!(NotPrimesError);
+            fail!(NotPrimesError);
         }
     }
 }
